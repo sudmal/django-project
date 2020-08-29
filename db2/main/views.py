@@ -4,4 +4,8 @@ from django.http import HttpResponse
 
 # Create your views here.
 def index(request):
-    return HttpResponse("DONE")
+    # Возвращаем запрос плюс имя шаблона в папке templates/appname текущего приложения
+    return render(request, 'main/index.html')
+
+def about(request):
+    return HttpResponse("about")
