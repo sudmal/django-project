@@ -42,6 +42,16 @@ class Trademark(models.Model):
         db_table = 'trademark'
 
 
+class Competitors(models.Model):
+    competitor_code = models.BigIntegerField(blank=True, null=True)
+    competitor_name = models.TextField(blank=True, null=True)
+    competitor_surname = models.TextField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'competitors'
+
+
 class Organisation(models.Model):
     id = models.BigAutoField(primary_key=True)
     name = models.CharField(max_length=2000)

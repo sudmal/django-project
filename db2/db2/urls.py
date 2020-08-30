@@ -20,5 +20,5 @@ from django.urls import path, include
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('main.urls')),
-    path('vedCompetitorsComparse',include('ved.urls'), name = 'vedCompetitorsComparse')
+    path('ved/',include('ved.urls'), name = 'vedIndex'),
 ]

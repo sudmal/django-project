@@ -1,0 +1,19 @@
+{% extends 'main/base.html' %}
+
+{% block title %}
+ВЭД :: Конкуренты :: Сравнительный анализ
+{% endblock title %}
+
+{% block content %}
+<div class="container">
+   ВЭД :: Конкуренты :: Сравнительный анализ 
+</div>
+    {% for competitor in competitors %}
+        <tr class='success'>
+            <td>{{ competitor.competitor_code }}</td>
+            <td>{{ competitor.competitor_name }}</td>
+            <td>{{ competitor.competitor_surname }}</td>
+        </tr>
+    {% endfor %}
+{% endblock content %}
+
