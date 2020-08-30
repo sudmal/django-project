@@ -43,7 +43,7 @@ class Trademark(models.Model):
 
 
 class Competitors(models.Model):
-    competitor_code = models.BigIntegerField(blank=True, null=True)
+    competitor_code = models.BigIntegerField(blank=True, primary_key=True)
     competitor_name = models.TextField(blank=True, null=True)
     competitor_surname = models.TextField(blank=True, null=True)
 

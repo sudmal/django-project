@@ -8,12 +8,26 @@
 <div class="container">
    ВЭД :: Конкуренты :: Сравнительный анализ 
 </div>
-    {% for competitor in competitors %}
-        <tr class='success'>
-            <td>{{ competitor.competitor_code }}</td>
-            <td>{{ competitor.competitor_name }}</td>
-            <td>{{ competitor.competitor_surname }}</td>
-        </tr>
-    {% endfor %}
+    <table class="table">
+        <thead>
+            <tr>
+                <th>ЕДРПОУ</th>
+                <th>Короткое имя</th>
+                <th>Наименование организации</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% if competitors.count > 0 %}
+                {% for firm in competitors %}
+                    <tr>
+                        <td scope="row">{{ firm.competitor_code }}</td>
+                        <td>{{ firm.competitor_name }}</td>
+                        <td>{{ firm.competitor_surname }}</td>
+                    </tr>
+                {% endfor %}
+            {% endif %}
+        </tbody>
+    </table>
+    
 {% endblock content %}
 
