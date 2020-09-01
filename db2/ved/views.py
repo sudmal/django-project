@@ -8,7 +8,7 @@ def index(request):
     return render(request,'ved/index.html')
 
 def CompetitorsComparse(request):
-    competitors = Competitors.objects.all()
+    competitors = Competitors.objects.all()[:10]
     return render(request,'ved/CompetitorsComparse.html',{"competitors": competitors})
 
 def IndividualReport(request):
