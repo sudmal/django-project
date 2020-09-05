@@ -9,12 +9,11 @@
    ВЭД :: Конкуренты :: Сравнительный анализ 
 </div>
 <div class="container">
-    <form method="get">
+    <form method="get" action={% url 'CompetitorsComparse' %}>
     <div class="col-md-4">
         <div class="form-group">
-        <label for="search-string">Поиск</label>
-        <input type="text" class="form-control" name="search-string" id="search-string" aria-describedby="helpId" placeholder="Введите запрос">
-        <small id="search-string" class="form-text text-muted">Поиск по таблице</small>
+         {% csrf_token %}
+        {{ search_form }}
         </div>
     </div>
     <div class="col-md-4">
@@ -22,6 +21,7 @@
     </div>
     </form>
 </div>
+<div class="container-fluid">
     <table class="table">
         <thead>
             <tr>
@@ -42,6 +42,6 @@
             {% endif %}
         </tbody>
     </table>
-    
+ </div>   
 {% endblock content %}
 
