@@ -9,7 +9,7 @@
    ВЭД :: Конкуренты :: Сравнительный анализ 
 </div>
 <div class="container">
-    <form method="get" action={% url 'CompetitorsComparse' %}>
+    <form method="post" action={% url 'CompetitorsComparse' %}>
     <div class="col-md-4">
         <div class="form-group">
          {% csrf_token %}
