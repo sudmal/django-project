@@ -85,7 +85,7 @@ WSGI_APPLICATION = 'db2.wsgi.application'
 DATABASES = {
         'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'anamnez_gtd',
+        'NAME': 'anamnez_copy',
         'USER': 'operator',
         'PASSWORD': 'Mimoza2019',
         'HOST': '192.168.55.55',

@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from .models import Competitors
+from .models import Organisation
 from .forms import SearchForm
 
 
@@ -17,4 +18,12 @@ def CompetitorsComparse(request):
     return render(request,'ved/CompetitorsComparse.html',context)
 
 def IndividualReport(request):
-    return render(request,'ved/IndividualReport.html')
+    firm = Organisation.objects.all()[:15]
+    search_form = SearchForm()
+    # if this is a POST request we need to process the form data
+    if request.method == 'POST':
+        print(request.POST['search_string'])
+        organisation = Organisation.objects.filter(edrpou=request.POST['search_string'])
+        search_form = SearchForm(request.POST)
+    context = {"organisation": organisation,"search_form": search_form}
+    return render(request,'ved/IndividualReport.html',context)

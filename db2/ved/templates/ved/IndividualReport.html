@@ -8,4 +8,40 @@
 <div class="container">
    ВЭД :: Конкуренты :: Индивидуальный анализ 
 </div>
-{% endblock content  %}
+<div class="container">
+    <form method="post" action={% url 'IndividualReport' %}>
+    <div class="col-md-4">
+        <div class="form-group">
+         {% csrf_token %}
+        {{ search_form }}
+        </div>
+    </div>
+    <div class="col-md-4">
+        <button type="submit" class="btn btn-primary">Поиск</button>
+    </div>
+    </form>
+</div>
+<div class="container-fluid">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>ЕДРПОУ</th>
+                <th>Короткое имя</th>
+                <th>Наименование организации</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% if competitors.count > 0 %}
+                {% for firm in competitors %}
+                    <tr>
+                        <td scope="row">{{ firm.competitor_code }}</td>
+                        <td>{{ firm.competitor_name }}</td>
+                        <td>{{ firm.competitor_surname }}</td>
+                    </tr>
+                {% endfor %}
+            {% endif %}
+        </tbody>
+    </table>
+ </div>   
+{% endblock content %}
+
