@@ -20,23 +20,24 @@
         <button type="submit" class="btn btn-primary">Поиск</button>
     </div>
     </form>
+    Found {{ organisation.count }}<br>
 </div>
 <div class="container-fluid">
     <table class="table">
         <thead>
             <tr>
                 <th>ЕДРПОУ</th>
-                <th>Короткое имя</th>
                 <th>Наименование организации</th>
+                <th>Конкурент</th>
             </tr>
         </thead>
         <tbody>
-        {% if competitors.count > 0 %}
-                {% for firm in competitors %}
+        {% if organisation.count > 0 %}
+                {% for firm in organisation %}
                     <tr>
-                        <td scope="row">{{ firm.competitor_code }}</td>
-                        <td>{{ firm.competitor_name }}</td>
-                        <td>{{ firm.competitor_surname }}</td>
+                        <td scope="row">{{ firm.edrpou }}</td>
+                        <td>{{ firm.name }}</td>
+                        <td>{{ firm.is_competitor }}</td>
                     </tr>
                 {% endfor %}
             {% endif %}
