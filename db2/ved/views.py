@@ -1,4 +1,6 @@
 from django.shortcuts import render
+from django.http import HttpResponse, HttpResponseRedirect
+from django.urls import reverse
 from .models import Competitors
 from .models import Organisation
 from .forms import SearchForm
@@ -22,9 +24,17 @@ def IndividualReport(request):
     search_form = SearchForm()
     # if this is a POST request we need to process the form data
     if request.method == 'POST':
-        print(request.POST['search_string'])
-        print(Organisation.objects.filter(edrpou=request.POST['search_string']).query)
-        organisation = Organisation.objects.filter(edrpou=request.POST['search_string'])
+ #       print(request.POST['search_string'])
+ #       print(Organisation.objects.filter(edrpou=request.POST['search_string']).query)
+        organisation = Organisation.objects.filter(edrpou__startswith=request.POST['search_string'])
         search_form = SearchForm(request.POST)
     context = {"organisation": organisation,"search_form": search_form}
     return render(request,'ved/IndividualReport.html',context)
+
+def IndividualReportFirmDetail(request):
+    if request.method == 'POST':
+        edrpou_detail = request.POST['edrpou_detail']
+        context = {"edrpou_detail": edrpou_detail}
+        return render(request,'ved/IndividualReportFirmDetail.html',context)
+    else:
+        return(HttpResponseRedirect(reverse('IndividualReport')))

@@ -35,7 +35,12 @@
         {% if organisation.count > 0 %}
                 {% for firm in organisation %}
                     <tr>
-                        <td scope="row">{{ firm.edrpou }}</td>
+                        
+                        <td scope="row">
+                        <form method="post" action="{% url 'IndividualReportFirmDetail' %}">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-info" name="edrpou_detail" value="{{ firm.edrpou }}">{{ firm.edrpou }}</button>
+                        </form></td>
                         <td>{{ firm.name }}</td>
                         <td>{{ firm.is_competitor }}</td>
                     </tr>
