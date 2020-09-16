@@ -4,6 +4,8 @@ from django.urls import reverse
 from .models import Competitors
 from .models import Organisation
 from .forms import SearchForm
+from django.db.models import Count, Sum
+from django.contrib.postgres.aggregates import ArrayAgg
 
 
 from .models import Records, Organisation, Organization, Trademark
@@ -33,14 +35,13 @@ def IndividualReport(request):
     context = {"organisation": organisation,"search_form": search_form}
     return render(request,'ved/IndividualReport.html',context)
 
-def IndividualReportFirmDetail(request):
-    if request.method == 'POST':
-        edrpou_detail = request.POST['edrpou_detail']
-        context = {"edrpou_detail": edrpou_detail}
-        queryset_list = Records.objects.filter(recipient__edrpou__icontains=organization)\
+def IndividualReportFirmShow(request,edrpou_num):
+    if edrpou_num >= 0:
+        context = {"edrpou_detail": edrpou_num}
+        queryset_list = Records.objects.filter(recipient__edrpou__icontains=edrpou_num)\
                 .values('gtd__date', 'gtd__name', 'recipient__name', 'recipient__edrpou').order_by('-gtd__date')\
                 .annotate(gtd_count=Count('gtd__name'), total_cost=Sum('gtd__cost_fact'), tms=ArrayAgg('gtd__trademark__name', distinct=True))
 
-        return render(request,'ved/IndividualReportFirmDetail.html',context)
+        return render(request,'ved/IndividualReportFirmShow.html',context)
     else:
-        return(HttpResponseRedirect(reverse('IndividualReport')))
+        return HttpResponse('EDRPOU {0} IS NOT VALID.<br><a href="/">  - Go back</a>'.format(edrpou_num))

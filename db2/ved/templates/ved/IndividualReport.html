@@ -9,7 +9,7 @@
    ВЭД :: Конкуренты :: Индивидуальный анализ 
 </div>
 <div class="container">
-    <form method="post" action={% url 'IndividualReport' %}>
+    <form method="post" action={% url 'ved:IndividualReport' %}>
     <div class="col-md-4">
         <div class="form-group">
          {% csrf_token %}
@@ -37,10 +37,8 @@
                     <tr>
                         
                         <td scope="row">
-                        <form method="post" action="{% url 'IndividualReportFirmDetail' %}">
-                            {% csrf_token %}
-                            <button type="submit" class="btn btn-info" name="edrpou_detail" value="{{ firm.edrpou }}">{{ firm.edrpou }}</button>
-                        </form></td>
+                        <!--<a class="btn btn-info" href="{% url 'ved:IndividualReport' %}/{{ firm.edrpou }}">{{ firm.edrpou }}</a> -->
+                        <a class="btn btn-info" href="{% url 'ved:IndividualReportFirmShow' firm.edrpou %}">{{ firm.edrpou }}</a> 
                         <td>{{ firm.name }}</td>
                         <td>{{ firm.is_competitor }}</td>
                     </tr>
