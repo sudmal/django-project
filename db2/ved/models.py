@@ -89,7 +89,7 @@ class Groupcodes(models.Model):
 class GtdRecords(models.Model):
     id = models.BigAutoField(primary_key=True)
     product_code = models.BigIntegerField(blank=True, null=True)
-    trademark_id = models.ForeignKey(Trademark)
+    trademark_id = models.ForeignKey('Trademark', models.DO_NOTHING)
     cost_fact = models.FloatField(blank=True, null=True)
     cost_customs = models.FloatField(blank=True, null=True)
     description = models.TextField(blank=True, null=True)

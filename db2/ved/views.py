@@ -25,8 +25,9 @@ def CompetitorsComparse(request):
 def test(request):
  #   gtdrecords = GtdRecords.objects.filter()
  #   gtdrecords = GtdRecords.objects.filter(record_id__gtd_name__icontains='UA100620/504321')
-    gtdrecords = GtdRecords.objects.filter(trademark_id__name__icontains='UNOX')
-    print(gtdrecords)
+    gtdrecords = GtdRecords.objects.filter(trademark__name__icontains='UNOX')
+    print(gtdrecords.query)
+
     return render(request,'ved/test.html',locals())
 
 def IndividualReport(request):
