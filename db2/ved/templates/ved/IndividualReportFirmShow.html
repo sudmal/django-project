@@ -6,4 +6,7 @@
 
 {% block content %}
     {{ edrpou_detail }}
+    {% for row in report %}
+        {{row}}
+    {% endfor %}
 {% endblock %}

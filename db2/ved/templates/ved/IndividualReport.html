@@ -1,5 +1,7 @@
 {% extends 'main/base.html' %}
 
+{% load static %}
+
 {% block title %}
 ВЭД :: Конкуренты :: Индивидуальный анализ
 {% endblock title %}
@@ -26,6 +28,7 @@
     <table class="table">
         <thead>
             <tr>
+                <th>№</th>
                 <th>ЕДРПОУ</th>
                 <th>Наименование организации</th>
                 <th>Конкурент</th>
@@ -37,10 +40,21 @@
                     <tr>
                         
                         <td scope="row">
-                        <!--<a class="btn btn-info" href="{% url 'ved:IndividualReport' %}/{{ firm.edrpou }}">{{ firm.edrpou }}</a> -->
+                            {{ forloop.counter }}
+                        </td>
+                        <td>
                         <a class="btn btn-info" href="{% url 'ved:IndividualReportFirmShow' firm.edrpou %}">{{ firm.edrpou }}</a> 
+                        </td>
                         <td>{{ firm.name }}</td>
-                        <td>{{ firm.is_competitor }}</td>
+                        <!--<td>{{ firm.is_competitor }}</td>-->
+                        <td>
+                        
+                        {% if firm.is_competitor %} 
+                            <img src="{% static 'yes.png' %}" alt="yes"> 
+                        {% else %}
+                            <img src="{% static 'no.png' %}" alt="no">
+                        {% endif %}
+                        </td>
                     </tr>
                 {% endfor %}
             {% endif %}

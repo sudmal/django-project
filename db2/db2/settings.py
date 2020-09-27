@@ -26,7 +26,7 @@ SECRET_KEY = 'yzy_%pf*52*(ubx3q1s6$dmu7swq(lilc1&$1pt9u!_z3-534b'
 DEBUG = True
 
 ALLOWED_HOSTS = []
-
+INTERNAL_IPS = ('127.0.0.1',)
 
 # Application definition
 
@@ -40,9 +40,11 @@ INSTALLED_APPS = [
     'main',
     'ved',
     'inner',
+    'debug_toolbar',
 ]
 
 MIDDLEWARE = [
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -130,3 +132,6 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
 STATIC_URL = '/static/'
+STATIC_DIRS = [
+    BASE_DIR / "static",
+]
