@@ -1,0 +1,18 @@
+{% extends 'main/base.html' %}
+
+
+{% block title %}
+Тесты
+{% endblock title %}
+
+
+{% block content %}
+<ul>
+{% for gr in gtdrecords %}
+<li>
+    {{ gr.cost }}
+</li>
+{% endfor %}
+</ul>
+
+{% endblock content %}

@@ -6,44 +6,8 @@ from django.utils.text import slugify
 from time import time
 
 
-def gen_slug(s):
-    new_slug = slugify(s, allow_unicode=True)
-
-    return new_slug + '-' + str(int(time()))
-
-
-# Create your models here.
-class Country(models.Model):
-    id = models.BigAutoField(primary_key=True)
-    name = models.CharField(max_length=255)
-
-    class Meta:
-        managed = False
-        db_table = 'country'
-
-class Sender(models.Model):
-    name = models.CharField(max_length=255, blank=True, null=True)
-    country = models.ForeignKey(Country, models.DO_NOTHING, blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'sender'
-
-class Trademark(models.Model):
-    id = models.BigAutoField(primary_key=True)
-    name = models.CharField(max_length=255, blank=True, null=True)
-    sender = models.ForeignKey(Sender, models.DO_NOTHING, blank=True, null=True)
-
-    def __str__(self):
-        return self.name
-
-    class Meta:
-        managed = False
-        db_table = 'trademark'
-
-
 class Competitors(models.Model):
-    competitor_code = models.BigIntegerField(blank=True, primary_key=True)
+    competitor_code = models.BigIntegerField(blank=True, null=True)
     competitor_name = models.TextField(blank=True, null=True)
     competitor_surname = models.TextField(blank=True, null=True)
 
@@ -52,54 +16,54 @@ class Competitors(models.Model):
         db_table = 'competitors'
 
 
-class Organisation(models.Model):
+class Country(models.Model):
     id = models.BigAutoField(primary_key=True)
-    name = models.CharField(max_length=2000)
-    is_competitor = models.BooleanField()
-    edrpou = models.TextField(unique=True)
+    name = models.CharField(unique=True, max_length=255)
 
     class Meta:
         managed = False
-        db_table = 'organisation'
+        db_table = 'country'
 
 
-class Organization(models.Model):
-    title = models.CharField(max_length=200, db_index=True, blank=True, null=True)
-    edrpou = models.CharField(max_length=150, db_index=True, blank=True, null=True)
-
-    def __str__(self):
-        return self.edrpou
-
-
-class Gtd(models.Model):
-    id = models.BigAutoField(primary_key=True)
-    name = models.CharField(max_length=250, blank=True, null=True)
-    product_code = models.BigIntegerField(blank=True, null=True)
-    trademark = models.ForeignKey('Trademark', models.DO_NOTHING, blank=True, null=True)
-    cost_fact = models.FloatField(blank=True, null=True)
-    cost_customs = models.FloatField(blank=True, null=True)
-    date = models.DateField(blank=True, null=True)
-    description = models.TextField(blank=True, null=True)
+class CreditStaging(models.Model):
+    doc_id = models.TextField(blank=True, null=True)
+    seller_region = models.TextField(blank=True, null=True)
+    seller_rayon = models.TextField(blank=True, null=True)
+    seller_edrpou = models.TextField(blank=True, null=True)
+    seller_ipn = models.TextField(blank=True, null=True)
+    seller_name = models.TextField(blank=True, null=True)
+    seller_state = models.TextField(blank=True, null=True)
+    buyer_region = models.TextField(blank=True, null=True)
+    buyer_rayon = models.TextField(blank=True, null=True)
+    buyer_edrpou = models.TextField(blank=True, null=True)
+    buyer_ipn = models.TextField(blank=True, null=True)
+    buyer_name = models.TextField(blank=True, null=True)
+    buyer_state = models.TextField(blank=True, null=True)
+    reestr_number = models.TextField(blank=True, null=True)
+    nn_number = models.TextField(blank=True, null=True)
+    ordering_date = models.DateField(blank=True, null=True)
+    registration_date = models.TextField(blank=True, null=True)
+    total_pay_cost = models.TextField(blank=True, null=True)
+    pdv_summ = models.TextField(blank=True, null=True)
+    number_20_percent_count = models.TextField(db_column='20_percent_count', blank=True, null=True)  # Field renamed because it wasn't a valid Python identifier.
+    number_7_percent_count = models.TextField(db_column='7_percent_count', blank=True, null=True)  # Field renamed because it wasn't a valid Python identifier.
+    rk_count = models.TextField(blank=True, null=True)
+    correction_cost = models.TextField(blank=True, null=True)
+    one_rk_cost = models.TextField(blank=True, null=True)
+    product_name = models.TextField(blank=True, null=True)
+    product_code = models.TextField(blank=True, null=True)
+    unit = models.TextField(blank=True, null=True)
+    count = models.TextField(blank=True, null=True)
+    one_product_cost = models.TextField(blank=True, null=True)
+    hash = models.BigIntegerField()
 
     class Meta:
         managed = False
-        db_table = 'gtd'
-    
-
-class Records(models.Model):
-    id = models.BigAutoField(primary_key=True)
-    sender = models.ForeignKey('Sender', models.DO_NOTHING, blank=True, null=True)
-    recipient = models.ForeignKey(Organisation, models.DO_NOTHING, blank=True, null=True)
-    gtd = models.ForeignKey(Gtd, models.DO_NOTHING, blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'records'
-        ordering = ['-id']
+        db_table = 'credit_staging'
 
 
 class Exchange(models.Model):
-    date = models.DateField(primary_key=True)
+    date = models.DateField(unique=True)
     eur_com = models.TextField(db_column='EUR-COM', blank=True, null=True)  # Field name made lowercase. Field renamed to remove unsuitable characters.
     eur_nbu = models.TextField(db_column='EUR-NBU', blank=True, null=True)  # Field name made lowercase. Field renamed to remove unsuitable characters.
     usd_com = models.TextField(db_column='USD-COM', blank=True, null=True)  # Field name made lowercase. Field renamed to remove unsuitable characters.
@@ -110,3 +74,160 @@ class Exchange(models.Model):
     class Meta:
         managed = False
         db_table = 'exchange'
+
+
+class Groupcodes(models.Model):
+    id = models.IntegerField(primary_key=True)
+    gname = models.CharField(max_length=255, blank=True, null=True)
+    gcodes = models.CharField(max_length=255, blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'groupcodes'
+
+
+class GtdRecords(models.Model):
+    id = models.BigAutoField(primary_key=True)
+    product_code = models.BigIntegerField(blank=True, null=True)
+    trademark_id = models.ForeignKey(Trademark)
+    cost_fact = models.FloatField(blank=True, null=True)
+    cost_customs = models.FloatField(blank=True, null=True)
+    description = models.TextField(blank=True, null=True)
+    record = models.ForeignKey('Records', models.DO_NOTHING)
+
+    class Meta:
+        managed = False
+        db_table = 'gtd_records'
+
+
+class NlCredit(models.Model):
+    id = models.BigIntegerField(primary_key=True)
+    doc_id = models.BigIntegerField(blank=True, null=True)
+    reestr_number = models.BigIntegerField(blank=True, null=True)
+    seller = models.ForeignKey('NlOrg', on_delete=models.DO_NOTHING, related_name='credit_seller')
+    buyer = models.ForeignKey('NlOrg',on_delete=models.DO_NOTHING, related_name='credit_buyer')
+    product = models.ForeignKey('NlProduct', models.DO_NOTHING, blank=True, null=True)
+    unit = models.CharField(max_length=50, blank=True, null=True)
+    one_product_cost = models.FloatField(blank=True, null=True)
+    count = models.FloatField(blank=True, null=True)
+    ordering_date = models.DateField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'nl_credit'
+
+
+class NlOrg(models.Model):
+    id = models.BigIntegerField(primary_key=True)
+    name = models.TextField(unique=True, blank=True, null=True)
+    edrpou = models.BigIntegerField(unique=True)
+
+    class Meta:
+        managed = False
+        db_table = 'nl_org'
+
+
+class NlProduct(models.Model):
+    id = models.BigIntegerField(primary_key=True)
+    name = models.TextField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'nl_product'
+
+
+class NlReestr(models.Model):
+    id = models.BigIntegerField(primary_key=True)
+    doc_id = models.BigIntegerField(blank=True, null=True)
+    reestr_number = models.BigIntegerField(blank=True, null=True)
+    seller = models.ForeignKey(NlOrg,  on_delete=models.DO_NOTHING, related_name='reestr_seller')
+    buyer = models.ForeignKey(NlOrg,  on_delete=models.DO_NOTHING, related_name='reestr_buyer')
+    product = models.ForeignKey(NlProduct, models.DO_NOTHING, blank=True, null=True)
+    unit = models.CharField(max_length=50, blank=True, null=True)
+    one_product_cost = models.FloatField(blank=True, null=True)
+    count = models.FloatField(blank=True, null=True)
+    ordering_date = models.DateField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'nl_reestr'
+
+
+class Organisation(models.Model):
+    id = models.BigAutoField(primary_key=True)
+    name = models.CharField(max_length=2000)
+    is_competitor = models.BooleanField()
+    edrpou = models.BigIntegerField(unique=True)
+
+    class Meta:
+        managed = False
+        db_table = 'organisation'
+
+
+class Records(models.Model):
+    id = models.BigAutoField(primary_key=True)
+    sender = models.ForeignKey('Sender', models.DO_NOTHING, blank=True, null=True)
+    recipient = models.ForeignKey(Organisation, models.DO_NOTHING, blank=True, null=True)
+    date = models.DateField(blank=True, null=True)
+    gtd_name = models.CharField(max_length=64)
+
+    class Meta:
+        managed = False
+        db_table = 'records'
+
+
+class Sender(models.Model):
+    name = models.CharField(max_length=255, blank=True, null=True)
+    country = models.ForeignKey(Country, models.DO_NOTHING, blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'sender'
+
+
+class SenderTrademark(models.Model):
+    sender_name = models.CharField(max_length=255)
+    trademark = models.CharField(max_length=255)
+    comment = models.CharField(max_length=255, blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'sender_trademark'
+
+
+class TmAlias(models.Model):
+    sender_name = models.TextField(blank=True, null=True)
+    trademark = models.TextField(blank=True, null=True)
+    comment = models.TextField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'tm_alias'
+
+
+class TnvedGroup(models.Model):
+    id = models.BigIntegerField(primary_key=True)
+    gname = models.TextField(blank=True, null=True)
+    gcodes = models.TextField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'tnved_group'
+
+
+class TnvedMark(models.Model):
+    code = models.IntegerField()
+    description = models.CharField(max_length=255, blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'tnved_mark'
+
+
+class Trademark(models.Model):
+    id = models.BigAutoField(primary_key=True)
+    name = models.CharField(unique=True, max_length=255)
+
+    class Meta:
+        managed = False
+        db_table = 'trademark'
