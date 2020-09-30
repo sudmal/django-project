@@ -89,7 +89,7 @@ class Groupcodes(models.Model):
 class GtdRecords(models.Model):
     id = models.BigAutoField(primary_key=True)
     product_code = models.BigIntegerField(blank=True, null=True)
-    trademark_id = models.ForeignKey('Trademark', models.DO_NOTHING)
+    trademark = models.ForeignKey('Trademark', models.DO_NOTHING)
     cost_fact = models.FloatField(blank=True, null=True)
     cost_customs = models.FloatField(blank=True, null=True)
     description = models.TextField(blank=True, null=True)
@@ -167,7 +167,7 @@ class Organisation(models.Model):
 class Records(models.Model):
     id = models.BigAutoField(primary_key=True)
     sender = models.ForeignKey('Sender', models.DO_NOTHING, blank=True, null=True)
-    recipient = models.ForeignKey(Organisation, models.DO_NOTHING, blank=True, null=True)
+    recipient = models.ForeignKey('Organisation', models.DO_NOTHING, blank=True, null=True)
     date = models.DateField(blank=True, null=True)
     gtd_name = models.CharField(max_length=64)
 
@@ -178,7 +178,7 @@ class Records(models.Model):
 
 class Sender(models.Model):
     name = models.CharField(max_length=255, blank=True, null=True)
-    country = models.ForeignKey(Country, models.DO_NOTHING, blank=True, null=True)
+    country = models.ForeignKey('Country', models.DO_NOTHING, blank=True, null=True)
 
     class Meta:
         managed = False

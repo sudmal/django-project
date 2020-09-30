@@ -7,10 +7,11 @@
 
 
 {% block content %}
+Found {{ gtdrecords.count }}
 <ul>
 {% for gr in gtdrecords %}
 <li>
-    {{ gr.cost }}
+    {{ gr.description }}
 </li>
 {% endfor %}
 </ul>
