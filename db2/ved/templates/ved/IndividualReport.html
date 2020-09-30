@@ -22,6 +22,8 @@
         <button type="submit" class="btn btn-primary">Поиск</button>
     </div>
     </form>
+{% if grecords.count > 0 %}
+
     Found {{ grecords.count }}<br>
 </div>
 <div class="container-fluid">
@@ -31,35 +33,57 @@
                 <th>№</th>
                 <th>ЕДРПОУ</th>
                 <th>Наименование организации</th>
+                <th>Торговые марки</th>
+                <th>Записей</th>
+                <th>На сумму</th>
                 <th>Конкурент</th>
             </tr>
         </thead>
         <tbody>
-        {% if organisation.count > 0 %}
-                {% for firm in organisation %}
+        {% for gr in grecords %}
                     <tr>
-                        
                         <td scope="row">
                             {{ forloop.counter }}
                         </td>
                         <td>
-                        <a class="btn btn-info" href="{% url 'ved:IndividualReportFirmShow' firm.edrpou %}">{{ firm.edrpou }}</a> 
+                        <a class="btn btn-info" href="{% url 'ved:IndividualReportFirmShow' gr.record__recipient__edrpou %}">{{ gr.record__recipient__edrpou | cut:' ' }}</a> 
                         </td>
-                        <td>{{ firm.name }}</td>
-                        <!--<td>{{ firm.is_competitor }}</td>-->
+                        <td ><span class="h6">{{ gr.record__recipient__name }}</span></td>
                         <td>
                         
-                        {% if firm.is_competitor %} 
+                        {% for tm in gr.tms %}
+                            {% if forloop.counter <= 5  %}
+                                [{{tm}}]
+                            {% endif %}
+                        {% endfor %}
+                        {% if  gr.tms_count > 5 %}
+                         ... ({{gr.tms_count}})
+                        {% endif %}
+                         
+                        </td>
+                         <td>
+                            {{ gr.count }}
+                        </td>
+                        <td>
+                            {{ gr.total_cost }}
+                        </td>
+                        <td>
+                        {% if gr.record__recipient__is_competitor %} 
                             <img src="{% static 'yes.png' %}" alt="yes"> 
                         {% else %}
                             <img src="{% static 'no.png' %}" alt="no">
                         {% endif %}
                         </td>
+
                     </tr>
                 {% endfor %}
-            {% endif %}
+{% else %}
+                <div class='warning'>
+                    Извините, по данному запросу ничего не найдено
+                </div>
         </tbody>
     </table>
  </div>   
+{% endif %}
 {% endblock content %}
 

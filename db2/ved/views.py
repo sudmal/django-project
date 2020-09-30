@@ -27,20 +27,27 @@ def test(request):
     # gtdrecords = GtdRecords.objects.filter(trademark__name__icontains='UNOX')
     gtdrecords = GtdRecords.objects.filter(trademark__name__icontains='UNOX')
     # print(gtdrecords.query)
-    print(type(gtdrecords))
-    ddd=3
+
+
 
     return render(request,'ved/test.html',locals())
 
 def IndividualReport(request):
-    #organisation = Organisation.objects.all()[:15]
     search_form = SearchForm()
-    
+    context=dict()
+ 
     # if this is a POST request we need to process the form data
     if request.method == 'POST':
-        grecords = GtdRecords.objects.filter(Q(record__recipient__edrpou__startswith=request.POST['search_string']) | Q(record__recipient__name__icontains=request.POST['search_string'])).annotate(count=Count("cost_fact"),total_cost=Sum('cost_fact'))
+        grecords = GtdRecords.objects.filter(Q(record__recipient__edrpou__startswith=request.POST['search_string']) | \
+             Q(record__recipient__name__icontains=request.POST['search_string']))\
+                .values('record__recipient__edrpou','record__recipient__name','record__recipient__is_competitor')\
+                 .annotate(count=Count("cost_fact"),total_cost=Sum('cost_fact'), tms_count=Count('trademark__name',distinct=True),\
+                     tms=ArrayAgg('trademark__name', distinct=True)).order_by('-total_cost')
+#        print (grecords.query)
         search_form = SearchForm(request.POST)
-    return render(request,'ved/IndividualReport.html',locals())
+        context = {"grecords": grecords }
+    context.update({"search_form": search_form})
+    return render(request,'ved/IndividualReport.html',context)
 
 def IndividualReportFirmShow(request,edrpou_num):
     if edrpou_num >= 0:
