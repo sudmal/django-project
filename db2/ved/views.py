@@ -41,7 +41,7 @@ def IndividualReport(request):
  
     # if this is a POST request we need to process the form data
     if request.method == 'POST':
-        print(request.POST)
+
         grecords = GtdRecords.objects.filter((Q(record__recipient__edrpou__startswith=request.POST['search_string']) | \
              Q(record__recipient__name__icontains=request.POST['search_string'])) & Q(record__date__range=[request.POST["start_date"], request.POST["end_date"]]))\
                 .values('record__recipient__edrpou','record__recipient__name','record__recipient__is_competitor')\
