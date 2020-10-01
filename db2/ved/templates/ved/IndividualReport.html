@@ -6,16 +6,27 @@
 ВЭД :: Конкуренты :: Индивидуальный анализ
 {% endblock title %}
 
+{% block DatePeriod %}
+    <form method="post" action={% url 'ved:IndividualReport' %}>
+        {% csrf_token %}
+        {{ search_form.start_date }}
+        to
+        {{ search_form.end_date }}
+        <button type="submit" class="btn btn-info">Изменить</button>
+
+{% endblock DatePeriod %}
+
 {% block content %}
 <div class="container">
    ВЭД :: Конкуренты :: Индивидуальный анализ 
 </div>
+<div data-date="12/03/2012"></div>
 <div class="container">
-    <form method="post" action={% url 'ved:IndividualReport' %}>
+
     <div class="col-md-4">
         <div class="form-group">
          {% csrf_token %}
-        {{ search_form }}
+        {{ search_form.search_string }}
         </div>
     </div>
     <div class="col-md-4">
@@ -24,7 +35,7 @@
     </form>
 {% if grecords.count > 0 %}
 
-    Found {{ grecords.count }}<br>
+    Найдено: {{ grecords.count }}<br>
 </div>
 <div class="container-fluid">
     <table class="table">
@@ -35,7 +46,7 @@
                 <th>Наименование организации</th>
                 <th>Торговые марки</th>
                 <th>Записей</th>
-                <th>На сумму</th>
+                <th>На сумму, $</th>
                 <th>Конкурент</th>
             </tr>
         </thead>
@@ -86,4 +97,8 @@
  </div>   
 {% endif %}
 {% endblock content %}
+
+{% block js %}
+
+{% endblock js %}
 

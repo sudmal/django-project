@@ -13,8 +13,10 @@ from django.contrib.postgres.aggregates import ArrayAgg
 def index(request):
     return render(request,'ved/index.html')
 
+
 def CompetitorsComparse(request):
     competitors = Competitors.objects.all()
+
     search_form = SearchForm()
     # if this is a POST request we need to process the form data
     if request.method == 'POST':
@@ -33,20 +35,22 @@ def test(request):
     return render(request,'ved/test.html',locals())
 
 def IndividualReport(request):
+    competitors = Competitors.objects.all()
     search_form = SearchForm()
     context=dict()
  
     # if this is a POST request we need to process the form data
     if request.method == 'POST':
-        grecords = GtdRecords.objects.filter(Q(record__recipient__edrpou__startswith=request.POST['search_string']) | \
-             Q(record__recipient__name__icontains=request.POST['search_string']))\
+        print(request.POST)
+        grecords = GtdRecords.objects.filter((Q(record__recipient__edrpou__startswith=request.POST['search_string']) | \
+             Q(record__recipient__name__icontains=request.POST['search_string'])) & Q(record__date__range=[request.POST["start_date"], request.POST["end_date"]]))\
                 .values('record__recipient__edrpou','record__recipient__name','record__recipient__is_competitor')\
                  .annotate(count=Count("cost_fact"),total_cost=Sum('cost_fact'), tms_count=Count('trademark__name',distinct=True),\
                      tms=ArrayAgg('trademark__name', distinct=True)).order_by('-total_cost')
-#        print (grecords.query)
+        print (str(len(grecords)))
         search_form = SearchForm(request.POST)
         context = {"grecords": grecords }
-    context.update({"search_form": search_form})
+    context.update({"search_form": search_form, 'competitors': competitors})
     return render(request,'ved/IndividualReport.html',context)
 
 def IndividualReportFirmShow(request,edrpou_num):
