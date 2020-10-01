@@ -10,7 +10,7 @@
     <form method="post" action={% url 'ved:IndividualReport' %}>
         {% csrf_token %}
         {{ search_form.start_date }}
-        to
+        -
         {{ search_form.end_date }}
         <button type="submit" class="btn btn-info">Изменить</button>
 
