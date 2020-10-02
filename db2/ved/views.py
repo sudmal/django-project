@@ -71,3 +71,13 @@ def IndividualReportFirmShow(request,edrpou_num):
         return render(request,'ved/IndividualReportFirmShow.html',context)
     else:
         return HttpResponse('EDRPOU {0} IS NOT VALID.<br><a href="/">  - Go back</a>'.format(edrpou_num))
+
+def IndividualReportFirmRaw(request,slug):
+
+    #  <a class="btn btn-primary font-weight-bold" href="{% url 'ved:IndividualReportRaw' %}row.record__gtd_name|slugify"> {{ row.record__gtd_name }}</a>
+    context=dict()
+    gtd=slug
+    context = {
+                "gtd": gtd,
+            }
+    return render(request,'ved/IndividualReportRaw.html',context)

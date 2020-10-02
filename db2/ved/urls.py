@@ -9,4 +9,5 @@ urlpatterns = [
     path('CompetitorsComparse/', views.CompetitorsComparse, name = 'CompetitorsComparse'),
     path('IndividualReport/', views.IndividualReport, name = 'IndividualReport'),
     path('IndividualReport/<int:edrpou_num>/', views.IndividualReportFirmShow, name = 'IndividualReportFirmShow'),
+    path('IndividualReport/<int:edrpou_num>/<str:slug>/', views.IndividualReportFirmRaw, name = 'IndividualReportFirmRaw'),
 ]

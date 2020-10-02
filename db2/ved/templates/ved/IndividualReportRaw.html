@@ -1,7 +1,7 @@
 {% extends 'main/base.html' %}
 
 {% block title %}
-ВЭД :: Конкуренты :: Индивидуальный анализ :: Просмотр
+ВЭД :: Конкуренты :: Индивидуальный анализ :: Просмотр (подробный)
 {% endblock title %}
 
 {% block content %}
@@ -17,30 +17,21 @@
             </tr>
         </thead>
         <tbody>
-        {% for row in report %}
             <tr>
                 <td scope="row">
                     {{ forloop.counter }}
                 </td>
                 <td>
-                    {{ row.record__date | date:"Y-M-d" |wordwrap:50 }} 
                 </td>
                 <td>
-                   
                 </td>
                 <td>
-                    {% for tm in row.tms %}
-                        [{{tm}}]
-                    {% endfor %}
                 </td>
                 <td>
-                    {{ row.count }} 
                 </td>
                 <td>
-                    {{ row.total_cost }} 
                 </td>
             </tr>
-        {% endfor %}
-        </tbody>
+         </tbody>
     </table>
 {% endblock %}
