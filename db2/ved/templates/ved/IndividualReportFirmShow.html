@@ -26,7 +26,7 @@
                     {{ row.record__date | date:"Y-M-d" |wordwrap:50 }} 
                 </td>
                 <td>
-                   
+                   <a class="btn btn-primary font-weight-bold" href="{% url 'ved:IndividualReportRaw' edrpou_detail row.record__gtd_name|urlencode:""  %}"> {{ row.record__gtd_name }}</a>
                 </td>
                 <td>
                     {% for tm in row.tms %}

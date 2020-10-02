@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse
+from urllib.parse import unquote
 from .models import Competitors
 from .models import Organisation,GtdRecords,Records,Trademark
 from .forms import SearchForm
@@ -72,12 +73,12 @@ def IndividualReportFirmShow(request,edrpou_num):
     else:
         return HttpResponse('EDRPOU {0} IS NOT VALID.<br><a href="/">  - Go back</a>'.format(edrpou_num))
 
-def IndividualReportFirmRaw(request,slug):
+def IndividualReportRaw(request,edrpou_num,gtd_num):
 
-    #  <a class="btn btn-primary font-weight-bold" href="{% url 'ved:IndividualReportRaw' %}row.record__gtd_name|slugify"> {{ row.record__gtd_name }}</a>
+    #  <a class="btn btn-primary font-weight-bold" href="{% url 'ved:IndividualReportRaw' %} row.record__gtd_name|slugify"> {{ row.record__gtd_name }}</a>
     context=dict()
-    gtd=slug
     context = {
-                "gtd": gtd,
+                "gtd": unquote(gtd_num),
+                'edrpou_num':edrpou_num,
             }
     return render(request,'ved/IndividualReportRaw.html',context)
