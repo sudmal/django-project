@@ -30,7 +30,7 @@
         </div>
     </div>
     <div class="col-md-4">
-        <button type="submit" class="btn btn-primary">Поиск</button>
+        <button type="submit" class="btn btn-primary ">Поиск</button>
     </div>
     </form>
 {% if grecords.count > 0 %}
@@ -38,7 +38,7 @@
     Найдено: {{ grecords.count }}<br>
 </div>
 <div class="container-fluid">
-    <table class="table">
+    <table class="table table-striped border border-secondary">
         <thead>
             <tr>
                 <th>№</th>
@@ -57,14 +57,14 @@
                             {{ forloop.counter }}
                         </td>
                         <td>
-                        <a class="btn btn-info" href="{% url 'ved:IndividualReportFirmShow' gr.record__recipient__edrpou %}?start_date={{ start_date }}&end_date={{ end_date }}">{{ gr.record__recipient__edrpou | cut:' ' }}</a> 
+                        <a class="btn btn-primary font-weight-bold" href="{% url 'ved:IndividualReportFirmShow' gr.record__recipient__edrpou %}?start_date={{ start_date }}&end_date={{ end_date }}">{{ gr.record__recipient__edrpou | cut:' ' }}</a> 
                         </td>
                         <td ><span class="h6">{{ gr.record__recipient__name }}</span></td>
                         <td>
                         
                         {% for tm in gr.tms %}
                             {% if forloop.counter <= 5  %}
-                                [{{tm}}]
+                                <div class="border border-secondary rounded p-1 bg-light font-weight-bold">{{tm}}</div>
                             {% endif %}
                         {% endfor %}
                         {% if  gr.tms_count > 5 %}

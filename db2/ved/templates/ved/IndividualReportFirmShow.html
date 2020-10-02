@@ -23,7 +23,7 @@
                     {{ forloop.counter }}
                 </td>
                 <td>
-                    {{ row.record__date }} 
+                    {{ row.record__date | date:"Y-M-d" |wordwrap:50 }} 
                 </td>
                 <td>
                     {{ row.record__gtd_name }} 
