@@ -49,16 +49,25 @@ def IndividualReport(request):
                      tms=ArrayAgg('trademark__name', distinct=True)).order_by('-total_cost')
         print (str(len(grecords)))
         search_form = SearchForm(request.POST)
-        context = {"grecords": grecords }
+        context = {
+            "grecords": grecords,
+            "start_date": request.POST["start_date"],
+            "end_date": request.POST["end_date"]
+            }
     context.update({"search_form": search_form, 'competitors': competitors})
     return render(request,'ved/IndividualReport.html',context)
 
 def IndividualReportFirmShow(request,edrpou_num):
+    context=dict()
     if edrpou_num >= 0:
-        queryset_list = Records.objects.filter(recipient__edrpou__icontains=edrpou_num)\
-                .values('gtd__date', 'gtd__name', 'recipient__name', 'recipient__edrpou').order_by('-gtd__date')\
-                .annotate(gtd_count=Count('gtd__name'), total_cost=Sum('gtd__cost_fact'), tms=ArrayAgg('gtd__trademark__name', distinct=True))
-        context = {"edrpou_detail": edrpou_num, 'report': queryset_list}
+        queryset_list = GtdRecords.objects.filter((Q(record__recipient__edrpou=edrpou_num) & Q(record__date__range=[request.GET['start_date'], request.GET['end_date']])))\
+            .values('record__date','record__gtd_name').order_by('record__date')\
+                .annotate(count=Count("cost_fact"),total_cost=Sum('cost_fact'),tms=ArrayAgg('trademark__name', distinct=True))
+        print(queryset_list.query)
+        context = {
+            "edrpou_detail": edrpou_num,
+            'report': queryset_list
+            }
         return render(request,'ved/IndividualReportFirmShow.html',context)
     else:
         return HttpResponse('EDRPOU {0} IS NOT VALID.<br><a href="/">  - Go back</a>'.format(edrpou_num))

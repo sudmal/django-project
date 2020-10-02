@@ -5,8 +5,42 @@
 {% endblock title %}
 
 {% block content %}
-    {{ edrpou_detail }}
-    {% for row in report %}
-        {{row}}
-    {% endfor %}
+        <table class="table">
+        <thead>
+            <tr>
+                <th>№</th>
+                <th>Дата</th>
+                <th>Номер ГТД</th>
+                <th>Торговые марки</th>
+                <th>Записей</th>
+                <th>На сумму, $</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for row in report %}
+            <tr>
+                <td scope="row">
+                    {{ forloop.counter }}
+                </td>
+                <td>
+                    {{ row.record__date }} 
+                </td>
+                <td>
+                    {{ row.record__gtd_name }} 
+                </td>
+                <td>
+                    {% for tm in row.tms %}
+                        [{{tm}}]
+                    {% endfor %}
+                </td>
+                <td>
+                    {{ row.count }} 
+                </td>
+                <td>
+                    {{ row.total_cost }} 
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
 {% endblock %}
