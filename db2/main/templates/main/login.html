@@ -13,9 +13,8 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link href="{% static 'css/bootstrap.min.css' %}" rel="stylesheet" id="bootstrap-css">
         <link href="{% static 'css/login.css' %}" rel="stylesheet" id="bootstrap-css">
-        <script src="{% static 'css/bootstrap.min.js' %}"></script>
+        <script src="{% static 'js/bootstrap.min.js' %}"></script>
         <script src="{% static 'js/jquery.min.js' %}"></script>
-
     </head>
     <body>
         <!--[if lt IE 7]>
@@ -31,10 +30,10 @@
     </div>
 
     <!-- Login Form -->
-    <form method="POST" action="{% url 'main:login' %}">
+    <form method="POST" action="{% url 'login' %}">
         {% csrf_token %}
-      <input type="text" id="login" class="fadeIn second" name="login" placeholder="login">
-      <input type="text" id="password" class="fadeIn third" name="login" placeholder="password">
+      <input type="text" id="login" class="fadeIn second" name="login" placeholder="login" autofocus=yes>
+      <input type="password" id="password" class="fadeIn third" name="password" placeholder="password">
       <input type="submit" class="fadeIn fourth" value="Log In">
     </form>
 
@@ -50,4 +49,5 @@
 
     </body>
 </html>
+
 
