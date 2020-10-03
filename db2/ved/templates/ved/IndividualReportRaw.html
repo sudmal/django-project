@@ -7,6 +7,7 @@
 {% block content %}
     {{ gtd }}<br>
     {{ edrpou_num | cut:' ' }}
+    {{ records.count }}
         <table class="table table-striped border border-secondary">
         <thead>
         <!-- 'record__sender__name','record__sender__country__name','record__date','product_code','trademark__name','description','cost_fact' -->
@@ -25,7 +26,7 @@
             {% for r in records %}
             <tr>
                 <td scope="row">
-                    {{ forloop.counter }}
+                    {{ forloop.counter0|add:records.start_index }} 
                 </td>
                 <td>
                     {{ r.record__date | date:"d-b-y" |wordwrap:50 }}
@@ -52,4 +53,29 @@
             {% endfor %}
          </tbody>
     </table>
+    <nav aria-label="Page navigation">
+        <ul class="pagination justify-content-center">
+            {% if records.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?page=1">&laquo;</a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ records.previous_page_number }}"> < </a>
+                </li>
+            {% endif %}
+
+            <li class="page-item">
+                <a class="page-link disabled" href="#"> Page {{ records.number }} of {{ records.paginator.num_pages }}</a>
+            </li>
+
+            {% if records.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ records.next_page_number }}"> > </a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ records.paginator.num_pages }}"> &raquo; </a>
+                </li>
+            {% endif %}
+        </ul>
+    </nav>  
 {% endblock %}
