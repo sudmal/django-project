@@ -82,4 +82,5 @@ def IndividualReportRaw(request,edrpou_num,gtd_num):
                 "gtd": gtd,
                 'edrpou_num':edrpou_num,
             }
+            
     return render(request,'ved/IndividualReportRaw.html',context)
