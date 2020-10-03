@@ -6,7 +6,7 @@
 
 {% block content %}
     {{ gtd }}<br>
-    {{ edrpou_num }}
+    {{ edrpou_num | cut:' ' }}
         <table class="table table-striped border border-secondary">
         <thead>
         <!-- 'record__sender__name','record__sender__country__name','record__date','product_code','trademark__name','description','cost_fact' -->
@@ -28,7 +28,7 @@
                     {{ forloop.counter }}
                 </td>
                 <td>
-                    {{ r.record__date | date:"d-M-Y" |wordwrap:50 }}
+                    {{ r.record__date | date:"d-b-y" |wordwrap:50 }}
                 </td>
                 <td>
                     {{ r.record__sender__name}}                    
@@ -43,7 +43,7 @@
                     {{ r.product_code| cut:' '  }}
                 </td>
                 <td>
-                    {{ r.description }}
+                    {{ r.description |wordwrap:150}}
                 </td>
                 <td>
                     {{ r.cost_fact }}

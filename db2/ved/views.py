@@ -2,6 +2,7 @@ from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse
 from urllib.parse import unquote
+from django.core.paginator import Paginator
 from .models import Competitors
 from .models import Organisation,GtdRecords,Records,Trademark,Sender,Country
 from .forms import SearchForm
@@ -27,7 +28,14 @@ def CompetitorsComparse(request):
 
 def test(request):
     gtdrecords = GtdRecords.objects.filter(trademark__name__icontains='UNOX')
-    return render(request,'ved/test.html',locals())
+    paginator = Paginator(gtdrecords, 5) # Show 25 contacts per page.
+
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    context = {
+        'page_obj': page_obj,
+        }
+    return render(request,'ved/test.html',context)
 
 def IndividualReport(request):
     competitors = Competitors.objects.all()

@@ -29,7 +29,7 @@ ALLOWED_HOSTS = []
 INTERNAL_IPS = ('127.0.0.1',)
 
 # Application definition
-
+## pip install django-tables2
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'ved',
     'inner',
     'debug_toolbar',
+    'django_tables2',
 ]
 
 

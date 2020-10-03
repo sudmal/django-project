@@ -33,9 +33,10 @@
         
     </div>
     </form>
+        Найдено: {{ grecords.count }}<br>
 {% if grecords.count > 0 %}
 
-    Найдено: {{ grecords.count }}<br>
+
 </div>
 <div class="container-fluid">
     <table class="table table-striped border border-secondary">
@@ -94,6 +95,7 @@
                 </div>
         </tbody>
     </table>
+    {% include "../main/pagination.html" with page=posts %}
  </div>   
 {% endif %}
 {% endblock content %}
