@@ -31,7 +31,7 @@
     </div>
 
     <!-- Login Form -->
-    <form method="POST" action="/">
+    <form method="POST" action="{% url 'main:login' %}">
         {% csrf_token %}
       <input type="text" id="login" class="fadeIn second" name="login" placeholder="login">
       <input type="text" id="password" class="fadeIn third" name="login" placeholder="password">
