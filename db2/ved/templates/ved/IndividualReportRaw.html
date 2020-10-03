@@ -7,33 +7,49 @@
 {% block content %}
     {{ gtd }}<br>
     {{ edrpou_num }}
-        <table class="table">
+        <table class="table table-striped border border-secondary">
         <thead>
+        <!-- 'record__sender__name','record__sender__country__name','record__date','product_code','trademark__name','description','cost_fact' -->
             <tr>
                 <th>№</th>
                 <th>Дата</th>
-                <th>Номер ГТД</th>
-                <th>Торговые марки</th>
-                <th>Записей</th>
-                <th>На сумму, $</th>
+                <th>Экспортер</th>
+                <th>Страна</th>
+                <th>Торговая марка</th>
+                <th>Код товара</th>
+                <th>Описание</th>
+                <th>Стоимость, $</th>
             </tr>
         </thead>
         <tbody>
+            {% for r in records %}
             <tr>
                 <td scope="row">
                     {{ forloop.counter }}
                 </td>
                 <td>
+                    {{ r.record__date | date:"d-M-Y" |wordwrap:50 }}
                 </td>
                 <td>
+                    {{ r.record__sender__name}}                    
                 </td>
                 <td>
+                    {{ r.record__sender__country__name}}
                 </td>
                 <td>
+                    {{ r.trademark__name}}
                 </td>
                 <td>
+                    {{ r.product_code| cut:' '  }}
+                </td>
+                <td>
+                    {{ r.description }}
+                </td>
+                <td>
+                    {{ r.cost_fact }}
                 </td>
             </tr>
+            {% endfor %}
          </tbody>
     </table>
 {% endblock %}

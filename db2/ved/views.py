@@ -3,7 +3,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse
 from urllib.parse import unquote
 from .models import Competitors
-from .models import Organisation,GtdRecords,Records,Trademark
+from .models import Organisation,GtdRecords,Records,Trademark,Sender,Country
 from .forms import SearchForm
 from django.db.models import Count, Sum, Q
 
@@ -26,13 +26,7 @@ def CompetitorsComparse(request):
     return render(request,'ved/CompetitorsComparse.html',context)
 
 def test(request):
- #   gtdrecords = GtdRecords.objects.filter()
-    # gtdrecords = GtdRecords.objects.filter(trademark__name__icontains='UNOX')
     gtdrecords = GtdRecords.objects.filter(trademark__name__icontains='UNOX')
-    # print(gtdrecords.query)
-
-
-
     return render(request,'ved/test.html',locals())
 
 def IndividualReport(request):
@@ -67,7 +61,9 @@ def IndividualReportFirmShow(request,edrpou_num):
         print(queryset_list.query)
         context = {
             "edrpou_detail": edrpou_num,
-            'report': queryset_list
+            'report': queryset_list,
+            'start_date': request.GET['start_date'], 
+            'end_date':request.GET['end_date']
             }
         return render(request,'ved/IndividualReportFirmShow.html',context)
     else:
@@ -77,8 +73,13 @@ def IndividualReportRaw(request,edrpou_num,gtd_num):
 
     #  <a class="btn btn-primary font-weight-bold" href="{% url 'ved:IndividualReportRaw' %} row.record__gtd_name|slugify"> {{ row.record__gtd_name }}</a>
     context=dict()
+    gtd=unquote(gtd_num)
+    queryset_list = GtdRecords.objects.filter((Q(record__recipient__edrpou=edrpou_num) & Q(record__gtd_name=gtd)))\
+            .values('record__sender__name','record__sender__country__name','record__date','product_code','trademark__name','description','cost_fact').order_by('record__date')
+    print(queryset_list.query)
     context = {
-                "gtd": unquote(gtd_num),
+                "records":queryset_list,
+                "gtd": gtd,
                 'edrpou_num':edrpou_num,
             }
     return render(request,'ved/IndividualReportRaw.html',context)
