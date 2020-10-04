@@ -8,19 +8,7 @@
 <div class="container">
    ВЭД :: Конкуренты :: Сравнительный анализ 
 </div>
-<div class="container">
-    <form method="post" action={% url 'CompetitorsComparse' %}>
-    <div class="col-md-4">
-        <div class="form-group">
-         {% csrf_token %}
-        {{ search_form }}
-        </div>
-    </div>
-    <div class="col-md-4">
-        <button type="submit" class="btn btn-primary">Поиск</button>
-    </div>
-    </form>
-</div>
+
 <div class="container-fluid">
     <table class="table">
         <thead>
@@ -34,7 +22,7 @@
         {% if competitors.count > 0 %}
                 {% for firm in competitors %}
                     <tr>
-                        <td scope="row">{{ firm.competitor_code }}</td>
+                        <td scope="row">{{ firm.competitor_code |cut:' ' }}</td>
                         <td>{{ firm.competitor_name }}</td>
                         <td>{{ firm.competitor_surname }}</td>
                     </tr>

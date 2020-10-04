@@ -5,7 +5,7 @@ from urllib.parse import unquote
 from django.core.paginator import Paginator
 from django.contrib.auth.decorators import login_required
 from .models import Competitors
-from .models import Organisation,GtdRecords,Records,Trademark,Sender,Country
+from .models import Organisation,GtdRecords,Records,Trademark,Sender,Country,TnvedGroup
 from .forms import SearchForm
 from django.db.models import Count, Sum, Q
 
@@ -21,14 +21,14 @@ def index(request):
 
 @login_required(login_url='login')
 def CompetitorsComparse(request):
+    # tnved_group competitors
     competitors = Competitors.objects.all()
+    tnved_groups = TnvedGroup.objects.all()
 
-    search_form = SearchForm()
-    # if this is a POST request we need to process the form data
-    if request.method == 'POST':
-        search_form = SearchForm(request.POST)
-    context = {"competitors": competitors,"search_form": search_form}
+    context = {"competitors": competitors,'tnved_groups': tnved_groups}
     return render(request,'ved/CompetitorsComparse.html',context)
+
+
 
 @login_required(login_url='login')
 def test(request):
