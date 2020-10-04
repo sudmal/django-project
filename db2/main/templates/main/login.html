@@ -32,18 +32,23 @@
     <!-- Login Form -->
     <form method="POST" action="{% url 'login' %}">
         {% csrf_token %}
+      {{ LoginForm.login_field }}
+      {{ LoginForm.pass_field }}
+
+    {% comment %}
       <input type="text" id="login" class="fadeIn second" name="login" placeholder="Логин" autofocus=yes>
       <input type="password" id="password" class="fadeIn third" name="password" placeholder="Пароль">
+    {% endcomment %}
       <input type="submit" class="fadeIn fourth" value="Войти">
     </form>
 
 
-{% comment 'Not required yet' %}
-    <!-- Remind Passowrd -->
-    <div id="formFooter">
-      <a class="underlineHover" href="#">Forgot Password?</a>
-    </div>
-{% endcomment %}
+  {% comment %}
+      <!-- Remind Passowrd -->
+      <div id="formFooter">
+        <a class="underlineHover" href="#">Forgot Password?</a>
+      </div>
+  {% endcomment %}
   </div>
 </div>
 

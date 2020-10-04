@@ -3,6 +3,7 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse
 from urllib.parse import unquote
 from django.core.paginator import Paginator
+from django.contrib.auth.decorators import login_required
 from .models import Competitors
 from .models import Organisation,GtdRecords,Records,Trademark,Sender,Country
 from .forms import SearchForm
@@ -11,11 +12,14 @@ from django.db.models import Count, Sum, Q
 from django.contrib.postgres.aggregates import ArrayAgg
 
 
-# Create your views here.
+
+
+@login_required(login_url='login')
 def index(request):
     return render(request,'ved/index.html')
 
 
+@login_required(login_url='login')
 def CompetitorsComparse(request):
     competitors = Competitors.objects.all()
 
@@ -26,6 +30,7 @@ def CompetitorsComparse(request):
     context = {"competitors": competitors,"search_form": search_form}
     return render(request,'ved/CompetitorsComparse.html',context)
 
+@login_required(login_url='login')
 def test(request):
     gtdrecords = GtdRecords.objects.filter(trademark__name__icontains='UNOX')
     paginator = Paginator(gtdrecords, 10)
@@ -36,6 +41,7 @@ def test(request):
         }
     return render(request,'ved/test.html',context)
 
+@login_required(login_url='login')
 def IndividualReport(request):
     context=dict()
     search_form = SearchForm()
@@ -61,6 +67,7 @@ def IndividualReport(request):
     context.update({"search_form": search_form})
     return render(request,'ved/IndividualReport.html',context)
 
+@login_required(login_url='login')
 def IndividualReportFirmShow(request,edrpou_num):
     context=dict()
     if edrpou_num >= 0:
@@ -78,6 +85,7 @@ def IndividualReportFirmShow(request,edrpou_num):
     else:
         return HttpResponse('EDRPOU {0} IS NOT VALID.<br><a href="/">  - Go back</a>'.format(edrpou_num))
 
+@login_required(login_url='login')
 def IndividualReportRaw(request,edrpou_num,gtd_num):
 
     #  <a class="btn btn-primary font-weight-bold" href="{% url 'ved:IndividualReportRaw' %} row.record__gtd_name|slugify"> {{ row.record__gtd_name }}</a>

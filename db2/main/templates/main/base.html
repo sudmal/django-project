@@ -75,12 +75,20 @@ body
     <div class="my-2 my-lg-0">
      <nav class="nav justify-content-center">
         <!--<a class="nav-link active" href="{% url 'about' %}">About</a>-->
-        {% if request.user.is_authenticated  %}
-          request.user.username
+         {% if request.user.is_authenticated  %}
+            <nav class="nav justify-content-center m-3">
+              {{ request.user.get_full_name }} ({{ request.user.username }})
+            </nav>
+            <nav class="nav justify-content-center m-3">
+              <a href="{% url 'logout' %}"> Выйти </a>
+            </nav>
         {% else %}
-          Anonim
+        <nav class="nav justify-content-center">
+          <a href="{% url 'login' %}"> Вход </a>
+        </nav>
         {% endif %}
       </nav>
+      
     </div>
   </div>
 </nav>
