@@ -27,14 +27,22 @@ def CompetitorsComparse(request):
             .values('record__recipient__edrpou','record__recipient__name')\
                 .annotate(count=Count('cost_fact',distinct=True),total_cost=Sum('cost_fact',distinct=True)).order_by('-total_cost')
                 # ,total_cost_eur=Sum(F('cost_fact') * F('record__date__usd_nbu') / F('record__date__eur_nbu'), output_field=FloatField()
-    print(comparse.query)
     total_sum=0
     for c in comparse:
         total_sum+=c['total_cost']
     comparse2=comparse.annotate(percent=(F('total_cost')/total_sum)*100)
-    print(comparse2.query)
-    #print(list(comparse))
+
+    # pie chart variables
+    data=[]
+    labels=[]
+    for c in comparse2[:10]:
+        labels.append(c['record__recipient__name'])
+        data.append(round(c['percent'],1))
+    print(data)
+    print(labels)
     context = {
+        'labels': labels,
+        'data': data,
         'comparse': comparse2}
     return render(request,'ved/CompetitorsComparse.html',context)
 
@@ -108,8 +116,8 @@ def IndividualReportRaw(request,edrpou_num,gtd_num):
     page_number = request.GET.get('page')
     records = paginator.get_page(page_number)
     context = {
-                "records":records,
-                "gtd": gtd,
+                'records': records,
+                'gtd': gtd,
                 'edrpou_num':edrpou_num,
             }
     return render(request,'ved/IndividualReportRaw.html',context)

@@ -1,14 +1,30 @@
 {% extends 'main/base.html' %}
+{% load bold_in_quotes %}
 
 {% block title %}
 ВЭД :: Конкуренты :: Сравнительный анализ
 {% endblock title %}
 
+{% block DatePeriod %}
+    <form method="get" action={% url 'ved:CompetitorsComparse' %}>
+         {{ search_form.start_date }}
+        -
+        {{ search_form.end_date }}
+        <button type="submit" class="btn btn-info">Изменить</button>
+
+{% endblock DatePeriod %}
+
 {% block content %}
 <div class="container">
    ВЭД :: Конкуренты :: Сравнительный анализ 
 </div>
-{{ comparse.count }}
+<div class="row">
+    <div class="d-flex align-items-center p-3 my-3 bg-light rounded shadow-sm container">
+        <div id="container" style="width: 75%;">
+            <canvas id="pie-chart" ></canvas>
+        </div>
+    </div>
+</div>
 
 <div class="container-fluid">
     <table class="table">
@@ -27,7 +43,7 @@
             <tr>
                 <td>{{ forloop.counter }}</td>
                 <td scope="row">{{ firm.record__recipient__edrpou |cut:' ' }}</td>
-                <td>{{ firm.record__recipient__name }}</td>
+                <td>{% autoescape off %} {{ firm.record__recipient__name|bold_in_quotes }} {% endautoescape %}</td>
                 <td>{{ firm.count }}</td>
                 <td>{{ firm.total_cost|floatformat:"2" }}</td>
                 <td style="width: 250px; ">
@@ -41,5 +57,27 @@
         </tbody>
     </table>
  </div>   
+<script>
+    var config = {
+      type: 'pie',
+      data: {
+        datasets: [{
+        data: {{ data|safe }},
+        backgroundColor: ["#0074D9", "#FF4136", "#2ECC40", "#FF851B", "#7FDBFF", "#B10DC9", "#FFDC00", "#001f3f", "#39CCCC", "#01FF70", "#85144b", "#F012BE", "#3D9970", "#111111", "#AAAAAA"],
+        label: 'Firm'
+    }],
+        labels: {{ labels|safe }}
+    },
+    options: {
+        responsive: true
+    }
+};
+
+window.onload = function() {
+    var ctx = document.getElementById('pie-chart').getContext('2d');
+    window.myPie = new Chart(ctx, config);
+};
+
+</script>
 {% endblock content %}
 
