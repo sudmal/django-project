@@ -5,9 +5,9 @@ from urllib.parse import unquote
 from django.core.paginator import Paginator
 from django.contrib.auth.decorators import login_required
 from .models import Competitors
-from .models import Organisation,GtdRecords,Records,Trademark,Sender,Country,TnvedGroup
+from .models import Organisation,GtdRecords,Records,Trademark,Sender,Country,TnvedGroup,Exchange
 from .forms import SearchForm
-from django.db.models import Count, Sum, Q
+from django.db.models import Count, Sum, Q, Avg, Subquery, OuterRef, F, FloatField
 
 from django.contrib.postgres.aggregates import ArrayAgg
 
@@ -21,11 +21,21 @@ def index(request):
 
 @login_required(login_url='login')
 def CompetitorsComparse(request):
-    # tnved_group competitors
-    competitors = Competitors.objects.all()
-    tnved_groups = TnvedGroup.objects.all()
 
-    context = {"competitors": competitors,'tnved_groups': tnved_groups}
+    comparse = GtdRecords.objects.filter(Q(record__recipient__edrpou__in=Competitors.objects.values_list('competitor_code',flat=True)))\
+        .extra(where=["LEFT(product_code::text,8) IN (SELECT LEFT(gcodes,8) from tnved_group)"])\
+            .values('record__recipient__edrpou','record__recipient__name')\
+                .annotate(count=Count('cost_fact',distinct=True),total_cost=Sum('cost_fact',distinct=True)).order_by('-total_cost')
+                # ,total_cost_eur=Sum(F('cost_fact') * F('record__date__usd_nbu') / F('record__date__eur_nbu'), output_field=FloatField()
+    print(comparse.query)
+    total_sum=0
+    for c in comparse:
+        total_sum+=c['total_cost']
+    comparse2=comparse.annotate(percent=(F('total_cost')/total_sum)*100)
+    print(comparse2.query)
+    #print(list(comparse))
+    context = {
+        'comparse': comparse2}
     return render(request,'ved/CompetitorsComparse.html',context)
 
 

@@ -8,26 +8,36 @@
 <div class="container">
    ВЭД :: Конкуренты :: Сравнительный анализ 
 </div>
+{{ comparse.count }}
 
 <div class="container-fluid">
     <table class="table">
         <thead>
             <tr>
+                <th>№</th>
                 <th>ЕДРПОУ</th>
-                <th>Короткое имя</th>
                 <th>Наименование организации</th>
+                <th>Количество записей</th>
+                <th>Сумма, $</th>
+                <th>Доля, %</th>
             </tr>
         </thead>
         <tbody>
-        {% if competitors.count > 0 %}
-                {% for firm in competitors %}
-                    <tr>
-                        <td scope="row">{{ firm.competitor_code |cut:' ' }}</td>
-                        <td>{{ firm.competitor_name }}</td>
-                        <td>{{ firm.competitor_surname }}</td>
-                    </tr>
-                {% endfor %}
-            {% endif %}
+        {% for firm in comparse %}
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td scope="row">{{ firm.record__recipient__edrpou |cut:' ' }}</td>
+                <td>{{ firm.record__recipient__name }}</td>
+                <td>{{ firm.count }}</td>
+                <td>{{ firm.total_cost|floatformat:"2" }}</td>
+                <td style="width: 250px; ">
+                    <div class="progress" style="height: 20px;"">
+                        <div class="progress-bar  bg-info" role="progressbar" style="width: {{ firm.percent|floatformat:"0" }}%" aria-valuenow="{{ firm.percent|floatformat:"1" }}" aria-valuemin="0" aria-valuemax="100"><span class = "ml-3" style="color:black;position:absolute;">{{ firm.percent|floatformat:"1" }}%</span></div>
+                    </div>
+                </td>
+                
+            </tr>
+        {% endfor %}
         </tbody>
     </table>
  </div>   
