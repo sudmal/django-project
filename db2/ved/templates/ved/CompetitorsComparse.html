@@ -42,7 +42,9 @@
         {% for firm in comparse %}
             <tr>
                 <td>{{ forloop.counter }}</td>
-                <td scope="row">{{ firm.record__recipient__edrpou |cut:' ' }}</td>
+                <td scope="row">
+                    <a class="btn btn-primary font-weight-bold" href="{% url 'ved:IndividualReportFirmShow' firm.record__recipient__edrpou %}?start_date={{ start_date }}&end_date={{ end_date }}">{{ firm.record__recipient__edrpou | cut:' ' }}</a> 
+                </td>
                 <td>{% autoescape off %} {{ firm.record__recipient__name|bold_in_quotes }} {% endautoescape %}</td>
                 <td>{{ firm.count }}</td>
                 <td>{{ firm.total_cost|floatformat:"2" }}</td>
