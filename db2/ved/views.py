@@ -25,7 +25,7 @@ def CompetitorsComparse(request):
     comparse = GtdRecords.objects.filter(Q(record__recipient__edrpou__in=Competitors.objects.values_list('competitor_code',flat=True)))\
         .extra(where=["LEFT(product_code::text,8) IN (SELECT LEFT(gcodes,8) from tnved_group)"])\
             .values('record__recipient__edrpou','record__recipient__name')\
-                .annotate(count=Count('cost_fact',distinct=True),total_cost=Sum('cost_fact',distinct=True)).order_by('-total_cost')
+                .annotate(count=Count('cost_fact',distinct=True),total_cost=Sum('cost_fact')).order_by('-total_cost')
                 # ,total_cost_eur=Sum(F('cost_fact') * F('record__date__usd_nbu') / F('record__date__eur_nbu'), output_field=FloatField()
     total_sum=0
     for c in comparse:
