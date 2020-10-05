@@ -13,6 +13,10 @@ from .forms import LoginForm
 def index(request):
     return render(request, 'main/index.html')
 
+
+    
+
+
 def login_user(request):
     context=dict()
     form = LoginForm()

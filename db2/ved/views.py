@@ -16,6 +16,14 @@ from django.contrib.postgres.aggregates import ArrayAgg
 # if now is not jan or feb, year is current year, other way - previus
 year = str((datetime.date.today() - datetime.timedelta(days=59)).year)
 
+def getRecDates():
+    #rec_dates = Records.objects.filter().dates('date','month',order='DESC')
+    rec_dates = Records.objects.distinct('date__month').values('date')
+    print(rec_dates.query)
+    for rd in rec_dates:
+        print(rd['date'])
+        
+    return rec_dates
 
 @login_required(login_url='login')
 def index(request):
@@ -27,6 +35,7 @@ def CompetitorsComparse(request):
     search_form = SearchForm()
     start_date=year+'-01-01'
     end_date=year+'-12-31'
+    rec_dates = getRecDates()
     if request.GET.get('start_date'):
         search_form = SearchForm(request.GET)
         start_date=request.GET.get('start_date')
