@@ -8,10 +8,13 @@ from .models import Competitors
 from .models import Organisation,GtdRecords,Records,Trademark,Sender,Country,TnvedGroup,Exchange
 from .forms import SearchForm
 from django.db.models import Count, Sum, Q, Avg, Subquery, OuterRef, F, FloatField
+import datetime
 
 from django.contrib.postgres.aggregates import ArrayAgg
 
 
+# if now is not jan or feb, year is current year, other way - previus
+year = str((datetime.date.today() - datetime.timedelta(days=59)).year)
 
 
 @login_required(login_url='login')
@@ -21,8 +24,19 @@ def index(request):
 
 @login_required(login_url='login')
 def CompetitorsComparse(request):
+    search_form = SearchForm()
+    start_date=year+'-01-01'
+    end_date=year+'-12-31'
+    if request.GET.get('start_date'):
+        search_form = SearchForm(request.GET)
+        start_date=request.GET.get('start_date')
+    if request.GET.get('end_date'):
+        search_form = SearchForm(request.GET)
+        end_date=request.GET.get('end_date')
 
-    comparse = GtdRecords.objects.filter(Q(record__recipient__edrpou__in=Competitors.objects.values_list('competitor_code',flat=True)))\
+
+    comparse = GtdRecords.objects.filter(Q(record__recipient__edrpou__in=Competitors.objects.values_list('competitor_code',flat=True)) & \
+        Q(record__date__range=[start_date, end_date] ))\
         .extra(where=["LEFT(product_code::text,8) IN (SELECT LEFT(gcodes,8) from tnved_group)"])\
             .values('record__recipient__edrpou','record__recipient__name')\
                 .annotate(count=Count('cost_fact',distinct=True),total_cost=Sum('cost_fact')).order_by('-total_cost')
@@ -43,7 +57,11 @@ def CompetitorsComparse(request):
     context = {
         'labels': labels,
         'data': data,
-        'comparse': comparse2}
+        'comparse': comparse2,
+        'start_date':start_date,
+        'end_date':end_date,
+        'search_form':search_form
+        }
     return render(request,'ved/CompetitorsComparse.html',context)
 
 
