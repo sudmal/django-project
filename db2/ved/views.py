@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect
 from django.urls import reverse
 from urllib.parse import unquote
-from django.core.paginator import Paginator
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.cache import cache_page
 from .models import Competitors
@@ -131,21 +131,23 @@ def IndividualReport(request):
                 .values('record__recipient__edrpou','record__recipient__name','record__recipient__is_competitor')\
                  .annotate(count=Count("cost_fact"),total_cost=Sum('cost_fact'), tms_count=Count('trademark__name',distinct=True),\
                      tms=ArrayAgg('trademark__name', distinct=True)).order_by('-total_cost')
-        if grecords_all:
-            print('ОК')
-        else:
-            print ('NO')
+
+        
         paginator = Paginator(grecords_all, 10)
         page_number = request.GET.get('page')
-        grecords = paginator.get_page(page_number)
-        print(page_number)
+        try:
+            grecords = paginator.page(page_number)
+        except PageNotAnInteger:
+            grecords = paginator.page(1)
+        except EmptyPage:
+            grecords = paginator.page(paginator.num_pages) 
+
         context = {
             "search_string": request.GET.get('search_string'),
-            "pages": grecords,
-            "grecords": grecords.object_list,
+            "grecords": grecords,
             "start_date": request.GET.get('start_date'),
             "end_date": request.GET.get('end_date'),
-            }
+        }
     ## ADD CONTEXT VARIABLES HERE 
     context.update({"search_form": search_form})
     context.update({'dates': dates})
