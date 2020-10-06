@@ -30,7 +30,7 @@ def index(request):
 
 
 @login_required(login_url='login')
-#@cache_page(60 * 60)
+@cache_page(60 * 60)
 def CompetitorsComparse(request):
     search_form = SearchForm()
     start_date=year+'-01-01'
