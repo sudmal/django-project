@@ -24,7 +24,6 @@
             </tr>
         </thead>
         <tbody>
-         {% cache 3600 records %}
             {% for r in records %}
             <tr>
                 <td scope="row">
@@ -53,7 +52,6 @@
                 </td>
             </tr>
             {% endfor %}
-        {% endcache %}
          </tbody>
     </table>
     <nav aria-label="Page navigation">

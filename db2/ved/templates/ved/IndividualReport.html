@@ -18,6 +18,7 @@
 {% endblock DatePeriod %}
 
 {% block content %}
+
 <div class="container m-2">
    ВЭД :: Конкуренты :: Индивидуальный анализ 
 </div>
@@ -52,7 +53,7 @@
             </tr>
         </thead>
         <tbody>
-        {% cache 3600 grecords %}
+        
         {% for gr in grecords %}
                     <tr>
                         <td scope="row">
@@ -90,7 +91,6 @@
 
                     </tr>
                 {% endfor %}
-                {% endcache %}
             </tbody>
         </table>
     <nav aria-label="Page navigation">
