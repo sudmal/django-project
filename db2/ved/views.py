@@ -4,6 +4,7 @@ from django.urls import reverse
 from urllib.parse import unquote
 from django.core.paginator import Paginator
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.cache import cache_page
 from .models import Competitors
 from .models import Organisation,GtdRecords,Records,Trademark,Sender,Country,TnvedGroup,Exchange
 from .forms import SearchForm
@@ -29,6 +30,7 @@ def index(request):
 
 
 @login_required(login_url='login')
+@cache_page(60 * 60)
 def CompetitorsComparse(request):
     search_form = SearchForm()
     start_date=year+'-01-01'
@@ -86,6 +88,7 @@ def test(request):
     return render(request,'ved/test.html',context)
 
 @login_required(login_url='login')
+@cache_page(60 * 60)
 def IndividualReport(request):
     context=dict()
     search_form = SearchForm()
@@ -113,6 +116,7 @@ def IndividualReport(request):
     return render(request,'ved/IndividualReport.html',context)
 
 @login_required(login_url='login')
+@cache_page(60 * 60)
 def IndividualReportFirmShow(request,edrpou_num):
     context=dict()
     rec_dates = getRecDates()
@@ -133,6 +137,7 @@ def IndividualReportFirmShow(request,edrpou_num):
         return HttpResponse('EDRPOU {0} IS NOT VALID.<br><a href="/">  - Go back</a>'.format(edrpou_num))
 
 @login_required(login_url='login')
+@cache_page(60 * 60)
 def IndividualReportRaw(request,edrpou_num,gtd_num):
 
     #  <a class="btn btn-primary font-weight-bold" href="{% url 'ved:IndividualReportRaw' %} row.record__gtd_name|slugify"> {{ row.record__gtd_name }}</a>
