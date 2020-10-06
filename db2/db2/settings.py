@@ -31,6 +31,7 @@ INTERNAL_IPS = ('127.0.0.1',)
 # Application definition
 ## pip install django-tables2
 ## pip install python-memcached ----NOT USED YET
+# pip install johnny-cache
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',

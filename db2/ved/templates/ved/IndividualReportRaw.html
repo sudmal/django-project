@@ -6,6 +6,7 @@
 {% endblock title %}
 
 {% block content %}
+{% cache 3600 IndividualReportRaw records.query %}
     {{ gtd }}<br>
     {{ edrpou_num | cut:' ' }}
     {{ records.count }}
@@ -80,4 +81,5 @@
         </ul>
     </nav>  
 {% include 'ved/periods.html' %}
+{% endcache %}
 {% endblock %}

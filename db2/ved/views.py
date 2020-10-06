@@ -30,7 +30,6 @@ def index(request):
 
 
 @login_required(login_url='login')
-@cache_page(60 * 60)
 def CompetitorsComparse(request):
     search_form = SearchForm()
     start_date=year+'-01-01'
@@ -46,7 +45,12 @@ def CompetitorsComparse(request):
                 dates[y][m]=True
             else:
                 dates[y][m]=False
-
+    if request.GET.get('start_date'):
+        search_form = SearchForm(request.GET)
+        start_date=request.GET.get('start_date')
+    if request.GET.get('end_date'):
+        search_form = SearchForm(request.GET)
+        end_date=request.GET.get('end_date')
     comparse = GtdRecords.objects.filter(Q(record__recipient__edrpou__in=Competitors.objects.values_list('competitor_code',flat=True)) & \
         Q(record__date__range=[start_date, end_date] ))\
         .extra(where=["LEFT(product_code::text,8) IN (SELECT LEFT(gcodes,8) from tnved_group)"])\

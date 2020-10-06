@@ -16,6 +16,7 @@
 {% endblock DatePeriod %}
 
 {% block content %}
+{% cache 3600 CompetitorsComparse comparse.query %}
 <div class="container">
    ВЭД :: Конкуренты :: Сравнительный анализ 
 </div>
@@ -88,5 +89,6 @@ window.onload = function() {
 
 
 </script>
+{% endcache %}
 {% endblock content %}
 
