@@ -4,9 +4,10 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login,authenticate,logout
 from django.urls import reverse
 from django.utils.http import is_safe_url,urlunquote
+from django.db.models import Count, Sum, Q, Avg, Subquery, OuterRef, F, FloatField
+import json
 
-
-
+from .models import Competitors
 from .forms import LoginForm
 
 
@@ -51,3 +52,19 @@ def logout_user(request):
 @login_required(login_url='login')
 def about(request):
     return render(request, 'main/info.html')
+
+
+def autocompleteModel(request):
+    if request.is_ajax():
+        q = request.GET.get('term', '').capitalize()
+        search_qs = Competitors.objects.filter(Q(competitor_name__icontains=q) | Q(competitor_code__icontains=q))
+
+        results = []
+        for r in search_qs:
+            results.append(r.competitor_name)
+        data = json.dumps(results)
+        print(results)
+    else:
+        data = 'fail'
+    mimetype = 'application/json'
+    return HttpResponse(data, mimetype)
