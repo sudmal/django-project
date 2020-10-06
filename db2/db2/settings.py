@@ -30,6 +30,7 @@ INTERNAL_IPS = ('127.0.0.1',)
 
 # Application definition
 ## pip install django-tables2
+## pip install python-memcached ----NOT USED YET
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -106,6 +107,13 @@ LOGGING = {
             'level': 'DEBUG',
         },
     },
+}
+
+CACHES = {
+    "default": {
+        "BACKEND": "django.core.cache.backends.db.DatabaseCache",
+        "LOCATION": "app_cache",
+    }
 }
 
 # Password validation

@@ -89,7 +89,7 @@ def test(request):
 def IndividualReport(request):
     context=dict()
     search_form = SearchForm()
-
+    rec_dates = getRecDates()
     if request.GET.get('search_string'):
         search_form = SearchForm(request.GET)
         grecords_all = GtdRecords.objects.filter((Q(record__recipient__edrpou__startswith=request.GET.get('search_string')) | \
@@ -109,11 +109,13 @@ def IndividualReport(request):
             "end_date": request.GET.get('end_date')
             }
     context.update({"search_form": search_form})
+    context.update({'rec_dates': rec_dates})
     return render(request,'ved/IndividualReport.html',context)
 
 @login_required(login_url='login')
 def IndividualReportFirmShow(request,edrpou_num):
     context=dict()
+    rec_dates = getRecDates()
     if edrpou_num >= 0:
         queryset_list = GtdRecords.objects.filter((Q(record__recipient__edrpou=edrpou_num) & Q(record__date__range=[request.GET['start_date'], request.GET['end_date']])))\
             .values('record__date','record__gtd_name').order_by('record__date')\
@@ -121,6 +123,7 @@ def IndividualReportFirmShow(request,edrpou_num):
         print(queryset_list.query)
         context = {
             "edrpou_detail": edrpou_num,
+            'rec_dates' : rec_dates,
             'report': queryset_list,
             'start_date': request.GET['start_date'], 
             'end_date':request.GET['end_date']
@@ -134,6 +137,7 @@ def IndividualReportRaw(request,edrpou_num,gtd_num):
 
     #  <a class="btn btn-primary font-weight-bold" href="{% url 'ved:IndividualReportRaw' %} row.record__gtd_name|slugify"> {{ row.record__gtd_name }}</a>
     context=dict()
+    rec_dates = getRecDates()
     gtd=unquote(gtd_num)
     queryset_list = GtdRecords.objects.filter((Q(record__recipient__edrpou=edrpou_num) & Q(record__gtd_name=gtd)))\
             .values('record__sender__name','record__sender__country__name','record__date','product_code','trademark__name','description','cost_fact').order_by('record__date')
@@ -142,6 +146,7 @@ def IndividualReportRaw(request,edrpou_num,gtd_num):
     page_number = request.GET.get('page')
     records = paginator.get_page(page_number)
     context = {
+                'rec_dates' : rec_dates,
                 'records': records,
                 'gtd': gtd,
                 'edrpou_num':edrpou_num,

@@ -2,6 +2,7 @@
 
 {% load bold_in_quotes %}
 {% load static %}
+{% load cache %}
 
 {% block title %}
 ВЭД :: Конкуренты :: Индивидуальный анализ
@@ -51,6 +52,7 @@
             </tr>
         </thead>
         <tbody>
+        {% cache 3600 grecords %}
         {% for gr in grecords %}
                     <tr>
                         <td scope="row">
@@ -88,6 +90,7 @@
 
                     </tr>
                 {% endfor %}
+                {% endcache %}
             </tbody>
         </table>
     <nav aria-label="Page navigation">
@@ -121,8 +124,11 @@
 </div>
 
 
- </div>   
+ </div>
 {% endif %}
+
+ {% include 'ved/periods.html' %}
+
 {% endblock content %}
 
 {% block js %}
