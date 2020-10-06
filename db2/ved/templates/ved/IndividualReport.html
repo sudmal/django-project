@@ -18,7 +18,6 @@
 {% endblock DatePeriod %}
 
 {% block content %}
-{% cache 8600 IndividualReport grecords.object_list.query %}
 
 <div class="container m-2">
    ВЭД :: Конкуренты :: Индивидуальный анализ 
@@ -127,7 +126,7 @@
 
  </div>
 {% endif %}
-{% endcache %}
+
  {% include 'ved/periods.html' %}
 
 
