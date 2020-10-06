@@ -131,6 +131,10 @@ def IndividualReport(request):
                 .values('record__recipient__edrpou','record__recipient__name','record__recipient__is_competitor')\
                  .annotate(count=Count("cost_fact"),total_cost=Sum('cost_fact'), tms_count=Count('trademark__name',distinct=True),\
                      tms=ArrayAgg('trademark__name', distinct=True)).order_by('-total_cost')
+        if grecords_all:
+            print('ОК')
+        else:
+            print ('NO')
         paginator = Paginator(grecords_all, 10)
         page_number = request.GET.get('page')
         grecords = paginator.get_page(page_number)
