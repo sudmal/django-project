@@ -104,6 +104,8 @@ def test(request):
 @login_required(login_url='login')
 def IndividualReport(request):
     context=dict()
+    start_date=year+'-01-01'
+    end_date=year+'-12-31'
     search_form = SearchForm()
     rec_dates = getRecDates()
     get_years=lambda x: str(x)[:4]
@@ -116,10 +118,16 @@ def IndividualReport(request):
                 dates[y][m]=True
             else:
                 dates[y][m]=False
+    if request.GET.get('start_date'):
+        search_form = SearchForm(request.GET)
+        start_date=request.GET.get('start_date')
+    if request.GET.get('end_date'):
+        search_form = SearchForm(request.GET)
+        end_date=request.GET.get('end_date')
     if request.GET.get('search_string'):
         search_form = SearchForm(request.GET)
         grecords_all = GtdRecords.objects.filter((Q(record__recipient__edrpou__startswith=request.GET.get('search_string')) | \
-             Q(record__recipient__name__icontains=request.GET.get('search_string'))) & Q(record__date__range=[request.GET.get('start_date'), request.GET.get('end_date')]))\
+             Q(record__recipient__name__icontains=request.GET.get('search_string'))) & Q(record__date__range=[start_date, end_date]))\
                 .values('record__recipient__edrpou','record__recipient__name','record__recipient__is_competitor')\
                  .annotate(count=Count("cost_fact"),total_cost=Sum('cost_fact'), tms_count=Count('trademark__name',distinct=True),\
                      tms=ArrayAgg('trademark__name', distinct=True)).order_by('-total_cost')
@@ -142,6 +150,8 @@ def IndividualReport(request):
 @login_required(login_url='login')
 def IndividualReportFirmShow(request,edrpou_num):
     context=dict()
+    start_date=year+'-01-01'
+    end_date=year+'-12-31'
     rec_dates = getRecDates()
     get_years=lambda x: str(x)[:4]
     years=(list(set(list(map(get_years,rec_dates)))))
@@ -153,8 +163,14 @@ def IndividualReportFirmShow(request,edrpou_num):
                 dates[y][m]=True
             else:
                 dates[y][m]=False
+    if request.GET.get('start_date'):
+        search_form = SearchForm(request.GET)
+        start_date=request.GET.get('start_date')
+    if request.GET.get('end_date'):
+        search_form = SearchForm(request.GET)
+        end_date=request.GET.get('end_date')
     if edrpou_num >= 0:
-        queryset_list = GtdRecords.objects.filter((Q(record__recipient__edrpou=edrpou_num) & Q(record__date__range=[request.GET['start_date'], request.GET['end_date']])))\
+        queryset_list = GtdRecords.objects.filter((Q(record__recipient__edrpou=edrpou_num) & Q(record__date__range=[start_date, end_date])))\
             .values('record__date','record__gtd_name').order_by('record__date')\
                 .annotate(count=Count("cost_fact"),total_cost=Sum('cost_fact'),tms=ArrayAgg('trademark__name', distinct=True))
         print(queryset_list.query)
