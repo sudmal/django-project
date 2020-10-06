@@ -141,10 +141,10 @@ def IndividualReport(request):
             "grecords": grecords.object_list,
             "start_date": request.GET.get('start_date'),
             "end_date": request.GET.get('end_date'),
-            "dates": dates,
             }
+    ## ADD CONTEXT VARIABLES HERE 
     context.update({"search_form": search_form})
-    context.update({'rec_dates': rec_dates})
+    context.update({'dates': dates})
     return render(request,'ved/IndividualReport.html',context)
 
 @login_required(login_url='login')

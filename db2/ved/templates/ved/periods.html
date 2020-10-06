@@ -1,3 +1,5 @@
+{% load cache %}
+{% cache 8640 periods dates %}
 <div class="modal fade" id="periodsModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
   <div class="modal-dialog modal-lg" role="document">
     <div class="modal-content">
@@ -12,7 +14,7 @@
          {% for year,value in dates.items %}
             <div class="m-3 row"><button class="d-inline button">{{year}}</button>
             {% for month,status in value.items %}
-                <div class="d-inline p-2 m-1 rounded text-white {{ status |yesno:"bg-success,bg-dark"}}">{{month}}</div>
+                <div class="d-inline p-2 m-1 rounded text-white {{ status |yesno:"bg-success,bg-dark"}}" >{{month}}</div>
             {% endfor %}
             </div>
         {% endfor %}
@@ -24,3 +26,4 @@
     </div>
   </div>
 </div>
+{% endcache %}
