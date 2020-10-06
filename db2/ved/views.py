@@ -78,12 +78,20 @@ def CompetitorsComparse(request):
 
 @login_required(login_url='login')
 def test(request):
-    gtdrecords = GtdRecords.objects.filter(trademark__name__icontains='UNOX')
-    paginator = Paginator(gtdrecords, 10)
-    page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
+    rec_dates = getRecDates()
+    get_years=lambda x: str(x)[:4]
+    years=(list(set(list(map(get_years,rec_dates)))))
+    dates={}
+    for y in years:
+        dates[y]={}
+        for m in range(1,13):
+            if str(y)+"-"+str(m).zfill(2) in rec_dates:
+                dates[y][m]='yes'
+            else:
+                dates[y][m]='no'
     context = {
-        'page_obj': page_obj,
+        'dates': dates,
+        'years' : years,
         }
     return render(request,'ved/test.html',context)
 
