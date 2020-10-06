@@ -5,6 +5,8 @@ from django.contrib.auth import login,authenticate,logout
 from django.urls import reverse
 from django.utils.http import is_safe_url,urlunquote
 
+
+
 from .forms import LoginForm
 
 
@@ -12,10 +14,6 @@ from .forms import LoginForm
 @login_required(login_url='login')
 def index(request):
     return render(request, 'main/index.html')
-
-
-    
-
 
 def login_user(request):
     context=dict()

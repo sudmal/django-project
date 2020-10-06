@@ -67,6 +67,9 @@ body
     <div class="my-2 my-lg-0 ">
      <nav class="input-group date" data-provide="datepicker">
       <div class="input-group input-daterange mr-5">
+      <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#periodsModal">
+        Доступные периоды
+      </button>
           {% block DatePeriod %}
           {% endblock DatePeriod %}
       </div>

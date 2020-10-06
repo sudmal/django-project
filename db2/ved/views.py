@@ -17,13 +17,11 @@ from django.contrib.postgres.aggregates import ArrayAgg
 year = str((datetime.date.today() - datetime.timedelta(days=59)).year)
 
 def getRecDates():
-    #rec_dates = Records.objects.filter().dates('date','month',order='DESC')
     rec_dates = Records.objects.distinct('date__month').values('date')
-    print(rec_dates.query)
+    dates=[]
     for rd in rec_dates:
-        print(rd['date'])
-        
-    return rec_dates
+        dates.append(str(rd['date'])[0:7])
+    return dates
 
 @login_required(login_url='login')
 def index(request):
@@ -64,6 +62,7 @@ def CompetitorsComparse(request):
     print(data)
     print(labels)
     context = {
+        'rec_dates' : rec_dates,
         'labels': labels,
         'data': data,
         'comparse': comparse2,
