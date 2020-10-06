@@ -7,11 +7,18 @@
 
 
 {% block content %}
+
+<div class="container">
 {% for year,value in dates.items %}
+    <div class="m-3 row"><button class="d-inline button">{{year}}</button>
     {% for month,status in value.items %}
-        {{year}}-{{month}}:{{status}}
+        <div class="d-inline p-2 m-1 rounded text-white {{ status |yesno:"bg-success,bg-dark"}}">{{month}}</div>
     {% endfor %}
+    </div>
 {% endfor %}
+</div>
+
+
 {% include 'ved/periods.html' %}
 
 {% endblock content %}

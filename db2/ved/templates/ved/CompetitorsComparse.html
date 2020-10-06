@@ -40,7 +40,7 @@
             </tr>
         </thead>
         <tbody>
-        {% cache 86400 comparse %}
+
         {% for firm in comparse %}
             <tr>
                 <td>{{ forloop.counter }}</td>
@@ -58,7 +58,7 @@
                 
             </tr>
         {% endfor %}
-        {% endcache %}
+
         </tbody>
     </table>
  </div>   

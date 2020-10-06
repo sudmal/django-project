@@ -1,23 +1,22 @@
-{% load times %}
-
 <div class="modal fade" id="periodsModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog" role="document">
+  <div class="modal-dialog modal-lg" role="document">
     <div class="modal-content">
       <div class="modal-header">
-        <h5 class="modal-title" id="exampleModalLabel">Доступные периоды</h5>
+        <h5 class="modal-title" id="exampleModalLabel">Доступные периоды:</h5>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
       <div class="modal-body">
-        {% for y in 20|times %}
-            {{y}}
+        <div class="container">
+         {% for year,value in dates.items %}
+            <div class="m-3 row"><button class="d-inline button">{{year}}</button>
+            {% for month,status in value.items %}
+                <div class="d-inline p-2 m-1 rounded text-white {{ status |yesno:"bg-success,bg-dark"}}">{{month}}</div>
+            {% endfor %}
+            </div>
         {% endfor %}
-
-
-        {% for mnth in rec_dates %}
-            - {{ mnth  }}<br>
-        {% endfor %}
+        </div>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>

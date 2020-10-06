@@ -30,19 +30,22 @@ def index(request):
 
 
 @login_required(login_url='login')
-@cache_page(60 * 60)
+#@cache_page(60 * 60)
 def CompetitorsComparse(request):
     search_form = SearchForm()
     start_date=year+'-01-01'
     end_date=year+'-12-31'
     rec_dates = getRecDates()
-    if request.GET.get('start_date'):
-        search_form = SearchForm(request.GET)
-        start_date=request.GET.get('start_date')
-    if request.GET.get('end_date'):
-        search_form = SearchForm(request.GET)
-        end_date=request.GET.get('end_date')
-
+    get_years=lambda x: str(x)[:4]
+    years=(list(set(list(map(get_years,rec_dates)))))
+    dates={}
+    for y in years:
+        dates[y]={}
+        for m in range(1,13):
+            if str(y)+"-"+str(m).zfill(2) in rec_dates:
+                dates[y][m]=True
+            else:
+                dates[y][m]=False
 
     comparse = GtdRecords.objects.filter(Q(record__recipient__edrpou__in=Competitors.objects.values_list('competitor_code',flat=True)) & \
         Q(record__date__range=[start_date, end_date] ))\
@@ -64,7 +67,7 @@ def CompetitorsComparse(request):
     print(data)
     print(labels)
     context = {
-        'rec_dates' : rec_dates,
+        'dates': dates,
         'labels': labels,
         'data': data,
         'comparse': comparse2,
@@ -86,12 +89,11 @@ def test(request):
         dates[y]={}
         for m in range(1,13):
             if str(y)+"-"+str(m).zfill(2) in rec_dates:
-                dates[y][m]='yes'
+                dates[y][m]=True
             else:
-                dates[y][m]='no'
+                dates[y][m]=False
     context = {
         'dates': dates,
-        'years' : years,
         }
     return render(request,'ved/test.html',context)
 
