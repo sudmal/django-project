@@ -9,7 +9,7 @@
 {% endblock title %}
 
 {% block DatePeriod %}
-    <form method="get" action={% url 'ved:IndividualReport' %}>
+    <form method="get" class="form-inline" action={% url 'ved:IndividualReport' %}>
          {{ search_form.start_date }}
         -
         {{ search_form.end_date }}
