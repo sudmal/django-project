@@ -179,11 +179,18 @@ def IndividualReportFirmShow(request,edrpou_num):
         queryset_list = GtdRecords.objects.filter((Q(record__recipient__edrpou=edrpou_num) & Q(record__date__range=[start_date, end_date])))\
             .values('record__date','record__gtd_name').order_by('record__date')\
                 .annotate(count=Count("cost_fact"),total_cost=Sum('cost_fact'),tms=ArrayAgg('trademark__name', distinct=True))
-        print(queryset_list.query)
+        paginator = Paginator(queryset_list, 50)
+        page_number = request.GET.get('page')
+        try:
+            queryset = paginator.page(page_number)
+        except PageNotAnInteger:
+            queryset = paginator.page(1)
+        except EmptyPage:
+            queryset = paginator.page(paginator.num_pages)
         context = {
             "edrpou_detail": edrpou_num,
             "dates": dates,
-            'report': queryset_list,
+            'report': queryset,
             'start_date': request.GET['start_date'], 
             'end_date':request.GET['end_date']
             }
