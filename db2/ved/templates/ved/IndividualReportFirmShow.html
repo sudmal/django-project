@@ -6,7 +6,7 @@
 {% endblock title %}
 
 {% block content %}
-{% cache 3600 IndividualReportShow report.query %}
+{% cache 300 IndividualReportShow request.get_full_path %}
         <table class="table table-striped border border-secondary">
         <thead>
             <tr>
@@ -28,7 +28,7 @@
                     {{ row.record__date | date:"Y-M-d" |wordwrap:50 }} 
                 </td>
                 <td>
-                   <a class="btn btn-primary font-weight-bold" href="{% url 'ved:IndividualReportRaw' edrpou_detail row.record__gtd_name|urlencode:""  %}?start_date={{ start_date }}&end_date={{ end_date }}"> {{ row.record__gtd_name }}</a>
+                   <a class="btn btn-primary font-weight-bold" href="{% url 'ved:IndividualReportRaw' edrpou_detail row.record__gtd_name|urlencode:""  %}"> {{ row.record__gtd_name }}</a>
                 </td>
                 <td>
                     {% for tm in row.tms %}
