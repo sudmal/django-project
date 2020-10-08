@@ -68,8 +68,6 @@ def CompetitorsComparse(request):
     for c in comparse2[:10]:
         labels.append(c['record__recipient__name'])
         data.append(round(c['percent'],1))
-    print(data)
-    print(labels)
     context = {
         'dates': dates,
         'labels': labels,
@@ -219,7 +217,6 @@ def IndividualReportRaw(request,edrpou_num,gtd_num):
     firm=Organisation.objects.get(edrpou = edrpou_num)
     queryset_list = GtdRecords.objects.filter((Q(record__recipient__edrpou=edrpou_num) & Q(record__gtd_name=gtd)))\
             .values('record__sender__name','record__sender__country__name','record__date','product_code','trademark__name','description','cost_fact').order_by('record__date')
-    print(queryset_list.query)
     paginator = Paginator(queryset_list, 10)
     page_number = request.GET.get('page')
     records = paginator.get_page(page_number)
