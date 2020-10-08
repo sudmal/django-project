@@ -18,7 +18,13 @@
 {% block content %}
 {% cache 3600 CompetitorsComparse comparse.query %}
 <div class="container">
-   ВЭД :: Конкуренты :: Сравнительный анализ 
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">ВЭД</li>
+            <li class="breadcrumb-item">Конкуренты</li>
+            <li class="breadcrumb-item active" aria-current="page">Сравнительный анализ</li>
+        </ol>
+   </nav> 
 </div>
 <div class="row">
     <div class="d-flex align-items-center p-3 my-3 bg-light rounded shadow-sm container">
