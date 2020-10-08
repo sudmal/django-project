@@ -1,12 +1,27 @@
 {% extends 'main/base.html' %}
 {% load cache %}
+{% load bold_in_quotes %}
 
 {% block title %}
-ВЭД :: Конкуренты :: Индивидуальный анализ :: Просмотр
+{{ firm.name }} - ВЭД :: Конкуренты :: Индивидуальный анализ :: Просмотр
 {% endblock title %}
 
 {% block content %}
 {% cache 300 IndividualReportShow request.get_full_path %}
+
+        <div class="container m-2">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{% url 'ved:index' %}">ВЭД</a></li>
+                    <li class="breadcrumb-item"><a href="{% url 'ved:index' %}">Конкуренты</a></li>
+                    <li class="breadcrumb-item"><a href="{% url 'ved:IndividualReport' %}">Индивидульный анализ (Поиск)</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Индивидульный анализ ({{ firm.edrpou |cut:" " }})</li>
+                </ol>
+            </nav> 
+        </div>
+        {% autoescape off %}
+        {{ firm.name|bold_in_quotes }}
+        {% endautoescape %}
         <table class="table table-striped border border-secondary">
         <thead>
             <tr>
@@ -28,7 +43,7 @@
                     {{ row.record__date | date:"Y-M-d" |wordwrap:50 }} 
                 </td>
                 <td>
-                   <a class="btn btn-primary font-weight-bold" href="{% url 'ved:IndividualReportRaw' edrpou_detail row.record__gtd_name|urlencode:""  %}"> {{ row.record__gtd_name }}</a>
+                   <a class="btn btn-primary font-weight-bold" href="{% url 'ved:IndividualReportRaw' edrpou_detail row.record__gtd_name|urlencode:""  %}?start_date={{ start_date }}&end_date={{ end_date }}"> {{ row.record__gtd_name }}</a>
                 </td>
                 <td>
                     {% for tm in row.tms %}

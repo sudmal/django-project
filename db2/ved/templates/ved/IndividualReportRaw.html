@@ -1,5 +1,6 @@
 {% extends 'main/base.html' %}
 {% load cache %}
+{% load bold_in_quotes %}
 
 {% comment %}
 TODO: 
@@ -8,15 +9,26 @@ TODO:
 
 
 {% block title %}
-ВЭД :: Конкуренты :: Индивидуальный анализ :: Просмотр (подробный)
+{{ firm.name }} - ВЭД :: Конкуренты :: Индивидуальный анализ :: Просмотр (подробный)
 {% endblock title %}
 
 {% block content %}
 
 {% cache 300 IndividualReportRaw request.get_full_path %}
-    {{ gtd }}<br>
-    {{ edrpou_num | cut:' ' }}
-    {{ records.count }}
+    <div class="container m-2">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'ved:index' %}">ВЭД</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'ved:index' %}">Конкуренты</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'ved:IndividualReport' %}">Индивидульный анализ (Поиск)</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'ved:IndividualReportFirmShow' edrpou_num %}?start_date={{ start_date }}&end_date={{ end_date }}">Индивидульный анализ ({{ firm.edrpou |cut:" " }})</a></li>
+                <li class="breadcrumb-item active" aria-current="page">{{ gtd }}</li>
+             </ol>
+        </nav> 
+    </div>
+        {% autoescape off %}
+        {{ firm.name|bold_in_quotes }}
+        {% endautoescape %}
         <table class="table table-striped border border-secondary">
         <thead>
         <!-- 'record__sender__name','record__sender__country__name','record__date','product_code','trademark__name','description','cost_fact' -->

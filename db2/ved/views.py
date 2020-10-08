@@ -176,6 +176,7 @@ def IndividualReportFirmShow(request,edrpou_num):
         search_form = SearchForm(request.GET)
         end_date=request.GET.get('end_date')
     if edrpou_num >= 0:
+        firm=Organisation.objects.get(edrpou = edrpou_num)
         queryset_list = GtdRecords.objects.filter((Q(record__recipient__edrpou=edrpou_num) & Q(record__date__range=[start_date, end_date])))\
             .values('record__date','record__gtd_name').order_by('record__date')\
                 .annotate(count=Count("cost_fact"),total_cost=Sum('cost_fact'),tms=ArrayAgg('trademark__name', distinct=True))
@@ -188,6 +189,7 @@ def IndividualReportFirmShow(request,edrpou_num):
         except EmptyPage:
             queryset = paginator.page(paginator.num_pages)
         context = {
+            "firm" : firm,
             "edrpou_detail": edrpou_num,
             "dates": dates,
             'report': queryset,
@@ -201,7 +203,6 @@ def IndividualReportFirmShow(request,edrpou_num):
 @login_required(login_url='login')
 def IndividualReportRaw(request,edrpou_num,gtd_num):
 
-    #  <a class="btn btn-primary font-weight-bold" href="{% url 'ved:IndividualReportRaw' %} row.record__gtd_name|slugify"> {{ row.record__gtd_name }}</a>
     context=dict()
     rec_dates = getRecDates()
     get_years=lambda x: str(x)[:4]
@@ -215,6 +216,7 @@ def IndividualReportRaw(request,edrpou_num,gtd_num):
             else:
                 dates[y][m]=False
     gtd=unquote(gtd_num)
+    firm=Organisation.objects.get(edrpou = edrpou_num)
     queryset_list = GtdRecords.objects.filter((Q(record__recipient__edrpou=edrpou_num) & Q(record__gtd_name=gtd)))\
             .values('record__sender__name','record__sender__country__name','record__date','product_code','trademark__name','description','cost_fact').order_by('record__date')
     print(queryset_list.query)
@@ -222,6 +224,9 @@ def IndividualReportRaw(request,edrpou_num,gtd_num):
     page_number = request.GET.get('page')
     records = paginator.get_page(page_number)
     context = {
+                "firm" : firm,
+                'start_date': request.GET['start_date'], 
+                'end_date':request.GET['end_date'],
                 'dates' : dates,
                 'records': records,
                 'gtd': gtd,

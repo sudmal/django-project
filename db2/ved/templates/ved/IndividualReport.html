@@ -20,13 +20,18 @@
 {% block content %}
 
 <div class="container m-2">
-   ВЭД :: Конкуренты :: Индивидуальный анализ 
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'home' %}">ВЭД</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'home' %}">Конкуренты</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Индивидульный анализ (Поиск)</li>
+        </ol>
+   </nav> 
 </div>
-<div data-date="12/03/2012"></div>
 <div class="container">
 
     <div class="col-md-4">
-        <div class="form-group">
+        <div class="form-group form-inline">
         {{ search_form.search_string }} <button type="submit" class="btn btn-primary" style="display: inline">Поиск</button>
         </div>
     </div>
