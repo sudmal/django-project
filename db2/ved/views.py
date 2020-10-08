@@ -17,6 +17,9 @@ from django.contrib.postgres.aggregates import ArrayAgg
 # if now is not jan or feb, year is current year, other way - previus
 year = str((datetime.date.today() - datetime.timedelta(days=59)).year)
 
+def logUserData(request):
+    print(request.META['REMOTE_ADDR'] + " " +request.META['USERDOMAIN'] + " " + request.META['USERNAME'] + " " + request.META['HTTP_USER_AGENT'])
+
 def getRecDates():
     rec_dates = Records.objects.distinct('date__month').values('date')
     dates=[]
@@ -31,6 +34,7 @@ def index(request):
 
 @login_required(login_url='login')
 def CompetitorsComparse(request):
+    logUserData(request)
     search_form = SearchForm()
     start_date=year+'-01-01'
     end_date=year+'-12-31'
@@ -83,6 +87,7 @@ def CompetitorsComparse(request):
 
 @login_required(login_url='login')
 def test(request):
+    logUserData(request)
     rec_dates = getRecDates()
     get_years=lambda x: str(x)[:4]
     years=(list(set(list(map(get_years,rec_dates)))))
@@ -101,6 +106,7 @@ def test(request):
 
 @login_required(login_url='login')
 def IndividualReport(request):
+    logUserData(request)
     context=dict()
     start_date=year+'-01-01'
     end_date=year+'-12-31'
@@ -153,6 +159,7 @@ def IndividualReport(request):
 
 @login_required(login_url='login')
 def IndividualReportFirmShow(request,edrpou_num):
+    logUserData(request)
     context=dict()
     start_date=year+'-01-01'
     end_date=year+'-12-31'
@@ -200,7 +207,7 @@ def IndividualReportFirmShow(request,edrpou_num):
 
 @login_required(login_url='login')
 def IndividualReportRaw(request,edrpou_num,gtd_num):
-
+    logUserData(request)
     context=dict()
     rec_dates = getRecDates()
     get_years=lambda x: str(x)[:4]
