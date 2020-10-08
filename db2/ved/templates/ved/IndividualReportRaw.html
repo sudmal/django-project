@@ -81,7 +81,7 @@ TODO:
                     <a class="page-link" href="?page=1">&laquo;</a>
                 </li>
                 <li class="page-item">
-                    <a class="page-link" href="?page={{ records.previous_page_number }}"> < </a>
+                    <a class="page-link" href="?page={{ records.previous_page_number }}&start_date={{ start_date }}&end_date={{ end_date }}"> < </a>
                 </li>
             {% endif %}
 
@@ -91,10 +91,10 @@ TODO:
 
             {% if records.has_next %}
                 <li class="page-item">
-                    <a class="page-link" href="?page={{ records.next_page_number }}"> > </a>
+                    <a class="page-link" href="?page={{ records.next_page_number }}&start_date={{ start_date }}&end_date={{ end_date }}"> > </a>
                 </li>
                 <li class="page-item">
-                    <a class="page-link" href="?page={{ records.paginator.num_pages }}"> &raquo; </a>
+                    <a class="page-link" href="?page={{ records.paginator.num_pages }}&start_date={{ start_date }}&end_date={{ end_date }}"> &raquo; </a>
                 </li>
             {% endif %}
         </ul>
