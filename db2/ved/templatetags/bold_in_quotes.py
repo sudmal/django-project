@@ -15,13 +15,13 @@ def bold_in_quotes(str1):
 
     if str1.find("'")>=0:
         st=str1.split("'")
-        result="<small class=\"text-muted\">"+st[0]+"</small> <span class=\"font-weight-bold\">\""
+        result="<small class=\"text-muted\">"+st[0]+"</small><br><span class=\"font-weight-bold\">\""
         for s in st[1:]:
             result=result+s
         result=result+"\"</span>"    
     elif str1.find("\"")>=0:
         st=str1.split("\"")
-        result="<small class=\"text-muted\">"+st[0]+"</small> <span class=\"font-weight-bold\">\""
+        result="<small class=\"text-muted\">"+st[0]+"</small><br><span class=\"font-weight-bold\">\""
         for s in st[1:]:
             result=result+s
         result=result+"\"</span>" 
