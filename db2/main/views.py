@@ -34,12 +34,6 @@ def login_user(request):
                 login (request,user)
 
             print(alogin)
- #       way=request.META.get('HTTP_REFERER')
- #       print (way)
- #       if way:
- #           way = urlunquote(way)
- #       if not is_safe_url(url=way,allowed_hosts=request.get_host()):
- #           way = reverse('home')
         return HttpResponseRedirect(reverse('home'))
     return render(request, 'main/login.html', context)
 

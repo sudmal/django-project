@@ -59,8 +59,9 @@ def CompetitorsComparse(request):
         Q(record__date__range=[start_date, end_date] ))\
         .extra(where=["LEFT(product_code::text,8) IN (SELECT LEFT(gcodes,8) from tnved_group)"])\
             .values('record__recipient__edrpou','record__recipient__name')\
-                .annotate(count=Count('cost_fact',distinct=True),total_cost=Sum('cost_fact')).order_by('-total_cost')
+                .annotate(total_cost_eur=Sum((F('record__exchange__usd_nbu')/F('record__exchange__eur_nbu'))*F('cost_fact')),count=Count('cost_fact',distinct=True),total_cost=Sum('cost_fact')).order_by('-total_cost')
                 # ,total_cost_eur=Sum(F('cost_fact') * F('record__date__usd_nbu') / F('record__date__eur_nbu'), output_field=FloatField()
+    print(comparse.query)
     total_sum=0
     for c in comparse:
         total_sum+=c['total_cost']
@@ -138,7 +139,7 @@ def IndividualReport(request):
                  .annotate(count=Count("cost_fact"),total_cost=Sum('cost_fact'), tms_count=Count('trademark__name',distinct=True),\
                      tms=ArrayAgg('trademark__name', distinct=True)).order_by('-total_cost')
 
-        
+        print(grecords_all.query)
         paginator = Paginator(grecords_all, 10)
         page_number = request.GET.get('page')
         try:

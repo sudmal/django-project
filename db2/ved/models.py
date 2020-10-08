@@ -63,11 +63,12 @@ class CreditStaging(models.Model):
 
 
 class Exchange(models.Model):
+    id = models.IntegerField(primary_key=True)
     date = models.DateField(unique=True)
-    eur_com = models.TextField(db_column='EUR-COM', blank=True, null=True)  # Field name made lowercase. Field renamed to remove unsuitable characters.
-    eur_nbu = models.TextField(db_column='EUR-NBU', blank=True, null=True)  # Field name made lowercase. Field renamed to remove unsuitable characters.
-    usd_com = models.TextField(db_column='USD-COM', blank=True, null=True)  # Field name made lowercase. Field renamed to remove unsuitable characters.
-    usd_nbu = models.TextField(db_column='USD-NBU', blank=True, null=True)  # Field name made lowercase. Field renamed to remove unsuitable characters.
+    eur_com = models.FloatField(db_column='EUR-COM', blank=True, null=True)  # Field name made lowercase. Field renamed to remove unsuitable characters.
+    eur_nbu = models.FloatField(db_column='EUR-NBU', blank=True, null=True)  # Field name made lowercase. Field renamed to remove unsuitable characters.
+    usd_com = models.FloatField(db_column='USD-COM', blank=True, null=True)  # Field name made lowercase. Field renamed to remove unsuitable characters.
+    usd_nbu = models.FloatField(db_column='USD-NBU', blank=True, null=True)  # Field name made lowercase. Field renamed to remove unsuitable characters.
     eur_mb_buy = models.FloatField(db_column='EUR-MB-BUY', blank=True, null=True)  # Field name made lowercase. Field renamed to remove unsuitable characters.
     eur_mb_sale = models.FloatField(db_column='EUR-MB-SALE', blank=True, null=True)  # Field name made lowercase. Field renamed to remove unsuitable characters.
 
@@ -166,9 +167,10 @@ class Organisation(models.Model):
 
 class Records(models.Model):
     id = models.BigAutoField(primary_key=True)
+    exchange = models.ForeignKey('Exchange', models.DO_NOTHING)
     sender = models.ForeignKey('Sender', models.DO_NOTHING, blank=True, null=True)
-    recipient = models.ForeignKey('Organisation', models.DO_NOTHING, blank=True, null=True)
-    date = models.DateField(blank=True, null=True)
+    recipient = models.ForeignKey('Organisation', models.DO_NOTHING)
+    date = models.DateField()
     gtd_name = models.CharField(max_length=64)
 
     class Meta:
