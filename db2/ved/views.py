@@ -18,7 +18,7 @@ from django.contrib.postgres.aggregates import ArrayAgg
 year = str((datetime.date.today() - datetime.timedelta(days=59)).year)
 
 def logUserData(request):
-    print(request.META['REMOTE_ADDR'] 
+    print(request.META['REMOTE_ADDR'])
 
 def getRecDates():
     rec_dates = Records.objects.distinct('date__month').values('date')
