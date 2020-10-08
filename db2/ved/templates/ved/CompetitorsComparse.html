@@ -17,15 +17,21 @@
 
 {% block content %}
 {% cache 3600 CompetitorsComparse comparse.query %}
+
 <div class="container">
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
             <li class="breadcrumb-item">ВЭД</li>
             <li class="breadcrumb-item">Конкуренты</li>
-            <li class="breadcrumb-item active" aria-current="page">Сравнительный анализ</li>
+            <li class="breadcrumb-item active" aria-current="page">Сравнительный анализ
+            <div class="center-block">
+                <span class="blockquote text-center blockquote-footer">Отчет построен для списка конкурентов по заданному профилю товаров по курсу НБУ </span>
+            </div>
+            </li>
         </ol>
    </nav> 
 </div>
+
 <div class="row">
     <div class="d-flex align-items-center p-3 my-3 bg-light rounded shadow-sm container">
         <div id="container" style="width: 75%;">
