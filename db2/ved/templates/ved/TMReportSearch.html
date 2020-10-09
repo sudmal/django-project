@@ -1,0 +1,89 @@
+{% extends 'main/base.html' %}
+{% load static %}
+{% load cache %}
+
+{% block title %}
+ВЭД :: Конкуренты :: Индивидуальный анализ
+{% endblock title %}
+
+{% block DatePeriod %}
+    <form method="get" class="form-inline" action={% url 'ved:TrademarkReportSearch' %}>
+        {{ search_form.start_date }}
+        -
+        {{ search_form.end_date }}
+        <button type="submit" class="btn btn-info">Изменить</button>
+
+{% endblock DatePeriod %}
+
+{% block content %}
+
+<div class="container m-2">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'home' %}">ВЭД</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'home' %}">Поставщики</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Индивидульный анализ (Поиск)</li>
+        </ol>
+   </nav> 
+</div>
+<div class="container">
+
+    <div class="col-md-4">
+        <div class="form-group form-inline">
+        {{ search_form.search_string }} <button type="submit" class="btn btn-primary" style="display: inline">Поиск</button>
+        </div>
+    </div>
+    <div class="col-md-4">
+        
+    </div>
+    </form>
+
+{% if grecords_all %}
+
+
+</div>
+<div class="container-fluid">
+    <table class="table table-striped border border-secondary">
+        <thead>
+            <tr>
+                <th>№</th>
+                <th>Торговая марка</th>
+                <th>Записей</th>
+                <th>На сумму, $</th>
+            </tr>
+        </thead>
+        <tbody>
+        
+        {% for gr in grecords_all %}
+                    <tr>
+                        <td scope="row">
+                            {{ forloop.counter }}
+                        </td>
+                        <td>
+                            <a class="btn btn-primary font-weight-bold" href="{% url 'ved:TrademarkReportShow' gr.trademark__name %}?start_date={{ start_date }}&end_date={{ end_date }}">{{ gr.trademark__name }}</a> 
+                        </td>
+                        <td>
+                            {{ gr.count }}
+                        </td>
+                        <td>
+                            {{ gr.total_cost }}
+                        </td>
+                    </tr>
+        {% endfor %}
+            </tbody>
+        </table>
+ {% else %}
+<div class='warning'>
+    Извините, по данному запросу ничего не найдено
+</div>
+
+
+ </div>
+{% endif %}
+
+{% include 'ved/periods.html' %}
+{% endblock content %}
+
+{% block js %}
+{% endblock js %}
+

@@ -240,3 +240,46 @@ def IndividualReportRaw(request,edrpou_num,gtd_num):
                 'edrpou_num':edrpou_num,
             }
     return render(request,'ved/IndividualReportRaw.html',context)
+
+@login_required(login_url='login')
+def TrademarkReportSearch(request):
+    print('###################TM###################')
+    context=dict()
+    start_date=year+'-01-01'
+    end_date=year+'-12-31'
+    search_form = SearchForm()
+    rec_dates = getRecDates()
+    get_years=lambda x: str(x)[:4]
+    years=(list(set(list(map(get_years,rec_dates)))))
+    dates={}
+    for y in years:
+        dates[y]={}
+        for m in range(1,13):
+            if str(y)+"-"+str(m).zfill(2) in rec_dates:
+                dates[y][m]=True
+            else:
+                dates[y][m]=False
+    if request.GET.get('start_date'):
+        search_form = SearchForm(request.GET)
+        start_date=request.GET.get('start_date')
+    if request.GET.get('end_date'):
+        search_form = SearchForm(request.GET)
+        end_date=request.GET.get('end_date')
+    if request.GET.get('search_string'):
+        search_form = SearchForm(request.GET)
+        grecords_all = GtdRecords.objects.filter((Q(trademark__name__icontains=request.GET.get('search_string')) & Q(record__date__range=[start_date, end_date])))\
+           .values('trademark__name').annotate(count=Count("product_code"),total_cost=Sum('cost_fact')).order_by('-total_cost')
+        print(grecords_all.query)
+        context = {
+                'grecords_all': grecords_all,
+                'search_form': search_form,
+                'start_date': request.GET['start_date'],
+                'end_date':request.GET['end_date'],
+        }
+    context.update({"search_form": search_form})
+    context.update({'dates': dates})
+    print(list(context))
+    return render(request,'ved/TMReportSearch.html',context)
+
+def TrademarkReportShow(request):
+    pass
