@@ -162,7 +162,6 @@ def IndividualReport(request):
 
 @login_required(login_url='login')
 def IndividualReportFirmShow(request,edrpou_num):
-    logUserData(request)
     context=dict()
     start_date=year+'-01-01'
     end_date=year+'-12-31'
@@ -281,5 +280,34 @@ def TrademarkReportSearch(request):
     print(list(context))
     return render(request,'ved/TMReportSearch.html',context)
 
-def TrademarkReportShow(request):
+def TrademarkReportShow(request,trademark_name):
+    context=dict()
+    start_date=year+'-01-01'
+    end_date=year+'-12-31'
+    rec_dates = getRecDates()
+    get_years=lambda x: str(x)[:4]
+    years=(list(set(list(map(get_years,rec_dates)))))
+    dates={}
+    for y in years:
+        dates[y]={}
+        for m in range(1,13):
+            if str(y)+"-"+str(m).zfill(2) in rec_dates:
+                dates[y][m]=True
+            else:
+                dates[y][m]=False
+    if request.GET.get('start_date'):
+        search_form = SearchForm(request.GET)
+        start_date=request.GET.get('start_date')
+    if request.GET.get('end_date'):
+        search_form = SearchForm(request.GET)
+        end_date=request.GET.get('end_date')
+    if  trademark_name >= 0:
+        trademark_name=unquote(trademark.name)
+        context.update({'trademark_name':trademark_name})
+        queryset_list = GtdRecords.objects.filter((Q(trademark__name=trademark_name) & Q(record__date__range=[start_date, end_date])))\
+            .values('record__recipient__edrpou','record__recipient__name').annotate(count=Count("cost_fact"),total_cost=Sum('cost_fact')).order_by('-total_cost')
+        context.update({'queryset_list':queryset_list})
+    return(request,'TMReportShow.html',context)
+
+def TrademarkReportRaw(request,trademark_name,edrpou_num):
     pass

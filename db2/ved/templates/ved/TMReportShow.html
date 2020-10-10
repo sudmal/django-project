@@ -1,0 +1,90 @@
+{% extends 'main/base.html' %}
+{% load cache %}
+{% load bold_in_quotes %}
+
+{% block title %}
+{{ firm.name }} - ВЭД :: Конкуренты :: Индивидуальный анализ :: Просмотр
+{% endblock title %}
+
+{% block content %}
+{% cache 300 TMReportShow request.get_full_path %}
+
+        <div class="container m-2">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{% url 'ved:index' %}">ВЭД</a></li>
+                    <li class="breadcrumb-item"><a href="{% url 'ved:index' %}">Поставщики</a></li>
+                    <li class="breadcrumb-item"><a href="{% url 'ved:IndividualReport' %}">Индивидульный анализ ()</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Индивидульный анализ ({{ firm.edrpou |cut:" " }})</li>
+                </ol>
+            </nav> 
+        </div>
+        {% autoescape off %}
+        {{ firm.name|bold_in_quotes }}
+        {% endautoescape %}
+        <table class="table table-striped border border-secondary">
+        <thead>
+            <tr>
+                <th>№</th>
+                <th>Дата</th>
+                <th>Номер ГТД</th>
+                <th>Торговые марки</th>
+                <th>Записей</th>
+                <th>На сумму, $</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for row in report %}
+            <tr>
+                <td scope="row">
+                     {{ forloop.counter0|add:report.start_index }}
+                </td>
+                <td>
+                    {{ row.record__date | date:"Y-M-d" |wordwrap:50 }} 
+                </td>
+                <td>
+                   <a class="btn btn-primary font-weight-bold" href="{% url 'ved:TMReportShow' tm_edrpou row.record__gtd_name|urlencode:""  %}?start_date={{ start_date }}&end_date={{ end_date }}"> {{ row.record__gtd_name }}</a>
+                </td>
+                <td>
+                    {% for tm in row.tms %}
+                        [{{tm}}]
+                    {% endfor %}
+                </td>
+                <td>
+                    {{ row.count }} 
+                </td>
+                <td>
+                    {{ row.total_cost }} 
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+   <nav aria-label="Page navigation">
+        <ul class="pagination justify-content-center">
+            {% if report.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?page=1&start_date={{ start_date }}&end_date={{ end_date }}">&laquo;</a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ report.previous_page_number }}&start_date={{ start_date }}&end_date={{ end_date }}"> < </a>
+                </li>
+            {% endif %}
+
+            <li class="page-item">
+                <a class="page-link disabled" href="#"> Page {{ report.number }} of {{ report.paginator.num_pages }}</a>
+            </li>
+
+            {% if report.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ report.next_page_number }}&start_date={{ start_date }}&end_date={{ end_date }}"> > </a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ report.paginator.num_pages }}&start_date={{ start_date }}&end_date={{ end_date }}"> &raquo; </a>
+                </li>
+            {% endif %}
+        </ul>
+    </nav>  
+{% include 'ved/periods.html' %}
+{% endcache %}
+{% endblock %}

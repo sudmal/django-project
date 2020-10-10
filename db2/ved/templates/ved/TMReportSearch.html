@@ -7,7 +7,7 @@
 {% endblock title %}
 
 {% block DatePeriod %}
-    <form method="get" class="form-inline" action={% url 'ved:TrademarkReportSearch' %}>
+    <form method="get" class="form-inline" action={% url 'ved:TrademarkReportShow'  %}>
         {{ search_form.start_date }}
         -
         {{ search_form.end_date }}
@@ -60,7 +60,7 @@
                             {{ forloop.counter }}
                         </td>
                         <td>
-                            <a class="btn btn-primary font-weight-bold" href="{% url 'ved:TrademarkReportShow' gr.trademark__name %}?start_date={{ start_date }}&end_date={{ end_date }}">{{ gr.trademark__name }}</a> 
+                            <a class="btn btn-primary font-weight-bold" href="{% url 'ved:TrademarkReportShow' gr.trademark__name|urlencode:"" %}?start_date={{ start_date }}&end_date={{ end_date }}">{{ gr.trademark__name|truncatewords:8}}</a> 
                         </td>
                         <td>
                             {{ gr.count }}

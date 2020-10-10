@@ -12,4 +12,5 @@ urlpatterns = [
     path('IndividualReportRaw/<int:edrpou_num>/<str:gtd_num>/', views.IndividualReportRaw, name = 'IndividualReportRaw'),
     path('TrademarkReport/', views.TrademarkReportSearch, name = 'TrademarkReportSearch' ),
     path('TrademarkReport/<str:trademark_name>/', views.TrademarkReportShow, name = 'TrademarkReportShow'),
+    path('TrademarkReport/<str:trademark_name>/<int:edrpou_num>/', views.TrademarkReportRaw, name = 'TrademarkReportRaw'),
 ]
