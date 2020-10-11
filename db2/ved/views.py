@@ -136,7 +136,7 @@ def IndividualReport(request):
         grecords_all = GtdRecords.objects.filter((Q(record__recipient__edrpou__startswith=request.GET.get('search_string')) | \
              Q(record__recipient__name__icontains=request.GET.get('search_string'))) & Q(record__date__range=[start_date, end_date]))\
                 .values('record__recipient__edrpou','record__recipient__name','record__recipient__is_competitor')\
-                 .annotate(count=Count("cost_fact"),total_cost=Sum('cost_fact'), tms_count=Count('trademark__name',distinct=True),\
+                 .annotate(count=Count("cost_fact"),total_cost=Sum('cost_fact'),total_cost_eur=Sum((F('record__exchange__usd_nbu')/F('record__exchange__eur_nbu'))*F('cost_fact')), tms_count=Count('trademark__name',distinct=True),\
                      tms=ArrayAgg('trademark__name', distinct=True)).order_by('-total_cost')
 
         print(grecords_all.query)
@@ -186,7 +186,7 @@ def IndividualReportFirmShow(request,edrpou_num):
         firm=Organisation.objects.get(edrpou = edrpou_num)
         queryset_list = GtdRecords.objects.filter((Q(record__recipient__edrpou=edrpou_num) & Q(record__date__range=[start_date, end_date])))\
             .values('record__date','record__gtd_name').order_by('record__date')\
-                .annotate(count=Count("cost_fact"),total_cost=Sum('cost_fact'),tms=ArrayAgg('trademark__name', distinct=True))
+                .annotate(count=Count("cost_fact"),total_cost=Sum('cost_fact'),total_cost_eur=Sum((F('record__exchange__usd_nbu')/F('record__exchange__eur_nbu'))*F('cost_fact')),tms=ArrayAgg('trademark__name', distinct=True))
         paginator = Paginator(queryset_list, 50)
         page_number = request.GET.get('page')
         try:
@@ -225,7 +225,8 @@ def IndividualReportRaw(request,edrpou_num,gtd_num):
     gtd=unquote(gtd_num)
     firm=Organisation.objects.get(edrpou = edrpou_num)
     queryset_list = GtdRecords.objects.filter((Q(record__recipient__edrpou=edrpou_num) & Q(record__gtd_name=gtd)))\
-            .values('record__sender__name','record__sender__country__name','record__date','product_code','trademark__name','description','cost_fact').order_by('record__date')
+            .values('record__sender__name','record__sender__country__name','record__date','product_code','trademark__name','description','cost_fact')\
+                .annotate(cost_eur=Sum((F('record__exchange__usd_nbu')/F('record__exchange__eur_nbu'))*F('cost_fact')),).order_by('record__date')
     paginator = Paginator(queryset_list, 10)
     page_number = request.GET.get('page')
     records = paginator.get_page(page_number)
@@ -301,13 +302,15 @@ def TrademarkReportShow(request,trademark_name):
     if request.GET.get('end_date'):
         search_form = SearchForm(request.GET)
         end_date=request.GET.get('end_date')
-    if  trademark_name >= 0:
-        trademark_name=unquote(trademark.name)
+    if  trademark_name:
+        trademark_name=unquote(trademark_name)
         context.update({'trademark_name':trademark_name})
         queryset_list = GtdRecords.objects.filter((Q(trademark__name=trademark_name) & Q(record__date__range=[start_date, end_date])))\
-            .values('record__recipient__edrpou','record__recipient__name').annotate(count=Count("cost_fact"),total_cost=Sum('cost_fact')).order_by('-total_cost')
+           .values('record__recipient__edrpou','record__recipient__name').annotate(count=Count("cost_fact"),total_cost=Sum('cost_fact'),\
+               total_cost_eur=Sum((F('record__exchange__usd_nbu')/F('record__exchange__eur_nbu'))*F('cost_fact'))).order_by('-total_cost')
         context.update({'queryset_list':queryset_list})
-    return(request,'TMReportShow.html',context)
+    print("test")
+    return render(request,'ved/TMReportShow.html',context)
 
 def TrademarkReportRaw(request,trademark_name,edrpou_num):
-    pass
+    return HttpResponse("UnderConstruction", content_type="text/plain")

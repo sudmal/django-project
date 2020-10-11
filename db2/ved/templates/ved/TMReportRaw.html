@@ -39,7 +39,7 @@
                      {{ forloop.counter }}
                 </td>
                 <td>
-                   <a class="btn btn-primary font-weight-bold" href="{% url 'ved:TrademarkReportRaw' trademark_name|urlencode:"" row.record__recipient__edrpou %}?start_date={{ start_date }}&end_date={{ end_date }}"> {{ row.record__recipient__edrpou| cut:' ' }}</a>
+                   <a class="btn btn-primary font-weight-bold" href="{% url 'ved:TrademarkReportRaw' trademark_name|urlencode:"" row.record__recipient__edrpou %}?start_date={{ start_date }}&end_date={{ end_date }}"> {{ row.record__recipient__edrpou }}</a>
                 </td>
                 <td>
                     {% autoescape off %}

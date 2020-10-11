@@ -54,6 +54,7 @@
                 <th>Торговые марки</th>
                 <th>Записей</th>
                 <th>На сумму, $</th>
+                <th>На сумму, €</th>
                 <th>Конкурент</th>
             </tr>
         </thead>
@@ -84,8 +85,12 @@
                             {{ gr.count }}
                         </td>
                         <td>
-                            {{ gr.total_cost }}
+                            {{ gr.total_cost|floatformat:2 }}
                         </td>
+                        <td>
+                            {{ gr.total_cost_eur |floatformat:2 }}
+                        </td>
+
                         <td>
                         {% if gr.record__recipient__is_competitor %} 
                             <img src="{% static 'yes.png' %}" alt="yes"> 

@@ -41,6 +41,7 @@ TODO:
                 <th>Код товара</th>
                 <th>Описание</th>
                 <th>Стоимость, $</th>
+                <th>Стоимость, €</th>
             </tr>
         </thead>
         <tbody>
@@ -68,7 +69,10 @@ TODO:
                     {{ r.description |wordwrap:150}}
                 </td>
                 <td>
-                    {{ r.cost_fact }}
+                    {{ r.cost_fact |floatformat:2 }}
+                </td>
+                <td>
+                    {{r.cost_eur|floatformat:2 }}
                 </td>
             </tr>
             {% endfor %}

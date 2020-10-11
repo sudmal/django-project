@@ -7,7 +7,7 @@
 {% endblock title %}
 
 {% block DatePeriod %}
-    <form method="get" class="form-inline" action={% url 'ved:TrademarkReportShow'  %}>
+    <form method="get" class="form-inline" action={% url 'ved:TrademarkReportSearch'  %}>
         {{ search_form.start_date }}
         -
         {{ search_form.end_date }}
@@ -50,6 +50,7 @@
                 <th>Торговая марка</th>
                 <th>Записей</th>
                 <th>На сумму, $</th>
+                <th>На сумму, €</th>
             </tr>
         </thead>
         <tbody>
@@ -67,6 +68,9 @@
                         </td>
                         <td>
                             {{ gr.total_cost }}
+                        </td>
+                        <td>
+                            {{ gr.total_cost_eur|floatformat:2 }}
                         </td>
                     </tr>
         {% endfor %}
