@@ -313,4 +313,34 @@ def TrademarkReportShow(request,trademark_name):
     return render(request,'ved/TMReportShow.html',context)
 
 def TrademarkReportRaw(request,trademark_name,edrpou_num):
-    return HttpResponse("UnderConstruction", content_type="text/plain")
+    logUserData(request)
+    context=dict()
+    rec_dates = getRecDates()
+    get_years=lambda x: str(x)[:4]
+    years=(list(set(list(map(get_years,rec_dates)))))
+    dates={}
+    for y in years:
+        dates[y]={}
+        for m in range(1,13):
+            if str(y)+"-"+str(m).zfill(2) in rec_dates:
+                dates[y][m]=True
+            else:
+                dates[y][m]=False
+    trademark_name=unquote(trademark_name)
+    firm=Organisation.objects.get(edrpou = edrpou_num)
+    queryset_list = GtdRecords.objects.filter((Q(record__recipient__edrpou=edrpou_num) & Q(trademark__name=trademark_name)))\
+            .values('record__sender__name','record__sender__country__name','record__date','product_code','description','cost_fact')\
+                .annotate(cost_eur=Sum((F('record__exchange__usd_nbu')/F('record__exchange__eur_nbu'))*F('cost_fact')),).order_by('record__date')
+    paginator = Paginator(queryset_list, 10)
+    page_number = request.GET.get('page')
+    records = paginator.get_page(page_number)
+    context = {
+                "firm" : firm,
+                'start_date': request.GET['start_date'], 
+                'end_date':request.GET['end_date'],
+                'dates' : dates,
+                'records': records,
+                'trademark_name': trademark_name,
+                'edrpou_num':edrpou_num,
+            }
+    return render(request,'ved/TMReportRaw.html',context)

@@ -69,12 +69,12 @@
                         <td>
                             <a class="btn btn-primary font-weight-bold" href="{% url 'ved:IndividualReportFirmShow' gr.record__recipient__edrpou %}?start_date={{ start_date }}&end_date={{ end_date }}">{{ gr.record__recipient__edrpou | cut:' ' }}</a> 
                         </td>
-                        <td ><span class="h6">{% autoescape off %} {{ gr.record__recipient__name | bold_in_quotes }} {% endautoescape %}</span></td>
+                        <td ><span class="h6">{% autoescape off %} {{ gr.record__recipient__name | bold_in_quotes }} {% endautoescape %}</span> </td>
                         <td>
                         
                         {% for tm in gr.tms %}
                             {% if forloop.counter <= 5  %}
-                                <div class="border border-secondary rounded p-1 bg-light font-weight-bold">{{tm}}</div>
+                                <div class="border border-secondary rounded p-1 bg-light font-weight-bold"><a href="{% url 'ved:TrademarkReportShow' tm|urlencode:"" %}?start_date={{ start_date }}&end_date={{ end_date }}">{{ tm }}</a></div>
                             {% endif %}
                         {% endfor %}
                         {% if  gr.tms_count > 5 %}

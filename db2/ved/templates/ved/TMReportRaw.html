@@ -2,66 +2,103 @@
 {% load cache %}
 {% load bold_in_quotes %}
 
+{% comment %}
+TODO: 
+
+{% endcomment %}
+
+
 {% block title %}
-{{ trademark_name }} - ВЭД :: Поставщики :: Индивидуальный анализ :: Просмотр
+{{ trademark_name }} ({{ firm.name }}) - ВЭД :: Поставщики :: Индивидуальный анализ :: Просмотр (подробный)
 {% endblock title %}
 
 {% block content %}
-{% cache 300 TMReportShow request.get_full_path %}
 
-        <div class="container m-2">
-            <nav aria-label="breadcrumb">
-                <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="{% url 'ved:index' %}">ВЭД</a></li>
-                    <li class="breadcrumb-item"><a href="{% url 'ved:index' %}">Поставщики</a></li>
-                    <li class="breadcrumb-item"><a href="{% url 'ved:TrademarkReportSearch' %}">Индивидульный анализ (Поиск) </a></li>
-                    <li class="breadcrumb-item active" aria-current="page">Индивидульный анализ ({{ trademark_name }})</li>
-                </ol>
-            </nav> 
-        </div>
-        {{ queryset_list.trademark__name }}
+{% cache 300 IndividualReportRaw request.get_full_path %}
+    <div class="container m-2">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="{% url 'ved:index' %}">ВЭД</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'ved:index' %}">Поставщики</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'ved:TrademarkReportSearch' %}">Индивидульный анализ (Поиск)</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'ved:TrademarkReportShow' trademark_name|urlencode:"" %}?start_date={{ start_date }}&end_date={{ end_date }}">Индивидульный анализ ({{ trademark_name }})</a></li>
+                <li class="breadcrumb-item active" aria-current="page">{{ gtd }}</li>
+             </ol>
+        </nav> 
+    </div>
+        {% autoescape off %}
+        <b>{{ trademark_name }}</b><br> {{ firm.name|bold_in_quotes }}
+        {% endautoescape %}
         <table class="table table-striped border border-secondary">
         <thead>
+        <!-- 'record__sender__name','record__sender__country__name','record__date','product_code','trademark__name','description','cost_fact' -->
             <tr>
                 <th>№</th>
-                <th>ЕДРПОУ</th>
-                <th>Наименование получателя</th>
-                <th>Количество записей</th>
-                <th>Сумма, $</th>
-                <th>Сумма, €</th>
-                <th>Доля, %</th>
+                <th>Дата</th>
+                <th>Экспортер</th>
+                <th>Страна</th>
+                <th>Код товара</th>
+                <th>Описание</th>
+                <th>Стоимость, $</th>
+                <th>Стоимость, €</th>
             </tr>
         </thead>
         <tbody>
-        {% for row in queryset_list %}
+            {% for r in records %}
             <tr>
                 <td scope="row">
-                     {{ forloop.counter }}
+                    {{ forloop.counter0|add:records.start_index }} 
                 </td>
                 <td>
-                   <a class="btn btn-primary font-weight-bold" href="{% url 'ved:TrademarkReportRaw' trademark_name|urlencode:"" row.record__recipient__edrpou %}?start_date={{ start_date }}&end_date={{ end_date }}"> {{ row.record__recipient__edrpou }}</a>
+                    {{ r.record__date | date:"Y-m-d"  }}
                 </td>
                 <td>
-                    {% autoescape off %}
-                    {{ row.record__recipient__name|bold_in_quotes }}
-                    {% endautoescape %}
+                    {{ r.record__sender__name}}                    
                 </td>
                 <td>
-                    {{ row.count }} 
+                    {{ r.record__sender__country__name}}
                 </td>
                 <td>
-                    {{ row.total_cost }} 
+                    {{ r.product_code| cut:' '  }}
                 </td>
                 <td>
-                    {{ row.total_cost_eur|floatformat:2 }} 
+                    {{ r.description |wordwrap:150}}
                 </td>
                 <td>
+                    {{ r.cost_fact |floatformat:2 }}
+                </td>
+                <td>
+                    {{r.cost_eur|floatformat:2 }}
                 </td>
             </tr>
-        {% endfor %}
-        </tbody>
+            {% endfor %}
+         </tbody>
     </table>
-  
+    <nav aria-label="Page navigation">
+        <ul class="pagination justify-content-center">
+            {% if records.has_previous %}
+                <li class="page-item">
+                    <a class="page-link" href="?page=1">&laquo;</a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ records.previous_page_number }}&start_date={{ start_date }}&end_date={{ end_date }}"> < </a>
+                </li>
+            {% endif %}
+
+            <li class="page-item">
+                <a class="page-link disabled" href="#"> Page {{ records.number }} of {{ records.paginator.num_pages }}</a>
+            </li>
+
+            {% if records.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ records.next_page_number }}&start_date={{ start_date }}&end_date={{ end_date }}"> > </a>
+                </li>
+                <li class="page-item">
+                    <a class="page-link" href="?page={{ records.paginator.num_pages }}&start_date={{ start_date }}&end_date={{ end_date }}"> &raquo; </a>
+                </li>
+            {% endif %}
+        </ul>
+    </nav>  
 {% include 'ved/periods.html' %}
 {% endcache %}
 {% endblock %}

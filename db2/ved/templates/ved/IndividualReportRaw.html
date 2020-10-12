@@ -60,7 +60,7 @@ TODO:
                     {{ r.record__sender__country__name}}
                 </td>
                 <td>
-                    {{ r.trademark__name}}
+                    <div class="border border-secondary rounded p-1 bg-light font-weight-bold"><a href="{% url 'ved:TrademarkReportShow' r.trademark__name|urlencode:"" %}?start_date={{ start_date }}&end_date={{ end_date }}">{{ r.trademark__name }}</a></div>
                 </td>
                 <td>
                     {{ r.product_code| cut:' '  }}
