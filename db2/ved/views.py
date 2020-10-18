@@ -344,3 +344,55 @@ def TrademarkReportRaw(request,trademark_name,edrpou_num):
                 'edrpou_num':edrpou_num,
             }
     return render(request,'ved/TMReportRaw.html',context)
+
+@login_required(login_url='login')
+def HRKReport(request):
+    start_date=year+'-01-01'
+    end_date=year+'-12-31'
+    rec_dates = getRecDates()
+    get_years=lambda x: str(x)[:4]
+    years=(list(set(list(map(get_years,rec_dates)))))
+    dates={}
+    for y in years:
+        dates[y]={}
+        for m in range(1,13):
+            if str(y)+"-"+str(m).zfill(2) in rec_dates:
+                dates[y][m]=True
+            else:
+                dates[y][m]=False
+    if request.GET.get('start_date'):
+        search_form = SearchForm(request.GET)
+        start_date=request.GET.get('start_date')
+    if request.GET.get('end_date'):
+        search_form = SearchForm(request.GET)
+        end_date=request.GET.get('end_date')
+    comparse = GtdRecords.objects.filter(Q(record__recipient__edrpou__in=Competitors.objects.values_list('competitor_code',flat=True)) & \
+        Q(record__date__range=[start_date, end_date] ))\
+        .extra(where=["LEFT(product_code::text,8) IN (SELECT LEFT(gcodes,8) from tnved_group)"])\
+            .values('record__recipient__edrpou','record__recipient__name')\
+                .annotate(total_cost_eur=Sum((F('record__exchange__usd_nbu')/F('record__exchange__eur_nbu'))*F('cost_fact')),count=Count('cost_fact',distinct=True),total_cost=Sum('cost_fact')).order_by('-total_cost')
+                # ,total_cost_eur=Sum(F('cost_fact') * F('record__date__usd_nbu') / F('record__date__eur_nbu'), output_field=FloatField()
+    print(comparse.query)
+    total_sum=0
+    for c in comparse:
+        total_sum+=c['total_cost']
+    comparse2=comparse.annotate(percent=(F('total_cost')/total_sum)*100)
+
+    # pie chart variables
+    data=[]
+    labels=[]
+    for c in comparse2[:10]:
+        labels.append(c['record__recipient__name'])
+        data.append(round(c['percent'],1))
+    labels.append('Другие')
+    data.append(round(100-sum(data),1))
+    context = {
+        'dates': dates,
+        'labels': labels,
+        'data': data,
+        'comparse': comparse2,
+        'start_date':start_date,
+        'end_date':end_date,
+
+        }
+    return render(request,'ved/HRKReport.html',context)

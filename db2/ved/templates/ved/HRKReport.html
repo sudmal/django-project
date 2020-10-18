@@ -1,0 +1,111 @@
+{% extends 'main/base.html' %}
+{% load bold_in_quotes %}
+{% load cache %}
+
+{% block title %}
+ВЭД :: Структура рынка (по категориям)
+{% endblock title %}
+
+{% block DatePeriod %}
+    <form method="get" action={% url 'ved:HRKReport' %}>
+         {{ search_form.start_date }}
+        -
+        {{ search_form.end_date }}
+        <button type="submit" class="btn btn-info">Изменить</button>
+
+{% endblock DatePeriod %}
+
+{% block content %}
+{% cache 3600 HRKReport comparse.query %}
+
+<div class="container">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item">ВЭД</li>
+            <li class="breadcrumb-item active" aria-current="page">Структура рынка (по категориям) 
+  
+            <div class="center-block">
+                 <span class="blockquote text-center blockquote-footer">Отчет находится в разработке </span>
+              {% comment %}
+                <span class="blockquote text-center blockquote-footer">Отчет построен для списка конкурентов по заданному профилю товаров по курсу НБУ </span>
+                {% endcomment %}
+            </div>
+            </li>
+        </ol>
+   </nav> 
+</div>
+
+<div class="row">
+    <div class="d-flex align-items-center p-3 my-3 bg-light rounded shadow-sm container">
+        <div id="container" style="width: 75%;">
+            <canvas id="pie-chart" ></canvas>
+        </div>
+    </div>
+</div>
+
+<div class="container-fluid">
+    <table class="table">
+        <thead>
+            <tr>
+                <th>№</th>
+                <th>ЕДРПОУ</th>
+                <th>Наименование организации</th>
+                <th>Количество записей</th>
+                <th>Сумма, $</th>
+                <th>Сумма, €</th>
+                <th>Доля, %</th>
+            </tr>
+        </thead>
+        <tbody>
+
+        {% for firm in comparse %}
+            <tr>
+                <td>{{ forloop.counter }}</td>
+                <td scope="row">
+                    <a class="btn btn-primary font-weight-bold" href="{% url 'ved:IndividualReportFirmShow' firm.record__recipient__edrpou %}?start_date={{ start_date }}&end_date={{ end_date }}">{{ firm.record__recipient__edrpou | cut:' ' }}</a> 
+                </td>
+                <td>{% autoescape off %} {{ firm.record__recipient__name|bold_in_quotes }} {% endautoescape %}</td>
+                <td>{{ firm.count }}</td>
+                <td>{{ firm.total_cost|floatformat:"2" }}</td>
+                <td>{{ firm.total_cost_eur|floatformat:"2" }}</td>
+                <td style="width: 250px; ">
+                    <div class="progress" style="height: 20px;"">
+                        <div class="progress-bar  bg-info" role="progressbar" style="width: {{ firm.percent|floatformat:"0" }}%" aria-valuenow="{{ firm.percent|floatformat:"1" }}" aria-valuemin="0" aria-valuemax="100"><span class = "ml-3" style="color:black;position:absolute;">{{ firm.percent|floatformat:"1" }}%</span></div>
+                    </div>
+                </td>
+                
+            </tr>
+        {% endfor %}
+
+        </tbody>
+    </table>
+ </div>   
+{% include 'ved/periods.html' %}
+<script>
+    var config = {
+      type: 'pie',
+      data: {
+        datasets: [{
+        data: {{ data|safe }},
+        backgroundColor: ["#0074D9", "#FF4136", "#2ECC40", "#FF851B", "#7FDBFF", "#B10DC9", "#FFDC00", "#001f3f", "#39CCCC", "#01FF70", "#85144b", "#F012BE", "#3D9970", "#111111", "#AAAAAA"],
+        label: 'Firm'
+    }],
+        labels: {{ labels|safe }}
+    },
+    options: {
+        responsive: true
+    }
+};
+
+window.onload = function() {
+    var ctx = document.getElementById('pie-chart').getContext('2d');
+    window.myPie = new Chart(ctx, config);
+};
+
+
+
+
+</script>
+{% endcache %}
+{% endblock content %}
+
