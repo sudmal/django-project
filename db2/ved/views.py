@@ -347,6 +347,9 @@ def TrademarkReportRaw(request,trademark_name,edrpou_num):
 
 @login_required(login_url='login')
 def HRKReport(request):
+    report_percent=80
+    if request.GET.get('report_percent'):
+        report_percent=request.GET.get('report_percent')
     start_date=year+'-01-01'
     end_date=year+'-12-31'
     rec_dates = getRecDates()
@@ -366,18 +369,17 @@ def HRKReport(request):
     if request.GET.get('end_date'):
         search_form = SearchForm(request.GET)
         end_date=request.GET.get('end_date')
-    comparse = GtdRecords.objects.filter(Q(record__recipient__edrpou__in=Competitors.objects.values_list('competitor_code',flat=True)) & \
-        Q(record__date__range=[start_date, end_date] ))\
+    comparse = GtdRecords.objects.filter(Q(record__date__range=[start_date, end_date]) & Q(cost_fact__gt=0))\
         .extra(where=["LEFT(product_code::text,8) IN (SELECT LEFT(gcodes,8) from tnved_group)"])\
             .values('record__recipient__edrpou','record__recipient__name')\
-                .annotate(total_cost_eur=Sum((F('record__exchange__usd_nbu')/F('record__exchange__eur_nbu'))*F('cost_fact')),count=Count('cost_fact',distinct=True),total_cost=Sum('cost_fact')).order_by('-total_cost')
-                # ,total_cost_eur=Sum(F('cost_fact') * F('record__date__usd_nbu') / F('record__date__eur_nbu'), output_field=FloatField()
+                .annotate(total_cost_eur=Sum((F('record__exchange__usd_nbu')/F('record__exchange__eur_nbu'))*F('cost_fact')),\
+                    count=Count('cost_fact',distinct=True),total_cost=Sum('cost_fact')).order_by('-total_cost')
     print(comparse.query)
-    total_sum=0
+    total_sum=0.0
     for c in comparse:
         total_sum+=c['total_cost']
     comparse2=comparse.annotate(percent=(F('total_cost')/total_sum)*100)
-
+ 
     # pie chart variables
     data=[]
     labels=[]

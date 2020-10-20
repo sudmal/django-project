@@ -37,8 +37,9 @@
 
 <div class="row">
     <div class="d-flex align-items-center p-3 my-3 bg-light rounded shadow-sm container">
-        <div id="container" style="width: 75%;">
+        <div id="container" style="width: 50%;">
             <canvas id="pie-chart" ></canvas>
+            <canvas id="gr_chart" ></canvas>
         </div>
     </div>
 </div>
@@ -96,6 +97,11 @@
         responsive: true
     }
 };
+
+var GroupChart = new Chart(ctx, {
+    type: 'horizontalBar',
+    data: {{ gr_data|safe }},
+});
 
 window.onload = function() {
     var ctx = document.getElementById('pie-chart').getContext('2d');

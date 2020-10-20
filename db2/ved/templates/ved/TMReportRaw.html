@@ -9,7 +9,7 @@ TODO:
 
 
 {% block title %}
-{{ trademark_name }} ({{ firm.name }}) - ВЭД :: Поставщики :: Индивидуальный анализ :: Просмотр (подробный)
+{% autoescape off %}{{ trademark_name }} ({{ firm.name }}){% endautoescape %} - ВЭД :: Поставщики :: Индивидуальный анализ :: Просмотр (подробный)
 {% endblock title %}
 
 {% block content %}
@@ -21,7 +21,7 @@ TODO:
                 <li class="breadcrumb-item"><a href="{% url 'ved:index' %}">ВЭД</a></li>
                 <li class="breadcrumb-item"><a href="{% url 'ved:index' %}">Поставщики</a></li>
                 <li class="breadcrumb-item"><a href="{% url 'ved:TrademarkReportSearch' %}">Индивидульный анализ (Поиск)</a></li>
-                <li class="breadcrumb-item"><a href="{% url 'ved:TrademarkReportShow' trademark_name|urlencode:"" %}?start_date={{ start_date }}&end_date={{ end_date }}">Индивидульный анализ ({{ trademark_name }})</a></li>
+                <li class="breadcrumb-item"><a href="{% url 'ved:TrademarkReportShow' trademark_name|urlencode:"" %}?start_date={{ start_date }}&end_date={{ end_date }}">Индивидульный анализ ({% autoescape off %}{{ trademark_name }}{% endautoescape %})</a></li>
                 <li class="breadcrumb-item active" aria-current="page">{{ gtd }}</li>
              </ol>
         </nav> 

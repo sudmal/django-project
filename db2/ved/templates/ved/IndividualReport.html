@@ -74,7 +74,9 @@
                         
                         {% for tm in gr.tms %}
                             {% if forloop.counter <= 5  %}
-                                <div class="border border-secondary rounded p-1 bg-light font-weight-bold"><a href="{% url 'ved:TrademarkReportShow' tm|urlencode:"" %}?start_date={{ start_date }}&end_date={{ end_date }}">{{ tm }}</a></div>
+                                <div class="border border-secondary rounded p-1 bg-light font-weight-bold">
+                                    <a href="{% url 'ved:TrademarkReportShow' tm|urlencode:"" %}?start_date={{ start_date }}&end_date={{ end_date }}">{% autoescape off %}{{ tm }}{% endautoescape %}</a>
+                                </div>
                             {% endif %}
                         {% endfor %}
                         {% if  gr.tms_count > 5 %}
@@ -82,7 +84,7 @@
                         {% endif %}
                          
                         </td>
-                         <td>
+                        <td>
                             {{ gr.count }}
                         </td>
                         <td>
