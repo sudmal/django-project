@@ -36,14 +36,29 @@
 </div>
 
 <div class="row">
-    <div class="d-flex align-items-center p-3 my-3 bg-light rounded shadow-sm container">
-        <div id="container" style="width: 50%;">
-            <canvas id="pie-chart" ></canvas>
-            <canvas id="gr_chart" ></canvas>
+    <div class="col">
+        <div class="d-flex align-items-center p-3 my-3 bg-light rounded shadow-sm container">
+            <div id="container" style="width: 50%;">
+                <canvas id="pie-chart" ></canvas>
+            </div>
+        </div>
+    </div>
+    <div class="col">
+        <div class="d-flex align-items-center p-3 my-3 bg-light rounded shadow-sm container">
+            <div id="container" style="width: 50%;">
+                <canvas id="gr_chart" ></canvas>
+            </div>
         </div>
     </div>
 </div>
-
+<div class="row">
+    <div class="col-md-6"></div>
+    <div class="col-md-6">
+        <form method=GET action={% url 'ved:HRKReport' %}>
+            
+        </form>
+    </div>
+</div>
 <div class="container-fluid">
     <table class="table">
         <thead>
