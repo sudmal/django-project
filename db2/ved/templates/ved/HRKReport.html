@@ -16,7 +16,7 @@
 {% endblock DatePeriod %}
 
 {% block content %}
-{% cache 3600 HRKReport comparse.query %}
+{% cache 3 HRKReport comparse.query %}
 
 <div class="container">
     <nav aria-label="breadcrumb">
@@ -36,26 +36,20 @@
 </div>
 
 <div class="row">
-    <div class="col">
-        <div class="d-flex align-items-center p-3 my-3 bg-light rounded shadow-sm container">
-            <div id="container" style="width: 50%;">
-                <canvas id="pie-chart" ></canvas>
-            </div>
-        </div>
-    </div>
-    <div class="col">
-        <div class="d-flex align-items-center p-3 my-3 bg-light rounded shadow-sm container">
-            <div id="container" style="width: 50%;">
-                <canvas id="gr_chart" ></canvas>
-            </div>
-        </div>
-    </div>
+  <div class="col">
+        <canvas id="pie-chart"></canvas>
+  </div>
+  <div class="col">
+        <canvas id="gr_chart"></canvas>
+  </div>
 </div>
+
+
 <div class="row">
     <div class="col-md-6"></div>
     <div class="col-md-6">
         <form method=GET action={% url 'ved:HRKReport' %}>
-            
+
         </form>
     </div>
 </div>
@@ -98,8 +92,30 @@
  </div>   
 {% include 'ved/periods.html' %}
 <script>
-    var config = {
+var config_pie = {
       type: 'pie',
+      data: {
+        datasets: [{
+        data: {{ data|safe }},
+        backgroundColor: ["#0074D9", "#FF4136", "#2ECC40", "#FF851B", "#7FDBFF", "#B10DC9", "#FFDC00", "#001f3f", "#39CCCC", "#01FF70", "#85144b", "#F012BE", "#3D9970", "#111111", "#AAAAAA"],
+        label: 'Firm'
+    }],
+        labels: {{ labels|safe }}
+    },
+    options: {
+        responsive: true,
+        legend:
+            {
+                display: false,
+                labels:
+                {
+                    FontSize: 10
+                }
+            }
+    }
+};
+var config_bar = {
+      type: 'horizontalBar',
       data: {
         datasets: [{
         data: {{ data|safe }},
@@ -113,14 +129,13 @@
     }
 };
 
-var GroupChart = new Chart(ctx, {
-    type: 'horizontalBar',
-    data: {{ gr_data|safe }},
-});
+
 
 window.onload = function() {
-    var ctx = document.getElementById('pie-chart').getContext('2d');
-    window.myPie = new Chart(ctx, config);
+    var ctx1 = document.getElementById('pie-chart').getContext('2d');
+    window.myPie = new Chart(ctx1, config_pie);
+    var ctx2 = document.getElementById('gr_chart').getContext('2d');
+    window.myBar = new Chart(ctx2, config_bar);
 };
 
 

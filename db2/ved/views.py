@@ -350,6 +350,7 @@ def HRKReport(request):
     report_percent=80
     if request.GET.get('report_percent'):
         report_percent=request.GET.get('report_percent')
+    search_form=SearchForm()
     start_date=year+'-01-01'
     end_date=year+'-12-31'
     rec_dates = getRecDates()
@@ -393,8 +394,8 @@ def HRKReport(request):
         'labels': labels,
         'data': data,
         'comparse': comparse2,
+        'search_form': search_form,
         'start_date':start_date,
         'end_date':end_date,
-
         }
     return render(request,'ved/HRKReport.html',context)
