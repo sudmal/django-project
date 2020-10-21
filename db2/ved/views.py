@@ -371,30 +371,42 @@ def HRKReport(request):
         search_form = SearchForm(request.GET)
         end_date=request.GET.get('end_date')
     tnved_group=TnvedGroup.objects.all()
-    gnames=[]
-    gsumms=[]
+    gcodes_all=list(set(list(tnved_group.values_list('gcodes', flat=True))))
+    full_group_summ=GtdRecords.objects.filter(record__date__range=[start_date, end_date]).values('cost_fact')\
+            .extra(where=["LEFT(product_code::text,8) IN (\'"+("\',\'".join(gcodes_all))+"\')"]).aggregate(Sum('cost_fact'))
+    full_group_summ_n=full_group_summ['cost_fact__sum']
     gpercents=[]
+    glabels=[]
     for gid in list(set(list(tnved_group.values_list('id', flat=True)))):
         current_gcodes=TnvedGroup.objects.filter(id=gid).values('gcodes')
         gcodes=list(set(list(current_gcodes.values_list('gcodes', flat=True))))
- 
-        cur_group_summ=GtdRecords.objects.filter(Q(product_code__in=gcodes) & Q(record__date__range=[start_date, end_date])).values('cost_fact')
-        #.aggregate(sum=Sum('cost_fact'))
-        print(cur_group_summ.query)
-    #tnved_gcodes=TnvedGroup.objects.order_by().values('gcodes').distinct()
-    #tnved_gnames=TnvedGroup.objects.order_by().values('gname').distinct()
-    #print(list(tnved_gcodes))
+        cur_gname=TnvedGroup.objects.filter(id=gid).distinct()
+        cur_group_summ=GtdRecords.objects.filter(record__date__range=[start_date, end_date]).values('cost_fact')\
+            .extra(where=["LEFT(product_code::text,8) IN (\'"+("\',\'".join(gcodes))+"\')"]).aggregate(Sum('cost_fact'))
+        percent=round((cur_group_summ['cost_fact__sum']/full_group_summ_n)*100,0)
+        gpercents.append(int(percent))
+        glabels.append(str(cur_gname.values_list('gname',flat=True)[0]))
     comparse = GtdRecords.objects.filter(Q(record__date__range=[start_date, end_date]) & Q(cost_fact__gt=0))\
         .extra(where=["LEFT(product_code::text,8) IN (SELECT LEFT(gcodes,8) from tnved_group)"])\
             .values('record__recipient__edrpou','record__recipient__name')\
                 .annotate(total_cost_eur=Sum((F('record__exchange__usd_nbu')/F('record__exchange__eur_nbu'))*F('cost_fact')),\
                     count=Count('cost_fact',distinct=True),total_cost=Sum('cost_fact')).order_by('-total_cost')
-    print(comparse.query)
+    
     total_sum=0.0
+    num_to_show=0
+    percents_sum=0.0
     for c in comparse:
         total_sum+=c['total_cost']
-    comparse2=comparse.annotate(percent=(F('total_cost')/total_sum)*100)
- 
+    for c in comparse:
+        if percents_sum < total_sum*float(report_percent)/100:
+            percents_sum+= c['total_cost']
+            num_to_show+=1
+    print(total_sum)
+    print(num_to_show)
+    print(percents_sum)
+    comparse2=comparse.annotate(percent=(F('total_cost')/total_sum)*100)[:num_to_show]
+
+
     # pie chart variables
     data=[]
     labels=[]
@@ -411,5 +423,9 @@ def HRKReport(request):
         'search_form': search_form,
         'start_date':start_date,
         'end_date':end_date,
+        'gpercents':gpercents,
+        'glabels':glabels,
+        'report_percent':report_percent,
+        'num_to_show':num_to_show,
         }
     return render(request,'ved/HRKReport.html',context)

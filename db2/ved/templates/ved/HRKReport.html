@@ -36,22 +36,38 @@
 </div>
 
 <div class="row">
-  <div class="col">
+  <div class="col-md-6">
+        <p class="text-center">Топ-10 организаций</p>
+  </div>
+  <div class="col-md-6">
+        <p class="text-center">Структура рынка</p>
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-6">
         <canvas id="pie-chart"></canvas>
   </div>
-  <div class="col">
+  <div class="col-md-6">
         <canvas id="gr_chart"></canvas>
   </div>
 </div>
-
-
 <div class="row">
     <div class="col-md-6"></div>
-    <div class="col-md-6">
+    
+    <div class="col-md-4">
         <form method=GET action={% url 'ved:HRKReport' %}>
-
+            <div class="form-group form-inline">
+              <label for=""></label>
+              <input type="number" min=1 max=100
+                class="form-control" name="report_percent" value={{ report_percent }} id="" aria-describedby="helpId" placeholder="">
+                <button type="submit" class="btn btn-secondary">Изменить</button>
+              <small id="helpId" class="form-text text-muted">Задайте процент формирования профиля рынка</small>
+              
+            </div>
         </form>
     </div>
+    <div class="col-md-2"></div>
+
 </div>
 <div class="container-fluid">
     <table class="table">
@@ -98,7 +114,7 @@ var config_pie = {
         datasets: [{
         data: {{ data|safe }},
         backgroundColor: ["#0074D9", "#FF4136", "#2ECC40", "#FF851B", "#7FDBFF", "#B10DC9", "#FFDC00", "#001f3f", "#39CCCC", "#01FF70", "#85144b", "#F012BE", "#3D9970", "#111111", "#AAAAAA"],
-        label: 'Firm'
+        label: 'Организации'
     }],
         labels: {{ labels|safe }}
     },
@@ -114,21 +130,17 @@ var config_pie = {
             }
     }
 };
-var config_bar = {
-      type: 'horizontalBar',
-      data: {
-        datasets: [{
-        data: {{ data|safe }},
-        backgroundColor: ["#0074D9", "#FF4136", "#2ECC40", "#FF851B", "#7FDBFF", "#B10DC9", "#FFDC00", "#001f3f", "#39CCCC", "#01FF70", "#85144b", "#F012BE", "#3D9970", "#111111", "#AAAAAA"],
-        label: 'Firm'
-    }],
-        labels: {{ labels|safe }}
-    },
-    options: {
-        responsive: true
-    }
-};
 
+var config_bar = {
+    type: 'doughnut',
+    data: {
+        datasets: [{
+            data: {{ gpercents|safe }},
+            backgroundColor: ["#B10DC9", "#FFDC00", "#001f3f", "#39CCCC", "#01FF70", "#85144b", "#F012BE", "#3D9970"],
+        }],
+        labels: {{ glabels|safe }}
+    },
+ };   
 
 
 window.onload = function() {
