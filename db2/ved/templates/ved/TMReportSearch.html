@@ -6,6 +6,15 @@
 ВЭД :: Конкуренты :: Индивидуальный анализ
 {% endblock title %}
 
+
+{% block js-before %}
+<style>
+  .ui-autocomplete-loading {
+    background: white url("{% static 'ui-anim_basic_16x16.gif' %}") right center no-repeat;
+  }
+</style>
+{% endblock js-before %}
+
 {% block DatePeriod %}
     <form method="get" class="form-inline" action={% url 'ved:TrademarkReportSearch'  %}>
         {{ search_form.start_date }}
@@ -86,8 +95,19 @@
 {% endif %}
 
 {% include 'ved/periods.html' %}
+
+
+
 {% endblock content %}
 
 {% block js %}
+<script>
+    $(function () {
+        $("#tm_search").autocomplete({
+            source: '{% url 'ved:autocomplete_tm' %}',
+            minLength: 3
+        });
+    });
+</script>
 {% endblock js %}
 

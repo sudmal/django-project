@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.urls import reverse
 from urllib.parse import unquote
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
@@ -19,6 +19,25 @@ year = str((datetime.date.today() - datetime.timedelta(days=59)).year)
 
 def logUserData(request):
     print(request.META['REMOTE_ADDR'])
+
+def autocomplete_tm(request):
+    titles = list()
+    if 'term' in request.GET:
+        found_trademarks = GtdRecords.objects.filter(trademark__name__icontains=request.GET.get('term')).values('trademark__name').annotate(sum=Sum('cost_fact')).distinct().order_by('-sum')[:10]
+        for tm in found_trademarks:
+            titles.append(tm['trademark__name'])
+    if len(titles)==0:
+        titles.append("Ничего не найдено")
+    return JsonResponse(titles, safe=False)
+
+def autocomplete_tm_tmp(request):
+    titles = list()
+    if 'term' in request.GET:
+        found_trademarks = Trademark.objects.filter(name__icontains=request.GET.get('term'))
+        for tm in found_trademarks:
+            if len(tm.name)<50:
+                titles.append(tm.name)
+    return JsonResponse(titles, safe=False)
 
 def getRecDates():
     rec_dates = Records.objects.distinct('date__month').values('date')

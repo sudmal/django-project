@@ -8,6 +8,7 @@
 <meta name="Description" content="Enter your description here"/>
 <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
 <link rel="stylesheet" href="{% static 'css/all.min.css' %}">
+<link rel="stylesheet" href="{% static 'css/jquery-ui.css' %}">
 <link rel="stylesheet" href="css/style.css">
 <link rel="shortcut icon" type="image/png" href="{% static 'favicon.ico' %}"/>
 <style type="text/css">
@@ -23,6 +24,8 @@ body
 $breadcrumb-divider: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI4IiBoZWlnaHQ9IjgiPjxwYXRoIGQ9Ik0yLjUgMEwxIDEuNSAzLjUgNCAxIDYuNSAyLjUgOGw0LTQtNC00eiIgZmlsbD0iY3VycmVudENvbG9yIi8+PC9zdmc+);
 </style>
 <title >{% block title %}}{% endblock title %}</title>
+{% block js-before %}
+{% endblock js-before %}
 </head>
 <body>
 <nav class="navbar navbar-expand-lg navbar-light bg-light" style="z-index:99; box-shadow: 0 0 10px rgba(0,0,0,0.5);">
@@ -102,9 +105,9 @@ $breadcrumb-divider: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3d
 </div>
 
 <script src="{% static 'js/Chart.min.js' %}"></script>
-<script src="{% static 'js/jquery.slim.min.js' %}"></script>
-<script src="{% static 'js/popper.min.js' %}"></script>
+<script src="{% static 'js/jquery.min.js' %}"></script>
 <script src="{% static 'js/bootstrap.min.js' %}"></script>
+<script src="{% static 'js/jquery-ui.js' %}"></script>
 {% block js %}
 {% endblock js %}
 </body>

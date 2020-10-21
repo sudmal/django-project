@@ -5,6 +5,7 @@ from . import views
 app_name="ved"
 urlpatterns = [
     path('', views.index, name = 'index'),
+    path('ajax-tm/', views.autocomplete_tm, name='autocomplete_tm'),
     path('test/', views.test, name = 'test'),
     path('CompetitorsComparse/', views.CompetitorsComparse, name = 'CompetitorsComparse'),
     path('IndividualReport/', views.IndividualReport, name = 'IndividualReport'),
