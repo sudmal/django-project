@@ -8,11 +8,19 @@
 ВЭД :: Конкуренты :: Индивидуальный анализ
 {% endblock title %}
 
+{% block js-before %}
+<style>
+  .ui-autocomplete-loading {
+    background: white url("{% static 'ui-anim_basic_16x16.gif' %}") right center no-repeat;
+  }
+</style>
+{% endblock js-before %}
+
 {% block DatePeriod %}
     <form method="get" class="form-inline" action={% url 'ved:IndividualReport' %}>
-         {{ search_form.start_date }}
+         {{ search_form_org.start_date }}
         -
-        {{ search_form.end_date }}
+        {{ search_form_org.end_date }}
         <button type="submit" class="btn btn-info">Изменить</button>
 
 {% endblock DatePeriod %}
@@ -32,7 +40,7 @@
 
     <div class="col-md-4">
         <div class="form-group form-inline">
-        {{ search_form.search_string }} <button type="submit" class="btn btn-primary" style="display: inline">Поиск</button>
+        {{ search_form_org.search_string }} <button type="submit" class="btn btn-primary" style="display: inline">Поиск</button>
         </div>
     </div>
     <div class="col-md-4">
@@ -147,5 +155,13 @@
 {% endblock content %}
 
 {% block js %}
+<script>
+    $(function () {
+        $("#org_search").autocomplete({
+            source: '{% url 'ved:autocomplete_org' %}',
+            minLength: 3
+        });
+    });
+</script>
 {% endblock js %}
 

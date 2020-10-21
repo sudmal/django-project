@@ -7,7 +7,7 @@ from django.contrib.auth.decorators import login_required
 from django.views.decorators.cache import cache_page
 from .models import Competitors
 from .models import Organisation,GtdRecords,Records,Trademark,Sender,Country,TnvedGroup,Exchange
-from .forms import SearchForm
+from .forms import SearchForm,SearchFormOrg
 from django.db.models import Count, Sum, Q, Avg, Subquery, OuterRef, F, FloatField
 import datetime
 
@@ -23,20 +23,23 @@ def logUserData(request):
 def autocomplete_tm(request):
     titles = list()
     if 'term' in request.GET:
-        found_trademarks = GtdRecords.objects.filter(trademark__name__icontains=request.GET.get('term')).values('trademark__name').annotate(sum=Sum('cost_fact')).distinct().order_by('-sum')[:10]
+        found_trademarks = GtdRecords.objects.filter(trademark__name__icontains=request.GET.get('term'))\
+            .values('trademark__name').annotate(sum=Sum('cost_fact')).distinct().order_by('-sum')[:10]
         for tm in found_trademarks:
             titles.append(tm['trademark__name'])
     if len(titles)==0:
         titles.append("Ничего не найдено")
     return JsonResponse(titles, safe=False)
 
-def autocomplete_tm_tmp(request):
+def autocomplete_org(request):
     titles = list()
     if 'term' in request.GET:
-        found_trademarks = Trademark.objects.filter(name__icontains=request.GET.get('term'))
+        found_trademarks = GtdRecords.objects.filter(Q(record__recipient__name__icontains=request.GET.get('term')) | Q(record__recipient__edrpou__startswith=request.GET.get('term')) )\
+            .values('record__recipient__name').annotate(sum=Sum('cost_fact')).distinct().order_by('-sum')[:10]
         for tm in found_trademarks:
-            if len(tm.name)<50:
-                titles.append(tm.name)
+            titles.append(tm['record__recipient__name'])
+    if len(titles)==0:
+        titles.append("Ничего не найдено")
     return JsonResponse(titles, safe=False)
 
 def getRecDates():
@@ -131,7 +134,7 @@ def IndividualReport(request):
     context=dict()
     start_date=year+'-01-01'
     end_date=year+'-12-31'
-    search_form = SearchForm()
+    search_form_org = SearchFormOrg()
     rec_dates = getRecDates()
     get_years=lambda x: str(x)[:4]
     years=(list(set(list(map(get_years,rec_dates)))))
@@ -144,13 +147,13 @@ def IndividualReport(request):
             else:
                 dates[y][m]=False
     if request.GET.get('start_date'):
-        search_form = SearchForm(request.GET)
+        search_form_org = SearchFormOrg(request.GET)
         start_date=request.GET.get('start_date')
     if request.GET.get('end_date'):
-        search_form = SearchForm(request.GET)
+        search_form_org = SearchFormOrg(request.GET)
         end_date=request.GET.get('end_date')
     if request.GET.get('search_string'):
-        search_form = SearchForm(request.GET)
+        search_form_org = SearchFormOrg(request.GET)
         grecords_all = GtdRecords.objects.filter((Q(record__recipient__edrpou__startswith=request.GET.get('search_string')) | \
              Q(record__recipient__name__icontains=request.GET.get('search_string'))) & Q(record__date__range=[start_date, end_date]))\
                 .values('record__recipient__edrpou','record__recipient__name','record__recipient__is_competitor')\
@@ -173,7 +176,7 @@ def IndividualReport(request):
             "end_date": request.GET.get('end_date'),
         }
     ## ADD CONTEXT VARIABLES HERE 
-    context.update({"search_form": search_form})
+    context.update({"search_form_org": search_form_org})
     context.update({'dates': dates})
     return render(request,'ved/IndividualReport.html',context)
 
