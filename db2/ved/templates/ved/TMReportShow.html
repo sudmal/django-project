@@ -35,27 +35,27 @@
         <tbody>
         {% for row in queryset_list %}
             <tr>
-                <td scope="row">
+                <td scope="row" {% if row.record__recipient__edrpou in competitors %} style="background-color: #F0E68C;" {% endif %}>
                      {{ forloop.counter }}
                 </td>
-                <td>
+                <td {% if row.record__recipient__edrpou in competitors %} style="background-color: #F0E68C;" {% endif %}>
                    <a class="btn btn-primary font-weight-bold" href="{% url 'ved:TrademarkReportRaw' trademark_name|urlencode:"" row.record__recipient__edrpou %}?start_date={{ start_date }}&end_date={{ end_date }}"> {{ row.record__recipient__edrpou| cut:' ' }}</a>
                 </td>
-                <td>
+                <td {% if row.record__recipient__edrpou in competitors %} style="background-color: #F0E68C;" {% endif %}>
                     {% autoescape off %}
                     {{ row.record__recipient__name|bold_in_quotes }}
                     {% endautoescape %}
                 </td>
-                <td>
+                <td {% if row.record__recipient__edrpou in competitors %} style="background-color: #F0E68C;" {% endif %}>
                     {{ row.count }} 
                 </td>
-                <td>
+                <td {% if row.record__recipient__edrpou in competitors %} style="background-color: #F0E68C;" {% endif %}>
                     {{ row.total_cost }} 
                 </td>
-                <td>
+                <td {% if row.record__recipient__edrpou in competitors %} style="background-color: #F0E68C;" {% endif %}>
                     {{ row.total_cost_eur|floatformat:2 }} 
                 </td>
-                <td>
+                <td {% if row.record__recipient__edrpou in competitors %} style="background-color: #F0E68C;" {% endif %}>
                 </td>
             </tr>
         {% endfor %}

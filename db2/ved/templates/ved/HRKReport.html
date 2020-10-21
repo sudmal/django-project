@@ -16,7 +16,7 @@
 {% endblock DatePeriod %}
 
 {% block content %}
-{% cache 3600 HRKReport comparse.query %}
+{% cache 3 HRKReport comparse.query %}
 
 <div class="container">
     <nav aria-label="breadcrumb">
@@ -51,8 +51,10 @@
         <canvas id="gr_chart"></canvas>
   </div>
 </div>
-<div class="row">
-    <div class="col-md-6"></div>
+<div class="row mt-3">
+    <div class="col-md-6">
+        Объем выбранного профиля рынка равен <span class="font-weight-bold">{{ percents_sum|floatformat:0 }}$</span>
+    </div>
     
     <div class="col-md-4">
         <form method=GET action={% url 'ved:HRKReport' %}>
@@ -62,7 +64,6 @@
                 class="form-control" name="report_percent" value={{ report_percent }} id="" aria-describedby="helpId" placeholder="">
                 <button type="submit" class="btn btn-secondary">Изменить</button>
               <small id="helpId" class="form-text text-muted">Задайте процент формирования профиля рынка</small>
-              
             </div>
         </form>
     </div>
@@ -86,15 +87,17 @@
 
         {% for firm in comparse %}
             <tr>
-                <td>{{ forloop.counter }}</td>
-                <td scope="row">
+                <td {% if firm.record__recipient__edrpou in competitors %} style="background-color: #F0E68C;" {% endif %}>{{ forloop.counter }}</td>
+                <td scope="row" {% if firm.record__recipient__edrpou in competitors %} style="background-color: #F0E68C;" {% endif %}>
                     <a class="btn btn-primary font-weight-bold" href="{% url 'ved:IndividualReportFirmShow' firm.record__recipient__edrpou %}?start_date={{ start_date }}&end_date={{ end_date }}">{{ firm.record__recipient__edrpou | cut:' ' }}</a> 
                 </td>
-                <td>{% autoescape off %} {{ firm.record__recipient__name|bold_in_quotes }} {% endautoescape %}</td>
-                <td>{{ firm.count }}</td>
-                <td>{{ firm.total_cost|floatformat:"2" }}</td>
-                <td>{{ firm.total_cost_eur|floatformat:"2" }}</td>
-                <td style="width: 250px; ">
+                <td {% if firm.record__recipient__edrpou in competitors %} style="background-color: #F0E68C;" {% endif %}>
+                    {% autoescape off %} {{ firm.record__recipient__name|bold_in_quotes }} {% endautoescape %}
+                </td>
+                <td {% if firm.record__recipient__edrpou in competitors %} style="background-color: #F0E68C;" {% endif %}>{{ firm.count }}</td>
+                <td {% if firm.record__recipient__edrpou in competitors %} style="background-color: #F0E68C;" {% endif %}>{{ firm.total_cost|floatformat:"2" }}</td>
+                <td {% if firm.record__recipient__edrpou in competitors %} style="background-color: #F0E68C;" {% endif %}>{{ firm.total_cost_eur|floatformat:"2" }}</td>
+                <td style="width: 250px;" {% if firm.record__recipient__edrpou in competitors %} style="background-color: #F0E68C;" {% endif %}>
                     <div class="progress" style="height: 20px;"">
                         <div class="progress-bar  bg-info" role="progressbar" style="width: {{ firm.percent|floatformat:"0" }}%" aria-valuenow="{{ firm.percent|floatformat:"1" }}" aria-valuemin="0" aria-valuemax="100"><span class = "ml-3" style="color:black;position:absolute;">{{ firm.percent|floatformat:"1" }}%</span></div>
                     </div>

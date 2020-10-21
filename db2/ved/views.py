@@ -61,7 +61,6 @@ def CompetitorsComparse(request):
             .values('record__recipient__edrpou','record__recipient__name')\
                 .annotate(total_cost_eur=Sum((F('record__exchange__usd_nbu')/F('record__exchange__eur_nbu'))*F('cost_fact')),count=Count('cost_fact',distinct=True),total_cost=Sum('cost_fact')).order_by('-total_cost')
                 # ,total_cost_eur=Sum(F('cost_fact') * F('record__date__usd_nbu') / F('record__date__eur_nbu'), output_field=FloatField()
-    print(comparse.query)
     total_sum=0
     for c in comparse:
         total_sum+=c['total_cost']
@@ -139,7 +138,6 @@ def IndividualReport(request):
                  .annotate(count=Count("cost_fact"),total_cost=Sum('cost_fact'),total_cost_eur=Sum((F('record__exchange__usd_nbu')/F('record__exchange__eur_nbu'))*F('cost_fact')), tms_count=Count('trademark__name',distinct=True),\
                      tms=ArrayAgg('trademark__name', distinct=True)).order_by('-total_cost')
 
-        print(grecords_all.query)
         paginator = Paginator(grecords_all, 10)
         page_number = request.GET.get('page')
         try:
@@ -243,7 +241,6 @@ def IndividualReportRaw(request,edrpou_num,gtd_num):
 
 @login_required(login_url='login')
 def TrademarkReportSearch(request):
-    print('###################TM###################')
     context=dict()
     start_date=year+'-01-01'
     end_date=year+'-12-31'
@@ -269,7 +266,6 @@ def TrademarkReportSearch(request):
         search_form = SearchForm(request.GET)
         grecords_all = GtdRecords.objects.filter((Q(trademark__name__icontains=request.GET.get('search_string')) & Q(record__date__range=[start_date, end_date])))\
            .values('trademark__name').annotate(count=Count("product_code"),total_cost=Sum('cost_fact')).order_by('-total_cost')
-        print(grecords_all.query)
         context = {
                 'grecords_all': grecords_all,
                 'search_form': search_form,
@@ -278,7 +274,6 @@ def TrademarkReportSearch(request):
         }
     context.update({"search_form": search_form})
     context.update({'dates': dates})
-    print(list(context))
     return render(request,'ved/TMReportSearch.html',context)
 
 def TrademarkReportShow(request,trademark_name):
@@ -309,7 +304,8 @@ def TrademarkReportShow(request,trademark_name):
            .values('record__recipient__edrpou','record__recipient__name').annotate(count=Count("cost_fact"),total_cost=Sum('cost_fact'),\
                total_cost_eur=Sum((F('record__exchange__usd_nbu')/F('record__exchange__eur_nbu'))*F('cost_fact'))).order_by('-total_cost')
         context.update({'queryset_list':queryset_list})
-    print("test")
+    competitors=list(Competitors.objects.values_list('competitor_code',flat=True))
+    context.update({'competitors':competitors})
     return render(request,'ved/TMReportShow.html',context)
 
 def TrademarkReportRaw(request,trademark_name,edrpou_num):
@@ -401,11 +397,7 @@ def HRKReport(request):
         if percents_sum < total_sum*float(report_percent)/100:
             percents_sum+= c['total_cost']
             num_to_show+=1
-    print(total_sum)
-    print(num_to_show)
-    print(percents_sum)
     comparse2=comparse.annotate(percent=(F('total_cost')/total_sum)*100)[:num_to_show]
-
 
     # pie chart variables
     data=[]
@@ -415,7 +407,10 @@ def HRKReport(request):
         data.append(round(c['percent'],1))
     labels.append('Другие')
     data.append(round(100-sum(data),1))
+    competitors=list(Competitors.objects.values_list('competitor_code',flat=True))
     context = {
+        'total_sum': total_sum,
+        'percents_sum': percents_sum,
         'dates': dates,
         'labels': labels,
         'data': data,
@@ -427,5 +422,6 @@ def HRKReport(request):
         'glabels':glabels,
         'report_percent':report_percent,
         'num_to_show':num_to_show,
+        'competitors':competitors,
         }
     return render(request,'ved/HRKReport.html',context)
