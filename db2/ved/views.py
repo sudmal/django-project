@@ -370,6 +370,20 @@ def HRKReport(request):
     if request.GET.get('end_date'):
         search_form = SearchForm(request.GET)
         end_date=request.GET.get('end_date')
+    tnved_group=TnvedGroup.objects.all()
+    gnames=[]
+    gsumms=[]
+    gpercents=[]
+    for gid in list(set(list(tnved_group.values_list('id', flat=True)))):
+        current_gcodes=TnvedGroup.objects.filter(id=gid).values('gcodes')
+        gcodes=list(set(list(current_gcodes.values_list('gcodes', flat=True))))
+ 
+        cur_group_summ=GtdRecords.objects.filter(Q(product_code__in=gcodes) & Q(record__date__range=[start_date, end_date])).values('cost_fact')
+        #.aggregate(sum=Sum('cost_fact'))
+        print(cur_group_summ.query)
+    #tnved_gcodes=TnvedGroup.objects.order_by().values('gcodes').distinct()
+    #tnved_gnames=TnvedGroup.objects.order_by().values('gname').distinct()
+    #print(list(tnved_gcodes))
     comparse = GtdRecords.objects.filter(Q(record__date__range=[start_date, end_date]) & Q(cost_fact__gt=0))\
         .extra(where=["LEFT(product_code::text,8) IN (SELECT LEFT(gcodes,8) from tnved_group)"])\
             .values('record__recipient__edrpou','record__recipient__name')\
