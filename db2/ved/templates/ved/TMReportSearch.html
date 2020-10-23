@@ -36,21 +36,26 @@
    </nav> 
 </div>
 <div class="container">
-
-    <div class="col-md-4">
-        <div class="form-group form-inline">
-        {{ search_form.search_string }} <button type="submit" class="btn btn-primary" style="display: inline">Поиск</button>
+    <div class="row">
+        <div class="col">
+            <div class="input-group mb-3">
+                {{ search_form.search_string }} 
+                <div class="input-group-append">
+                    <button type="submit" class="btn btn-outline-secondary"">Поиск</button>
+                </div>
+            </div>    
+        </div>
+        <div class="col">
+            
         </div>
     </div>
-    <div class="col-md-4">
-        
-    </div>
     </form>
+</div>
 
 {% if grecords_all %}
 
 
-</div>
+
 <div class="container-fluid">
     <table class="table table-striped border border-secondary">
         <thead>

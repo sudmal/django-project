@@ -178,6 +178,7 @@ def IndividualReport(request):
     ## ADD CONTEXT VARIABLES HERE 
     context.update({"search_form_org": search_form_org})
     context.update({'dates': dates})
+    context.update({'request':request})
     return render(request,'ved/IndividualReport.html',context)
 
 @login_required(login_url='login')
@@ -246,7 +247,7 @@ def IndividualReportRaw(request,edrpou_num,gtd_num):
     firm=Organisation.objects.get(edrpou = edrpou_num)
     queryset_list = GtdRecords.objects.filter((Q(record__recipient__edrpou=edrpou_num) & Q(record__gtd_name=gtd)))\
             .values('record__sender__name','record__sender__country__name','record__date','product_code','trademark__name','description','cost_fact')\
-                .annotate(cost_eur=Sum((F('record__exchange__usd_nbu')/F('record__exchange__eur_nbu'))*F('cost_fact')),).order_by('record__date')
+                .annotate(total_cost_eur=Sum((F('record__exchange__usd_nbu')/F('record__exchange__eur_nbu'))*F('cost_fact'))).order_by('record__date')
     paginator = Paginator(queryset_list, 10)
     page_number = request.GET.get('page')
     records = paginator.get_page(page_number)
@@ -287,7 +288,8 @@ def TrademarkReportSearch(request):
     if request.GET.get('search_string'):
         search_form = SearchForm(request.GET)
         grecords_all = GtdRecords.objects.filter((Q(trademark__name__icontains=request.GET.get('search_string')) & Q(record__date__range=[start_date, end_date])))\
-           .values('trademark__name').annotate(count=Count("product_code"),total_cost=Sum('cost_fact')).order_by('-total_cost')
+           .values('trademark__name').annotate(count=Count("product_code"),total_cost=Sum('cost_fact'),\
+               total_cost_eur=Sum((F('record__exchange__usd_nbu')/F('record__exchange__eur_nbu'))*F('cost_fact'))).order_by('-total_cost')
         context = {
                 'grecords_all': grecords_all,
                 'search_form': search_form,
