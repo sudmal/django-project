@@ -52,8 +52,9 @@
 </div>
 </form>
 </div>
+
 {% if request.GET.search_string|length > 0 %}
-    {% if grecords.object_list %}
+{% if grecords.object_list %}
 <div class="container">
     <div class="table-responsive">
 
@@ -142,11 +143,11 @@
                 {% endif %}
             </ul>
         </nav>  
-        {% else %}
+{% else %}
         <div class='container  warning'>
             Извините, по данному запросу ничего не найдено
         </div>
-        {% endif %}
+{% endif %}
 
  </div>
 {% endif %}

@@ -330,6 +330,7 @@ def TrademarkReportShow(request,trademark_name):
         context.update({'queryset_list':queryset_list})
     competitors=list(Competitors.objects.values_list('competitor_code',flat=True))
     context.update({'competitors':competitors})
+    context.update({'request':request})
     return render(request,'ved/TMReportShow.html',context)
 
 def TrademarkReportRaw(request,trademark_name,edrpou_num):

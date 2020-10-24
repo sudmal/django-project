@@ -52,7 +52,8 @@
     </form>
 </div>
 
-{% if grecords_all %}
+{% if request.GET.search_string|length > 0 %}
+    {% if grecords_all %}
 
 
 
@@ -94,6 +95,7 @@
 <div class='warning'>
     Извините, по данному запросу ничего не найдено
 </div>
+{% endif %}
 
 
  </div>
