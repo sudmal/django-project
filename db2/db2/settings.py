@@ -114,6 +114,9 @@ CACHES = {
     "default": {
         "BACKEND": "django.core.cache.backends.db.DatabaseCache",
         "LOCATION": "app_cache",
+        'OPTIONS': {
+            'PICKLE_VERSION': 4,
+        },
     }
 }
 
