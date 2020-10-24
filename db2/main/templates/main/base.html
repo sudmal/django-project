@@ -21,6 +21,7 @@
 </head>
 <body>
 
+
 <nav class="navbar  fixed-top navbar-expand-lg navbar-light bg-light" style="z-index:99; box-shadow: 0 0 10px rgba(0,0,0,0.5);">
   <a class="navbar-brand" href="{% url 'home' %}"><img src="{% static 'favicon-32x32.png' %}"></a>
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
@@ -40,6 +41,7 @@
             <a class="dropdown-item dropdown-toggle" href="#">Конкуренты</a>
             <ul class="dropdown-menu">
               <li><a class="dropdown-item" href="{% url 'ved:IndividualReport' %}">Индивидуальный анализ</a></li>
+              <div class="dropdown-divider"></div>
               <li><a class="dropdown-item" href="{% url 'ved:CompetitorsComparse' %}">Сравнительный анализ</a></li>
             </ul>
           </li>
@@ -75,7 +77,9 @@
             <a class="dropdown-item dropdown-toggle" href="#">Продажи</a>
             <ul class="dropdown-menu">
               <li><a class="dropdown-item" href="#">Индивидуальный анализ</a></li>
+              <div class="dropdown-divider"></div>
               <li><a class="dropdown-item" href="#">Сравнительный анализ</a></li>
+              <div class="dropdown-divider"></div>
               <li><a class="dropdown-item" href="#">Поиск товара по запросу</a></li>
             </ul>
           </li>
@@ -84,6 +88,7 @@
             <a class="dropdown-item dropdown-toggle" href="#">Анализ Клиентов конкурентов</a>
             <ul class="dropdown-menu">
               <li><a class="dropdown-item" href="#">Индивидуальный анализ</a></li>
+              <div class="dropdown-divider"></div>
               <li><a class="dropdown-item" href="#">Сравнительный анализ</a></li>
             </ul>
           </li>
@@ -109,9 +114,11 @@
     <div class="my-2 my-lg-0 ">
      <nav class="input-group date" data-provide="datepicker">
       <div class="input-group input-daterange mr-5">
+      {% block period_button %}
       <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#periodsModal">
         Доступные периоды
       </button>
+      {% endblock period_button %}
           {% block DatePeriod %}
           {% endblock DatePeriod %}
       </div>
@@ -138,6 +145,7 @@
   </div>
 </nav>
 <script>
+
 $('.dropdown-menu a.dropdown-toggle').on('click', function(e) {
   if (!$(this).next().hasClass('show')) {
     $(this).parents('.dropdown-menu').first().find('.show').removeClass('show');
@@ -170,7 +178,7 @@ $('.dropdown-menu a.dropdown-toggle').on('mouseover', function(e) {
 });
 </script>
 
-<div class="container p-3">
+<div class="container p-3" >
     {% block content %}
     {% endblock content %}
 </div>
@@ -178,5 +186,6 @@ $('.dropdown-menu a.dropdown-toggle').on('mouseover', function(e) {
 
 {% block js %}
 {% endblock js %}
+
 </body>
 </html>

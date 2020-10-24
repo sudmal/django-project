@@ -1,8 +1,24 @@
+
 body 
 { 
   background: #F5F4EB !important; 
+  padding-top: 80px;
 }
-
+@media (min-width: 640px) {
+  body {
+    padding-top: 150px;
+ }
+}
+@media (min-width: 900px) {
+  body {
+    padding-top: 120px;
+ }
+}
+@media (min-width: 1280px) {
+  body {
+    padding-top: 90px;
+ }
+}
 .date-inline-select {
     width: auto;
     display: inline-block;
@@ -58,4 +74,5 @@ input[type="color"]:focus,
   margin-left: .1rem;
   margin-right: .1rem;
 }
+
 
