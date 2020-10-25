@@ -7,7 +7,7 @@
 {% endblock title %}
 
 {% block content %}
-{% cache 300 IndividualReportShow request.get_full_path %}
+{% cache 3600 IndividualReportShow request.get_full_path %}
 
         <div class="container m-2">
             <nav aria-label="breadcrumb">

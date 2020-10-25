@@ -14,7 +14,7 @@ TODO:
 
 {% block content %}
 
-{% cache 300 IndividualReportRaw request.get_full_path %}
+{% cache 3600 IndividualReportRaw request.get_full_path %}
     <div class="container m-2">
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
