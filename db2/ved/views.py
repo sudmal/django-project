@@ -450,3 +450,14 @@ def HRKReport(request):
         'competitors':competitors,
         }
     return render(request,'ved/HRKReport.html',context)
+
+def CompetitorsCatalog(request):
+    start_date=year+'-01-01'
+    end_date=year+'-12-31'
+    competitors=GtdRecords.objects.filter(record__recipient__edrpou__in=Competitors.objects.all().values('competitor_code')).annotate(total_cost=Sum('cost_fact')).order_by('-total_cost')
+    context={
+        'competitors':competitors,
+        'start_date':start_date,
+        'end_date':end_date,
+        }
+    return render(request,'ved/CompetitorsCatalog.html',context)
