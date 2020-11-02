@@ -34,7 +34,7 @@ def autocomplete_tm(request):
 def autocomplete_org(request):
     titles = list()
     if 'term' in request.GET:
-        found_trademarks = GtdRecords.objects.filter(Q(record__recipient__name__icontains=request.GET.get('term')) | Q(record__recipient__edrpou__startswith=request.GET.get('term')) )\
+        found_trademarks = GtdRecords.objects.filter(Q(record__recipient__firm_alias__icontains=request.GET.get('term')) |Q(record__recipient__name__icontains=request.GET.get('term')) | Q(record__recipient__edrpou__startswith=request.GET.get('term')) )\
             .values('record__recipient__name').annotate(sum=Sum('cost_fact')).distinct().order_by('-sum')[:10]
         for tm in found_trademarks:
             titles.append(tm['record__recipient__name'])
@@ -454,7 +454,10 @@ def HRKReport(request):
 def CompetitorsCatalog(request):
     start_date=year+'-01-01'
     end_date=year+'-12-31'
-    competitors=GtdRecords.objects.filter(record__recipient__edrpou__in=Competitors.objects.all().values('competitor_code')).annotate(total_cost=Sum('cost_fact')).order_by('-total_cost')
+    competitors=GtdRecords.objects.filter(record__recipient__edrpou__in=Competitors.objects.all().values('competitor_code'))\
+        .values('record__recipient__edrpou','record__recipient__name','record__recipient__firm_alias')\
+            .annotate(total_cost=Sum('cost_fact'),total_cost_eur=Sum((F('record__exchange__usd_nbu')/F('record__exchange__eur_nbu'))*F('cost_fact')),\
+                total_count=Count('cost_fact')).order_by('-total_cost')
     context={
         'competitors':competitors,
         'start_date':start_date,
