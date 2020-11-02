@@ -35,8 +35,7 @@
         </ol>
    </nav> 
 </div>
-<div class="container">
-    <div class="row">
+<div class="row p-3">
         <div class="col">
             <div class="input-group mb-3">
                 {{ search_form.search_string }} 
@@ -48,16 +47,14 @@
         <div class="col">
             
         </div>
-    </div>
-    </form>
 </div>
-
+</form>
 {% if request.GET.search_string|length > 0 %}
     {% if grecords_all %}
 
 
 
-<div class="container-fluid">
+<div class="table-responsive p-3">
     <table class="table table-striped border border-secondary">
         <thead>
             <tr>

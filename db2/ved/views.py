@@ -324,9 +324,13 @@ def TrademarkReportShow(request,trademark_name):
     if  trademark_name:
         trademark_name=unquote(trademark_name)
         context.update({'trademark_name':trademark_name})
-        queryset_list = GtdRecords.objects.filter((Q(trademark__name=trademark_name) & Q(record__date__range=[start_date, end_date])))\
+        queryset_list1 = GtdRecords.objects.filter((Q(trademark__name=trademark_name) & Q(record__date__range=[start_date, end_date])))\
            .values('record__recipient__edrpou','record__recipient__name').annotate(count=Count("cost_fact"),total_cost=Sum('cost_fact'),\
                total_cost_eur=Sum((F('record__exchange__usd_nbu')/F('record__exchange__eur_nbu'))*F('cost_fact'))).order_by('-total_cost')
+        total_sum=0
+        for c in queryset_list1:
+            total_sum+=c['total_cost']
+        queryset_list=queryset_list1.annotate(percent=(F('total_cost')/total_sum)*100)
         context.update({'queryset_list':queryset_list})
     competitors=list(Competitors.objects.values_list('competitor_code',flat=True))
     context.update({'competitors':competitors})

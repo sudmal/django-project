@@ -39,7 +39,7 @@
 
 <div class="row">
     <div class="col">
-        <div class="input-group mb-3">
+        <div class="input-group mb-3 ml-5">
         {{ search_form_org.search_string }} 
             <div class="input-group-append">
                 <button type="submit" class="btn btn-outline-secondary">Поиск</button>
@@ -55,8 +55,7 @@
 
 {% if request.GET.search_string|length > 0 %}
 {% if grecords.object_list %}
-<div class="container">
-    <div class="table-responsive">
+    <div class="table-responsive p-3">
 
         <table class="table table-striped border border-secondary">
             <thead>
