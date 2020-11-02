@@ -19,7 +19,7 @@
 
     <ul class="nav nav-tabs">
       <li class="nav-item">
-        <a class="nav-link active" data-toggle="tab" href="#tab_1">Конкуренты</a>
+        <a class="nav-link active" data-toggle="tab" href="#tab_1">Конкуренты ({{ year }})</a>
       </li>
     </ul>
 
@@ -42,7 +42,7 @@
 				      <th scope="row">{{ forloop.counter }}</th>
 				      <td><a class="btn btn-secondary font-weight-bold" href="{% url 'ved:IndividualReportFirmShow' firm.record__recipient__edrpou %}?start_date={{ start_date }}&end_date={{ end_date }}">{{ firm.record__recipient__edrpou | cut:' ' }}</a></td>
 				      <td>{% autoescape off %} {{ firm.record__recipient__name|bold_in_quotes }} {% endautoescape %}</td>
-				      <td>{{ firm.record__recipient__firm_alias }}</td>
+				      <td><span class="font-weight-bold">{{ firm.record__recipient__firm_alias }}</span></td>
 					  <td>{{ firm.total_count }}</td>
 					  <td>{{ firm.total_cost|floatformat:2 }}</td>
 					  <td>{{ firm.total_cost_eur|floatformat:2 }}</td>

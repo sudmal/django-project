@@ -462,5 +462,6 @@ def CompetitorsCatalog(request):
         'competitors':competitors,
         'start_date':start_date,
         'end_date':end_date,
+        'year':year,
         }
     return render(request,'ved/CompetitorsCatalog.html',context)
