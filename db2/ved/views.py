@@ -46,8 +46,8 @@ def getRecDates():
     rec_dates = Records.objects.distinct('date__year','date__month').values('date')
     dates=[]
     for rd in rec_dates:
-        print(rd)
         dates.append(str(rd['date'])[0:7])
+    print(dates)
     return dates
 
 @login_required(login_url='login')
