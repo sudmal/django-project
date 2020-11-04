@@ -18,26 +18,28 @@
 {% block content %}
 {% cache 3 CompetitorsComparse comparse.query %}
 
-<div class="container">
-    <nav aria-label="breadcrumb">
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item">ВЭД</li>
-            <li class="breadcrumb-item">Конкуренты</li>
-            <li class="breadcrumb-item active" aria-current="page">Сравнительный анализ
-            <div class="center-block">
-                <span class="blockquote text-center blockquote-footer">Отчет построен для списка конкурентов по заданному профилю товаров по курсу НБУ </span>
-            </div>
-            </li>
-        </ol>
-   </nav> 
-</div>
+
 
 <div class="row">
-    <div class="col-sm-3"></div>
+    <div class="col-sm-1"></div>
     <div class="col-sm-6">
-        <canvas id="pie-chart" ></canvas>
+        <canvas height="200px" width="800px" id="pie-chart" > </canvas>
     </div>
-    <div class="col-sm-3"></div>
+    <div class="col-sm-5">
+        <div class="container">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item">ВЭД</li>
+                    <li class="breadcrumb-item">Конкуренты</li>
+                    <li class="breadcrumb-item active" aria-current="page">Сравнительный анализ
+                    <div class="center-block">
+                        <span class="blockquote text-center blockquote-footer">Отчет построен для списка конкурентов по заданному профилю товаров по курсу НБУ </span>
+                    </div>
+                    </li>
+                </ol>
+        </nav> 
+    </div>
+    </div>
 </div>
 
 <div class="container-fluid">
@@ -90,7 +92,7 @@
         labels: {{ labels|safe }}
     },
     options: {
-        responsive: true,
+        responsive: false,
         legend:
             {
                 display: true,

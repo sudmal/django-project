@@ -42,6 +42,26 @@ def autocomplete_org(request):
         titles.append("Ничего не найдено")
     return JsonResponse(titles, safe=False)
 
+def getFirmName(str1):
+    st=''
+    result=''
+    if str1.find("«")>=0 and str1.find("»")>=0:
+        str1=str1.replace("«","\"")
+        str1=str1.replace("»","\"")
+    if str1.find("”")>=0 and str1.find("“")>=0:
+        str1=str1.replace("”","\"")
+        str1=str1.replace("“","\"")
+    if str1.find("'")>=0:
+        str1=str1.replace("'","\"")
+    if str1.find("\"")>=0 :
+        st=str1.split("\"")
+        for s in st[1:]:
+            result=result+s
+    else:
+        result=str1
+    return(result)
+
+
 def getRecDates():
     rec_dates = Records.objects.distinct('date__year','date__month').values('date')
     dates=[]
@@ -50,13 +70,14 @@ def getRecDates():
     get_years=lambda x: str(x)[:4]
     years=(list(set(list(map(get_years,dates)))))
     dates_dict={}
-    for y in years:
+    for y in sorted(years,reverse=True):
         dates_dict[y]={}
         for m in range(1,13):
             if str(y)+"-"+str(m).zfill(2) in dates:
                 dates_dict[y][m]=True
             else:
                 dates_dict[y][m]=False
+    print(dates_dict.keys())
     return dates_dict
 
 @login_required(login_url='login')
@@ -91,7 +112,7 @@ def CompetitorsComparse(request):
     data=[]
     labels=[]
     for c in comparse2[:10]:
-        labels.append(c['record__recipient__name'])
+        labels.append(getFirmName(c['record__recipient__name']))
         data.append(round(c['percent'],1))
     labels.append('Другие')
     data.append(round(100-sum(data),1))
