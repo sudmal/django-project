@@ -43,7 +43,7 @@ def autocomplete_org(request):
     return JsonResponse(titles, safe=False)
 
 def getRecDates():
-    rec_dates = Records.objects.distinct('date__month').values('date')
+    rec_dates = Records.objects.distinct('date__year','date__month').values('date')
     dates=[]
     for rd in rec_dates:
         dates.append(str(rd['date'])[0:7])
