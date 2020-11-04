@@ -131,21 +131,24 @@ def CompetitorsComparse(request):
 
 @login_required(login_url='login')
 def test(request):
-    logUserData(request)
-    rec_dates = getRecDates()
-    get_years=lambda x: str(x)[:4]
-    years=(list(set(list(map(get_years,rec_dates)))))
-    dates={}
-    for y in years:
-        dates[y]={}
-        for m in range(1,13):
-            if str(y)+"-"+str(m).zfill(2) in rec_dates:
-                dates[y][m]=True
-            else:
-                dates[y][m]=False
-    context = {
-        'dates': dates,
-        }
+    arrow_down='<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M13.03 8.22a.75.75 0 010 1.06l-4.25 4.25a.75.75 0 01-1.06 0L3.47 9.28a.75.75 0 011.06-1.06l2.97 2.97V3.75a.75.75 0 011.5 0v7.44l2.97-2.97a.75.75 0 011.06 0z"/></svg>'
+    arrow_up='<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M3.47 7.78a.75.75 0 010-1.06l4.25-4.25a.75.75 0 011.06 0l4.25 4.25a.75.75 0 01-1.06 1.06L9 4.81v7.44a.75.75 0 01-1.5 0V4.81L4.53 7.78a.75.75 0 01-1.06 0z"/></svg>'
+    competitors_all=Competitors.objects.all()
+    paginator = Paginator(competitors_all, 10)
+    page_number = request.GET.get('page')
+    try:
+        competitors = paginator.page(page_number)
+    except PageNotAnInteger:
+        competitors = paginator.page(1)
+    except EmptyPage:
+        competitors = paginator.page(paginator.num_pages) 
+
+    context={
+        'year':year,
+        'table_data': competitors,
+        'arrow_down': arrow_down,
+        'arrow_up': arrow_up,
+    }
     return render(request,'ved/test.html',context)
 
 @login_required(login_url='login')
