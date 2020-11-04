@@ -16,7 +16,7 @@
 {% endblock DatePeriod %}
 
 {% block content %}
-{% cache 7200 HRKReport comparse.query %}
+{% cache 3 HRKReport comparse.query %}
 
 <div class="container">
     <nav aria-label="breadcrumb">
@@ -36,19 +36,31 @@
 </div>
 
 <div class="row">
-  <div class="col-md-6">
+  <div class="col-md-2">
+  </div>
+  <div class="col-md-2">
         <p class="text-center">Топ-10 организаций</p>
   </div>
-  <div class="col-md-6">
+  <div class="col-md-2">
+  </div>
+  <div class="col-md-4">
         <p class="text-center">Структура рынка</p>
+  </div>
+  <div class="col-md-2">
   </div>
 </div>
 <div class="row">
-  <div class="col-md-6">
+  <div class="col-sm-2">
+  </div>
+  <div class="col-sm-4">
         <canvas id="pie-chart"></canvas>
   </div>
-  <div class="col-md-6">
+  <div class="col-sm-1">
+  </div>
+  <div class="col-sm-3">
         <canvas id="gr_chart"></canvas>
+  </div>
+    <div class="col-sm-1">
   </div>
 </div>
 <div class="row mt-3">
@@ -125,7 +137,8 @@ var config_pie = {
         responsive: true,
         legend:
             {
-                display: false,
+                position: 'right',
+                display: true,
                 labels:
                 {
                     FontSize: 10
@@ -143,6 +156,11 @@ var config_bar = {
         }],
         labels: {{ glabels|safe }}
     },
+    options: {
+        legend: {
+            position: 'right'
+        }
+    }
  };   
 
 

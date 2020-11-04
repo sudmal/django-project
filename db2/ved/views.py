@@ -47,8 +47,17 @@ def getRecDates():
     dates=[]
     for rd in rec_dates:
         dates.append(str(rd['date'])[0:7])
-    print(dates)
-    return dates
+    get_years=lambda x: str(x)[:4]
+    years=(list(set(list(map(get_years,dates)))))
+    dates_dict={}
+    for y in years:
+        dates_dict[y]={}
+        for m in range(1,13):
+            if str(y)+"-"+str(m).zfill(2) in dates:
+                dates_dict[y][m]=True
+            else:
+                dates_dict[y][m]=False
+    return dates_dict
 
 @login_required(login_url='login')
 def index(request):
@@ -57,21 +66,10 @@ def index(request):
 
 @login_required(login_url='login')
 def CompetitorsComparse(request):
-    logUserData(request)
     search_form = SearchForm()
     start_date=year+'-01-01'
     end_date=year+'-12-31'
-    rec_dates = getRecDates()
-    get_years=lambda x: str(x)[:4]
-    years=(list(set(list(map(get_years,rec_dates)))))
-    dates={}
-    for y in years:
-        dates[y]={}
-        for m in range(1,13):
-            if str(y)+"-"+str(m).zfill(2) in rec_dates:
-                dates[y][m]=True
-            else:
-                dates[y][m]=False
+    dates=getRecDates()
     if request.GET.get('start_date'):
         search_form = SearchForm(request.GET)
         start_date=request.GET.get('start_date')
@@ -136,17 +134,7 @@ def IndividualReport(request):
     start_date=year+'-01-01'
     end_date=year+'-12-31'
     search_form_org = SearchFormOrg()
-    rec_dates = getRecDates()
-    get_years=lambda x: str(x)[:4]
-    years=(list(set(list(map(get_years,rec_dates)))))
-    dates={}
-    for y in years:
-        dates[y]={}
-        for m in range(1,13):
-            if str(y)+"-"+str(m).zfill(2) in rec_dates:
-                dates[y][m]=True
-            else:
-                dates[y][m]=False
+    dates=getRecDates()
     if request.GET.get('start_date'):
         search_form_org = SearchFormOrg(request.GET)
         start_date=request.GET.get('start_date')
@@ -187,17 +175,7 @@ def IndividualReportFirmShow(request,edrpou_num):
     context=dict()
     start_date=year+'-01-01'
     end_date=year+'-12-31'
-    rec_dates = getRecDates()
-    get_years=lambda x: str(x)[:4]
-    years=(list(set(list(map(get_years,rec_dates)))))
-    dates={}
-    for y in years:
-        dates[y]={}
-        for m in range(1,13):
-            if str(y)+"-"+str(m).zfill(2) in rec_dates:
-                dates[y][m]=True
-            else:
-                dates[y][m]=False
+    dates=getRecDates()
     if request.GET.get('start_date'):
         search_form = SearchForm(request.GET)
         start_date=request.GET.get('start_date')
@@ -233,17 +211,7 @@ def IndividualReportFirmShow(request,edrpou_num):
 def IndividualReportRaw(request,edrpou_num,gtd_num):
     logUserData(request)
     context=dict()
-    rec_dates = getRecDates()
-    get_years=lambda x: str(x)[:4]
-    years=(list(set(list(map(get_years,rec_dates)))))
-    dates={}
-    for y in years:
-        dates[y]={}
-        for m in range(1,13):
-            if str(y)+"-"+str(m).zfill(2) in rec_dates:
-                dates[y][m]=True
-            else:
-                dates[y][m]=False
+    dates=getRecDates()
     gtd=unquote(gtd_num)
     firm=Organisation.objects.get(edrpou = edrpou_num)
     queryset_list = GtdRecords.objects.filter((Q(record__recipient__edrpou=edrpou_num) & Q(record__gtd_name=gtd)))\
@@ -269,17 +237,7 @@ def TrademarkReportSearch(request):
     start_date=year+'-01-01'
     end_date=year+'-12-31'
     search_form = SearchForm()
-    rec_dates = getRecDates()
-    get_years=lambda x: str(x)[:4]
-    years=(list(set(list(map(get_years,rec_dates)))))
-    dates={}
-    for y in years:
-        dates[y]={}
-        for m in range(1,13):
-            if str(y)+"-"+str(m).zfill(2) in rec_dates:
-                dates[y][m]=True
-            else:
-                dates[y][m]=False
+    dates=getRecDates()
     if request.GET.get('start_date'):
         search_form = SearchForm(request.GET)
         start_date=request.GET.get('start_date')
@@ -305,17 +263,7 @@ def TrademarkReportShow(request,trademark_name):
     context=dict()
     start_date=year+'-01-01'
     end_date=year+'-12-31'
-    rec_dates = getRecDates()
-    get_years=lambda x: str(x)[:4]
-    years=(list(set(list(map(get_years,rec_dates)))))
-    dates={}
-    for y in years:
-        dates[y]={}
-        for m in range(1,13):
-            if str(y)+"-"+str(m).zfill(2) in rec_dates:
-                dates[y][m]=True
-            else:
-                dates[y][m]=False
+    dates=getRecDates()
     if request.GET.get('start_date'):
         search_form = SearchForm(request.GET)
         start_date=request.GET.get('start_date')
@@ -341,17 +289,7 @@ def TrademarkReportShow(request,trademark_name):
 def TrademarkReportRaw(request,trademark_name,edrpou_num):
     logUserData(request)
     context=dict()
-    rec_dates = getRecDates()
-    get_years=lambda x: str(x)[:4]
-    years=(list(set(list(map(get_years,rec_dates)))))
-    dates={}
-    for y in years:
-        dates[y]={}
-        for m in range(1,13):
-            if str(y)+"-"+str(m).zfill(2) in rec_dates:
-                dates[y][m]=True
-            else:
-                dates[y][m]=False
+    dates=getRecDates()
     trademark_name=unquote(trademark_name)
     firm=Organisation.objects.get(edrpou = edrpou_num)
     queryset_list = GtdRecords.objects.filter((Q(record__recipient__edrpou=edrpou_num) & Q(trademark__name=trademark_name)))\
@@ -379,17 +317,7 @@ def HRKReport(request):
     search_form=SearchForm()
     start_date=year+'-01-01'
     end_date=year+'-12-31'
-    rec_dates = getRecDates()
-    get_years=lambda x: str(x)[:4]
-    years=(list(set(list(map(get_years,rec_dates)))))
-    dates={}
-    for y in years:
-        dates[y]={}
-        for m in range(1,13):
-            if str(y)+"-"+str(m).zfill(2) in rec_dates:
-                dates[y][m]=True
-            else:
-                dates[y][m]=False
+    dates=getRecDates()
     if request.GET.get('start_date'):
         search_form = SearchForm(request.GET)
         start_date=request.GET.get('start_date')
