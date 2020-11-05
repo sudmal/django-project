@@ -40,7 +40,7 @@
 				      <th scope="row">{{ forloop.counter }}</th>
 				      <td>{{ row.product_code }} </td>
 				      <td>{{ row.short_code }}</td>
-				      <td>{{ row.description }}</td>
+				      <td>{{ row.description|linebreaks }}</td>
 				    </tr>
                     {% endfor %}
               </tbody>
