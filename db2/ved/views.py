@@ -96,6 +96,7 @@ def generateOrder(request,default_sort_order,default_sort_field):
     if request.GET.get('sort_field'):
         sort_field=request.GET.get('sort_field')
     order={'sort_order_symbol':sort_order_symbol,'sort_order':sort_order,'sort_field':sort_field}
+    print(order)
     return order
 
 
