@@ -6,6 +6,14 @@ from django.utils.text import slugify
 from time import time
 
 
+class filter_codes(models.Model):
+    product_code  = models.TextField(primary_key=True)
+    short_code    = models.TextField(blank=True, null=True)
+    description   = models.TextField(blank=True, null=True)
+    class Meta:
+        managed = False
+        db_table = 'filter_codes'
+
 class Competitors(models.Model):
     competitor_code = models.BigIntegerField(primary_key=True)
     competitor_name = models.TextField(blank=True, null=True)

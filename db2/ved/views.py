@@ -6,7 +6,7 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.cache import cache_page
 from .models import Competitors
-from .models import Organisation,GtdRecords,Records,Trademark,Sender,Country,TnvedGroup,Exchange
+from .models import Organisation,GtdRecords,Records,Trademark,Sender,Country,TnvedGroup,Exchange,filter_codes
 from .forms import SearchForm,SearchFormOrg
 from django.db.models import Count, Sum, Q, Avg, Subquery, OuterRef, F, FloatField
 import datetime
@@ -124,6 +124,8 @@ def test(request):
         'order':order,
     }
     return render(request,'ved/test.html',context)
+
+
 
 
 @login_required(login_url='login')
@@ -440,3 +442,11 @@ def CompetitorsCatalog(request):
         'year':year,
         }
     return render(request,'ved/CompetitorsCatalog.html',context)
+
+def ProductCodesCatalog(request):
+    ProductCodes=filter_codes.objects.all()
+    context={
+        'ProductCodes':ProductCodes,
+        }
+    return render(request,'ved/ProductCodesCatalog.html',context)
+

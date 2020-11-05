@@ -17,4 +17,5 @@ urlpatterns = [
     path('TrademarkReport/<str:trademark_name>/<int:edrpou_num>/', views.TrademarkReportRaw, name = 'TrademarkReportRaw'),
     path('HRKReport/', views.HRKReport, name = 'HRKReport'),
     path('CompetitorsCatalog/', views.CompetitorsCatalog, name = 'CompetitorsCatalog'),
+    path('ProductCodesCatalog/', views.ProductCodesCatalog, name = 'ProductCodesCatalog'),
 ]
