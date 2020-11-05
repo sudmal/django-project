@@ -13,6 +13,9 @@ class filter_codes(models.Model):
     class Meta:
         managed = False
         db_table = 'filter_codes'
+    def __str__(self):
+        #String for representing the object (in Admin site etc.)
+        return self.product_code
 
 class Competitors(models.Model):
     competitor_code = models.BigIntegerField(primary_key=True)
