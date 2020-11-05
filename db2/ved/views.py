@@ -80,9 +80,53 @@ def getRecDates():
     print(dates_dict.keys())
     return dates_dict
 
+def generateOrder(request,default_sort_order,default_sort_field):
+    #symbol for query
+    sort_order_symbol=''
+
+    sort_order=default_sort_order
+    sort_field=default_sort_field
+    # change sort order for link and generate symbol for current query
+    if request.GET.get('sort_order'):
+        if request.GET.get('sort_order')=='asc':
+            sort_order='desc'  # next link status   
+        if request.GET.get('sort_order')=='desc':
+            sort_order='asc'  # next link status
+            sort_order_symbol='-' # current query
+    if request.GET.get('sort_field'):
+        sort_field=request.GET.get('sort_field')
+    order={'sort_order_symbol':sort_order_symbol,'sort_order':sort_order,'sort_field':sort_field}
+    return order
+
+
 @login_required(login_url='login')
 def index(request):
     return render(request,'ved/index.html')
+
+@login_required(login_url='login')
+def test(request):
+    arrow_down='<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M13.03 8.22a.75.75 0 010 1.06l-4.25 4.25a.75.75 0 01-1.06 0L3.47 9.28a.75.75 0 011.06-1.06l2.97 2.97V3.75a.75.75 0 011.5 0v7.44l2.97-2.97a.75.75 0 011.06 0z"/></svg>'
+    arrow_up='<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M3.47 7.78a.75.75 0 010-1.06l4.25-4.25a.75.75 0 011.06 0l4.25 4.25a.75.75 0 01-1.06 1.06L9 4.81v7.44a.75.75 0 01-1.5 0V4.81L4.53 7.78a.75.75 0 01-1.06 0z"/></svg>'
+    order=generateOrder(request,'','competitor_code')
+    print(order['sort_order_symbol']+order['sort_field'])
+    competitors_all=Competitors.objects.all().order_by(order['sort_order_symbol']+order['sort_field'])
+    paginator = Paginator(competitors_all, 20)
+    page_number = request.GET.get('page')
+    try:
+        competitors = paginator.page(page_number)
+    except PageNotAnInteger:
+        competitors = paginator.page(1)
+    except EmptyPage:
+        competitors = paginator.page(paginator.num_pages) 
+
+    context={
+        'year':year,
+        'table_data': competitors,
+        'arrow_down': arrow_down,
+        'arrow_up': arrow_up,
+        'order':order,
+    }
+    return render(request,'ved/test.html',context)
 
 
 @login_required(login_url='login')
@@ -127,29 +171,6 @@ def CompetitorsComparse(request):
         }
     return render(request,'ved/CompetitorsComparse.html',context)
 
-
-
-@login_required(login_url='login')
-def test(request):
-    arrow_down='<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M13.03 8.22a.75.75 0 010 1.06l-4.25 4.25a.75.75 0 01-1.06 0L3.47 9.28a.75.75 0 011.06-1.06l2.97 2.97V3.75a.75.75 0 011.5 0v7.44l2.97-2.97a.75.75 0 011.06 0z"/></svg>'
-    arrow_up='<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M3.47 7.78a.75.75 0 010-1.06l4.25-4.25a.75.75 0 011.06 0l4.25 4.25a.75.75 0 01-1.06 1.06L9 4.81v7.44a.75.75 0 01-1.5 0V4.81L4.53 7.78a.75.75 0 01-1.06 0z"/></svg>'
-    competitors_all=Competitors.objects.all()
-    paginator = Paginator(competitors_all, 10)
-    page_number = request.GET.get('page')
-    try:
-        competitors = paginator.page(page_number)
-    except PageNotAnInteger:
-        competitors = paginator.page(1)
-    except EmptyPage:
-        competitors = paginator.page(paginator.num_pages) 
-
-    context={
-        'year':year,
-        'table_data': competitors,
-        'arrow_down': arrow_down,
-        'arrow_up': arrow_up,
-    }
-    return render(request,'ved/test.html',context)
 
 @login_required(login_url='login')
 def IndividualReport(request):

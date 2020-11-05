@@ -7,17 +7,54 @@
 
 
 {% block content %}
+{{ order.sort_order }}
+{{ order.sort_field }}
+
 
 <div class="row">
     <div class="col">
         <table class="table">
             <thead>
                 <tr>
-
-
-                    <th>{% autoescape off %}{{ arrow_down }}{% endautoescape %} Code</th>
-                    <th>Name</th>
-                    <th>Alias</th>
+                    <th>
+                    <a class="btn btn-light w-100 h-100" href={% url 'ved:test' %}?start_date={{ start_date }}&end_date={{ end_date }}&sort_order={{ order.sort_order }}&sort_field=competitor_code>
+                    {% if order.sort_field  ==  "competitor_code" %}
+                        {% if order.sort_order == 'asc' %}
+                            &#8673;
+                        {% elif order.sort_order == 'desc' %}
+                            &#8675;
+                        {% endif %}
+                     {% else %}
+                        &#8645;
+                    {% endif %}
+                    Code </a>
+                    </th>
+                    <th>
+                    <a class="btn btn-light w-100 h-100" href={% url 'ved:test' %}?start_date={{ start_date }}&end_date={{ end_date }}&sort_order={{ order.sort_order }}&sort_field=competitor_surname>
+                     {% if order.sort_field  ==  "competitor_surname" %}
+                        {% if order.sort_order == 'asc' %}
+                            &#8673;
+                        {% elif order.sort_order == 'desc' %}
+                            &#8675;
+                        {% endif %}
+                     {% else %}
+                        &#8645;
+                   {% endif %}
+                    Name </a>
+                    </th>
+                    <th>
+                    <a class="btn btn-light w-100 h-100" href={% url 'ved:test' %}?start_date={{ start_date }}&end_date={{ end_date }}&sort_order={{ order.sort_order }}&sort_field=competitor_name>
+                    {% if order.sort_field  ==  "competitor_name" %}
+                        {% if order.sort_order == 'asc' %}
+                            &#8673;
+                        {% elif order.sort_order == 'desc' %}
+                            &#8675;
+                        {% endif %}
+                    {% else %}
+                        &#8645;
+                    {% endif %}
+                        
+                    Alias</a></th>
                 </tr>
             </thead>
             <tbody>
