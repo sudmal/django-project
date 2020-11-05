@@ -11,7 +11,7 @@
 {% endblock js-before %}
 
 {% block content %}
-{% cache 3 ProductCodesCatalog ProductCodes.query %}
+{% cache 7200 ProductCodesCatalog ProductCodes.query %}
 {% block period_button %}
 {% endblock period_button %}
 <div class="container">
