@@ -108,7 +108,7 @@ def index(request):
 def test(request):
     arrow_down='<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M13.03 8.22a.75.75 0 010 1.06l-4.25 4.25a.75.75 0 01-1.06 0L3.47 9.28a.75.75 0 011.06-1.06l2.97 2.97V3.75a.75.75 0 011.5 0v7.44l2.97-2.97a.75.75 0 011.06 0z"/></svg>'
     arrow_up='<svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M3.47 7.78a.75.75 0 010-1.06l4.25-4.25a.75.75 0 011.06 0l4.25 4.25a.75.75 0 01-1.06 1.06L9 4.81v7.44a.75.75 0 01-1.5 0V4.81L4.53 7.78a.75.75 0 01-1.06 0z"/></svg>'
-    order=generateOrder(request,'','competitor_code')
+    order=generateOrder(request,'asc','competitor_code')
     print(order['sort_order_symbol']+order['sort_field'])
     competitors_all=Competitors.objects.all().order_by(order['sort_order_symbol']+order['sort_field'])
     paginator = Paginator(competitors_all, 20)
