@@ -121,8 +121,6 @@ def test(request):
     context={
         'year':year,
         'table_data': competitors,
-        'arrow_down': arrow_down,
-        'arrow_up': arrow_up,
         'order':order,
     }
     return render(request,'ved/test.html',context)
