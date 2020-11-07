@@ -16,6 +16,8 @@
 <script src="{% static 'js/jquery.min.js' %}"></script>
 <script src="{% static 'js/bootstrap.min.js' %}"></script>
 <script src="{% static 'js/jquery-ui.js' %}"></script>
+<script src="{% static 'js/popper.min.js' %}"></script>
+
 <title >{% block title %}}{% endblock title %}</title>
 {% block js-before %}
 {% endblock js-before %}
@@ -159,6 +161,10 @@ $('.dropdown-menu a.dropdown-toggle').on('click', function(e) {
 
 
   return false;
+});
+
+$(function () {
+  $('[data-toggle="tooltip"]').tooltip()
 });
 
 </script>
