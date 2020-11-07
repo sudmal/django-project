@@ -4,7 +4,8 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login,authenticate,logout
 from django.urls import reverse
 from django.utils.http import is_safe_url,urlunquote
-import urllib.request, json 
+import json 
+from urllib.request import Request, urlopen
 
 
 
@@ -49,11 +50,12 @@ def about(request):
 
 @login_required(login_url='login')
 def FirmInfo(request,edrpou_num):
-    url_string="https://api.youscore.com.ua/v1/companyInfo/"+ str(edrpou_num) +"?apiKey=1f0900000ebe229bcca6e39128b59d5be1fa2bb7"
+    url_string="https://api.youscore.com.ua/v1/companyInfo/"+ str(edrpou_num) +"?apiKey=__1f0900000ebe229bcca6e39128b59d5be1fa2bb7"
     print(url_string)
-    with urllib.request.urlopen(url_string) as url:
-        data = json.loads(url.read().decode())
+    req = Request(url_string, headers={'User-Agent': 'Mozilla/5.0'})
+    data = urlopen(req).read()
     print(data)
-
-    context={}
+    context={
+        'data':data,
+    }
     return render(request, 'main/FirmInfo.html', context)

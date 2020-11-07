@@ -51,6 +51,7 @@
                 <th>Наименование организации</th>
                 <th>Количество записей</th>
                 <th>Сумма, $</th>
+                <th>Сумма, $ (Пред. аналогичный период)</th>
                 <th>Сумма, €</th>
                 <th>Доля, %</th>
             </tr>
@@ -66,6 +67,17 @@
                 <td>{% autoescape off %} {{ firm.record__recipient__name|bold_in_quotes }} {% endautoescape %}</td>
                 <td>{{ firm.count }}</td>
                 <td>{{ firm.total_cost|floatformat:"2" }}</td>
+                <td>{{ firm.prev.total_cost|floatformat:"2" }} <span class="badge badge-pill
+                {% if firm.prev_total_cost > 0 %}
+                    badge-success
+                {% else %}
+                    {% if firm.prev_total_cost < 0 %}
+                        badge-danger
+                    {% else %}
+                        badge-secondary
+                    {% endif %}
+                {% endif %}
+                    badge-success">{{ firm.delta }}</span></td>
                 <td>{{ firm.total_cost_eur|floatformat:"2" }}</td>
                 <td style="width: 250px; ">
                     <div class="progress" style="height: 20px;"">

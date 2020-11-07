@@ -8,7 +8,7 @@ from django.views.decorators.cache import cache_page
 from .models import Competitors
 from .models import Organisation,GtdRecords,Records,Trademark,Sender,Country,TnvedGroup,Exchange,filter_codes
 from .forms import SearchForm,SearchFormOrg
-from django.db.models import Count, Sum, Q, Avg, Subquery, OuterRef, F, FloatField
+from django.db.models import Count, Sum, Q, Avg, Subquery, OuterRef, F, FloatField, Max
 import datetime
 
 from django.contrib.postgres.aggregates import ArrayAgg
@@ -96,7 +96,6 @@ def generateOrder(request,default_sort_order,default_sort_field):
     if request.GET.get('sort_field'):
         sort_field=request.GET.get('sort_field')
     order={'sort_order_symbol':sort_order_symbol,'sort_order':sort_order,'sort_field':sort_field}
-    print(order)
     return order
 
 
@@ -133,6 +132,8 @@ def CompetitorsComparse(request):
     search_form = SearchForm()
     start_date=year+'-01-01'
     end_date=year+'-12-31'
+    end_date_q=str(Records.objects.filter(date__range=[start_date, end_date]).aggregate(Max('date'))['date__max'])
+    end_date=end_date_q
     dates=getRecDates()
     if request.GET.get('start_date'):
         search_form = SearchForm(request.GET)
@@ -140,17 +141,49 @@ def CompetitorsComparse(request):
     if request.GET.get('end_date'):
         search_form = SearchForm(request.GET)
         end_date=request.GET.get('end_date')
+    prev_start_date=str(int(year)-1)+start_date[4:10]
+    prev_end_date=str(int(year)-1)+end_date[4:10]
+    print(prev_start_date)
+    print(prev_end_date)
+
     comparse = GtdRecords.objects.filter(Q(record__recipient__edrpou__in=Competitors.objects.values_list('competitor_code',flat=True)) & \
         Q(record__date__range=[start_date, end_date] ))\
         .extra(where=["LEFT(product_code::text,8) IN (SELECT LEFT(gcodes,8) from tnved_group)"])\
             .values('record__recipient__edrpou','record__recipient__name')\
                 .annotate(total_cost_eur=Sum((F('record__exchange__usd_nbu')/F('record__exchange__eur_nbu'))*F('cost_fact')),count=Count('cost_fact',distinct=True),total_cost=Sum('cost_fact')).order_by('-total_cost')
-                # ,total_cost_eur=Sum(F('cost_fact') * F('record__date__usd_nbu') / F('record__date__eur_nbu'), output_field=FloatField()
+    comparse_prev = GtdRecords.objects.filter(Q(record__recipient__edrpou__in=Competitors.objects.values_list('competitor_code',flat=True)) & \
+        Q(record__date__range=[prev_start_date, prev_end_date] ))\
+        .extra(where=["LEFT(product_code::text,8) IN (SELECT LEFT(gcodes,8) from tnved_group)"])\
+            .values('record__recipient__edrpou').annotate(total_cost=Sum('cost_fact')).order_by('-total_cost')
+    
+    
     total_sum=0
+    edrpou_list=[]
+    comparse_list=[]
+    for e in comparse:
+        edrpou_list.append(e['record__recipient__edrpou'])
+    print (edrpou_list)
+
     for c in comparse:
         total_sum+=c['total_cost']
-    comparse2=comparse.annotate(percent=(F('total_cost')/total_sum)*100)
+ 
 
+    comparse2=comparse.annotate(percent=(F('total_cost')/total_sum)*100)
+    for c in comparse2:
+        total_sum+=c['total_cost']
+        for c2 in comparse_prev:
+            if c2['record__recipient__edrpou'] in edrpou_list:
+                if c2['record__recipient__edrpou'] == c['record__recipient__edrpou']:
+                    print(c['record__recipient__edrpou'])
+                    c['delta'] = round(float(c['total_cost'])-float(c2['total_cost']),2)
+                    c['prev_total_cost'] = c2['total_cost']
+            else:
+                c['delta'] = 0
+                c['prev_total_cost'] = 0
+        comparse_list.append(c)
+
+        
+    print(comparse_list)
     # pie chart variables
     data=[]
     labels=[]
@@ -431,7 +464,13 @@ def HRKReport(request):
 def CompetitorsCatalog(request):
     start_date=year+'-01-01'
     end_date=year+'-12-31'
-    competitors=GtdRecords.objects.filter(record__recipient__edrpou__in=Competitors.objects.all().values('competitor_code'))\
+    max_year_date=Records.objects.filter(Q(date__range=[start_date, end_date])).latest('date').date
+    max_yearprev_date=Records.objects.filter(Q(date__range=[start_date, end_date])).latest('date').date
+    print(max_year_date)
+    print(max_yearprev_date)
+
+
+    competitors=GtdRecords.objects.filter(Q(record__recipient__edrpou__in=Competitors.objects.all().values('competitor_code')))\
         .values('record__recipient__edrpou','record__recipient__name','record__recipient__firm_alias')\
             .annotate(total_cost=Sum('cost_fact'),total_cost_eur=Sum((F('record__exchange__usd_nbu')/F('record__exchange__eur_nbu'))*F('cost_fact')),\
                 total_count=Count('cost_fact')).order_by('-total_cost')
