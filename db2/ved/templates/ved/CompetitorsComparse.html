@@ -67,7 +67,7 @@
                 <td>{% autoescape off %} {{ firm.record__recipient__name|bold_in_quotes }} {% endautoescape %}</td>
                 <td>{{ firm.count }}</td>
                 <td>{{ firm.total_cost|floatformat:"2" }}</td>
-                <td><span class="badge badge-pill {% if firm.delta > 0 %} badge-success {% else %} {% if firm.delta < 0 %} badge-danger {% else %} badge-secondary {% endif %} {% endif %}" style="cursor: help" data-toggle="tooltip" data-placement="right" title="{{ firm.prev_total_cost }} $" >{{ firm.delta }}</span></td>
+                <td><span class="badge badge-pill {% if firm.delta > 0 %} badge-success {% else %} {% if firm.delta < 0 %} badge-danger {% else %} badge-secondary {% endif %} {% endif %}" style="cursor: help" data-toggle="tooltip" data-placement="right" title="{{ firm.prev_total_cost }} $" >{% if firm.delta > 0 %} +{% endif %}{{ firm.delta }}</span></td>
                 <td>{{ firm.total_cost_eur|floatformat:"2" }}</td>
                 <td style="width: 250px; ">
                     <div class="progress" style="height: 20px;"">
