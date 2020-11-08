@@ -10,6 +10,8 @@ from .models import Organisation,GtdRecords,Records,Trademark,Sender,Country,Tnv
 from .forms import SearchForm,SearchFormOrg
 from django.db.models import Count, Sum, Q, Avg, Subquery, OuterRef, F, FloatField, Max
 import datetime
+import requests
+import json 
 
 from django.contrib.postgres.aggregates import ArrayAgg
 
@@ -475,16 +477,23 @@ def CompetitorsCatalog(request):
     for c_top in competitors_top:
         edrpou=c_top['record__recipient__edrpou']
         ysr="https://api.youscore.com.ua/v1/financialIndicators/"+str(edrpou)+"/years/"+str(int(year)-1)+"?apiKey="+api_key
-        print(ysr)
-        reply=""
+        headers = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.67 Safari/537.36'}
+
         if Youscore.objects.filter(request=ysr):
             reply=Youscore.objects.filter(request=ysr)
-            print("get")
-            print(reply)
         else:
-            reply=Youscore.objects.create(request=ysr,jsonreply="{test}")
-            print("create")
-            print(reply)
+            result = requests.get(ysr, headers=headers)
+            reply=Youscore.objects.create(request=ysr,jsonreply=result.json())
+    #api.youscore.com.ua/v1/externalEconomies/38797324?apiKey=1f0900000ebe229bcca6e39128b59d5be1fa2bb7
+        ysr="https://api.youscore.com.ua/v1/externalEconomies/"+str(edrpou)+"?apiKey="+api_key
+        headers = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.67 Safari/537.36'}
+        
+        if Youscore.objects.filter(request=ysr):
+            reply=Youscore.objects.filter(request=ysr)
+        else:
+            print(ysr)
+            #result = requests.get(ysr, headers=headers)
+            #reply=Youscore.objects.create(request=ysr,jsonreply=result.json())
 
     context={
         'competitors':competitors,
