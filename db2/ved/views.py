@@ -6,7 +6,7 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.cache import cache_page
 from .models import Competitors
-from .models import Organisation,GtdRecords,Records,Trademark,Sender,Country,TnvedGroup,Exchange,filter_codes
+from .models import Organisation,GtdRecords,Records,Trademark,Sender,Country,TnvedGroup,Exchange,filter_codes,Youscore
 from .forms import SearchForm,SearchFormOrg
 from django.db.models import Count, Sum, Q, Avg, Subquery, OuterRef, F, FloatField, Max
 import datetime
@@ -106,7 +106,6 @@ def index(request):
 @login_required(login_url='login')
 def test(request):
     order=generateOrder(request,'asc','competitor_code')
-    print(order['sort_order_symbol']+order['sort_field'])
     competitors_all=Competitors.objects.all().order_by(order['sort_order_symbol']+order['sort_field'])
     paginator = Paginator(competitors_all, 20)
     page_number = request.GET.get('page')
@@ -464,14 +463,29 @@ def CompetitorsCatalog(request):
     end_date=year+'-12-31'
     max_year_date=Records.objects.filter(Q(date__range=[start_date, end_date])).latest('date').date
     max_yearprev_date=Records.objects.filter(Q(date__range=[start_date, end_date])).latest('date').date
-    print(max_year_date)
-    print(max_yearprev_date)
+ 
 
 
     competitors=GtdRecords.objects.filter(Q(record__recipient__edrpou__in=Competitors.objects.all().values('competitor_code')))\
         .values('record__recipient__edrpou','record__recipient__name','record__recipient__firm_alias')\
             .annotate(total_cost=Sum('cost_fact'),total_cost_eur=Sum((F('record__exchange__usd_nbu')/F('record__exchange__eur_nbu'))*F('cost_fact')),\
                 total_count=Count('cost_fact')).order_by('-total_cost')
+    competitors_top=competitors[:10]
+    api_key='1f0900000ebe229bcca6e39128b59d5be1fa2bb7'
+    for c_top in competitors_top:
+        edrpou=c_top['record__recipient__edrpou']
+        ysr="https://api.youscore.com.ua/v1/financialIndicators/"+str(edrpou)+"/years/"+str(int(year)-1)+"?apiKey="+api_key
+        print(ysr)
+        reply=""
+        if Youscore.objects.filter(request=ysr):
+            reply=Youscore.objects.filter(request=ysr)
+            print("get")
+            print(reply)
+        else:
+            reply=Youscore.objects.create(request=ysr,jsonreply="{test}")
+            print("create")
+            print(reply)
+
     context={
         'competitors':competitors,
         'start_date':start_date,

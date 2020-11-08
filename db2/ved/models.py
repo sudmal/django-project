@@ -25,6 +25,13 @@ class Competitors(models.Model):
         managed = False
         db_table = 'competitors'
 
+class Youscore(models.Model):
+    request=models.TextField(blank=True, null=True,unique=True)
+    jsonreply=models.TextField(blank=True, null=True)
+    class Meta:
+        managed = False
+        db_table = 'youscore'
+
 
 class Country(models.Model):
     id = models.BigAutoField(primary_key=True)
