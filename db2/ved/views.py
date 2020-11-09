@@ -129,11 +129,13 @@ def test(request):
 def Youscore_get(competitors_top):
     api_key='1f0900000ebe229bcca6e39128b59d5be1fa2bb7'
     fin_data={}
+    ved_data={}
     for c_top in competitors_top:
         edrpou=c_top['record__recipient__edrpou']
         ysr="https://api.youscore.com.ua/v1/financialIndicators/"+str(edrpou)+"/years/"+str(int(year)-1)+"?apiKey="+api_key
         headers = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.67 Safari/537.36'}
         ret_fin=''
+        ret_ved=''
         if Youscore.objects.filter(request=ysr):
             db_reply=Youscore.objects.filter(request=ysr).values('jsonreply')
             ret_fin=str(db_reply[0]['jsonreply'])
@@ -141,24 +143,29 @@ def Youscore_get(competitors_top):
         else:
             result = requests.get(ysr, headers=headers)
             save_result=Youscore.objects.create(request=ysr,jsonreply=result.text)
-            ret_fin=result
+            ret_fin=str(result.text)
 
-        #api.youscore.com.ua/v1/externalEconomies/38797324?apiKey=1f0900000ebe229bcca6e39128b59d5be1fa2bb7
-        """         
-        ysr="https://api.youscore.com.ua/v1/externalEconomies/"+str(edrpou)+"?apiKey="+api_key
+        #https://api.youscore.com.ua/v1/externalEconomies/38797324?apiKey=1f0900000ebe229bcca6e39128b59d5be1fa2bb7
+        #https://api.youscore.com.ua/v1/externalEconomies/38797324?year=2020&apiKey=1f0900000ebe229bcca6e39128b59d5be1fa2bb7
+                
+        ysr="https://api.youscore.com.ua/v1/externalEconomies/"+str(edrpou)+"?year="+str(int(year)-1)+"&apiKey="+api_key
         headers = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.67 Safari/537.36'}
         
         if Youscore.objects.filter(request=ysr):
-            reply=Youscore.objects.filter(request=ysr)
+            db_reply=Youscore.objects.filter(request=ysr).values('jsonreply')
+            ret_ved=str(db_reply[0]['jsonreply'])
         else:
-            print(ysr)
-            #result = requests.get(ysr, headers=headers)
-            #reply=Youscore.objects.create(request=ysr,jsonreply=result.json()) """
 
+            result = requests.get(ysr, headers=headers)
+            if result:
+                save_result=Youscore.objects.create(request=ysr,jsonreply=result.text)
+                ret_ved=str(result.text)
 
         fin_data.update({edrpou:json.loads(ret_fin)})
+        ved_data.update({edrpou:json.loads(ret_ved)})
     ret_dict={
         'fin':fin_data,
+        'ved':ved_data,
     }
     return ret_dict
 
@@ -507,14 +514,49 @@ def CompetitorsCatalog(request):
             .annotate(total_cost=Sum('cost_fact'),total_cost_eur=Sum((F('record__exchange__usd_nbu')/F('record__exchange__eur_nbu'))*F('cost_fact')),\
                 total_count=Count('cost_fact')).order_by('-total_cost')
     competitors_top=competitors[:10]
+    yresults_dict={}
     yresult=Youscore_get(competitors_top)
+    
+    competitors_list=[]
     for e in  yresult['fin']:
+        money_in=''
+        utkved=[]
         for f in yresult['fin'][e]['indicators']:
             if f['field'] == 'Разом доходи' or f['field'] == 'Валовий: прибуток' :
-                print(str(f['min'])+" - "+str(f['max']))
+                money_in=str(f['min'])+"-"+str(f['max'])
+        for f in yresult['ved'][e]['topImportUktZed']:
+            utkved.append(str(f['uktZed'])+" - "+str(f['description']))
 
+        yresults_dict.update({  e:
+                                    {
+                                        'fin':{
+                                            'money_in': money_in,
+                                        },
+                                        'ved':{
+                                            'utkved': utkved,
+                                        }
+
+                                    }
+                            })
+
+    edrpou_list=[]
+    for e in yresults_dict:
+        edrpou_list.append(e)
+    for c in competitors:
+        money_in=''
+        utk_top=''
+        for y in yresults_dict:
+            if c['record__recipient__edrpou'] in edrpou_list:
+                if str(y) == str(c['record__recipient__edrpou']):
+                    money_in=yresults_dict[y]['fin']['money_in']
+                    utk_top=yresults_dict[y]['ved']['utkved']
+        c['y_fin_m_in'] = money_in
+        c['y_ved_utk'] = utk_top
+        print(utk_top)
+        competitors_list.append(c)
     context={
-        'competitors':competitors,
+        'yresults': yresults_dict,
+        'competitors':competitors_list,
         'start_date':start_date,
         'end_date':end_date,
         'year':year,
