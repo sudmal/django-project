@@ -552,7 +552,6 @@ def CompetitorsCatalog(request):
                     utk_top=yresults_dict[y]['ved']['utkved']
         c['y_fin_m_in'] = money_in
         c['y_ved_utk'] = utk_top
-        print(utk_top)
         competitors_list.append(c)
     context={
         'yresults': yresults_dict,
