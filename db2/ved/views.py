@@ -525,7 +525,7 @@ def CompetitorsCatalog(request):
             if f['field'] == 'Разом доходи' or f['field'] == 'Валовий: прибуток' :
                 money_in=str(f['min'])+"-"+str(f['max'])
         for f in yresult['ved'][e]['topImportUktZed']:
-            utkved.append(str(f['uktZed'])+" - "+str(f['description']))
+            utkved.append(str('<b>'+f['uktZed'])+'</b> - '+str(f['description']))
 
         yresults_dict.update({  e:
                                     {

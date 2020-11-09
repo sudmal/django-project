@@ -14,51 +14,52 @@
 {% cache 3600 CompetitorsCatalog competitors.query %}
 {% block period_button %}
 {% endblock period_button %}
-<div class="container">
+<div class="row">
+	<div class="col-md ml-5 mr-5">
+		<ul class="nav nav-tabs">
+		<li class="nav-item">
+			<a class="nav-link bg-secondary text-light active" data-toggle="tab" href="#tab_1">Конкуренты ({{ year }})</a>
+		</li>
+		</ul>
 
-
-    <ul class="nav nav-tabs">
-      <li class="nav-item">
-        <a class="nav-link bg-secondary text-light active" data-toggle="tab" href="#tab_1">Конкуренты ({{ year }})</a>
-      </li>
-    </ul>
-
-	<div class="tab-content">
-      <div class="tab-pane fade show active" id="tab_1">
-	  	<div class="table-responsive-lg">
-			<table class="table table-hover table-secondary table-bordered table-striped">
-			  <thead>
-			    <tr class="table-secondary">
-			      <th scope="col">№</th>
-			      <th scope="col">ЕДРПОУ</th>
-			      <th scope="col">Наименование</th>
-			      <th scope="col">Псевдоним</th>
-				  <th scope="col" width=20%>YS::Доход (2019, тыс. грн.)</th>
-				  <th scope="col" width=40%>YS::Группы товаров (ТОП) (2019)</th>
-			    </tr>
-			  </thead>
-			  <tbody><tr>
-                    {% for firm in competitors %}
-				      <th scope="row">{{ forloop.counter }}</th>
-				      <td><a class="btn btn-secondary font-weight-bold" href="{% url 'ved:IndividualReportFirmShow' firm.record__recipient__edrpou %}?start_date={{ start_date }}&end_date={{ end_date }}">{{ firm.record__recipient__edrpou | cut:' ' }}</a></td>
-				      <td>{% autoescape off %} {{ firm.record__recipient__name|bold_in_quotes }} {% endautoescape %}</td>
-				      <td><span class="font-weight-bold">{{ firm.record__recipient__firm_alias }}</span></td>
-				      <td>{{ firm.y_fin_m_in }}</td>
-					  <td>
-					  	{% for utk in firm.y_ved_utk %}
-						  <p>
-					  		{{ utk|truncatechars:70|safe }}
-						  </p>
+		<div class="tab-content">
+		<div class="tab-pane fade show active" id="tab_1">
+			<div class="table-responsive-lg">
+				<table class="table table-hover table-secondary table-bordered table-striped">
+				<thead>
+					<tr class="table-secondary">
+					<th scope="col">№</th>
+					<th scope="col">ЕДРПОУ</th>
+					<th scope="col">Наименование</th>
+					<th scope="col">Псевдоним</th>
+					<th scope="col" width=20%>YS::Доход (2019, тыс. грн.)</th>
+					<th scope="col" width=40%>YS::Группы товаров (ТОП) (2019)</th>
+					</tr>
+				</thead>
+				<tbody><tr>
+						{% for firm in competitors %}
+						<th scope="row">{{ forloop.counter }}</th>
+						<td><a class="btn btn-secondary font-weight-bold" href="{% url 'ved:IndividualReportFirmShow' firm.record__recipient__edrpou %}?start_date={{ start_date }}&end_date={{ end_date }}">{{ firm.record__recipient__edrpou | cut:' ' }}</a></td>
+						<td>{% autoescape off %} {{ firm.record__recipient__name|bold_in_quotes }} {% endautoescape %}</td>
+						<td><span class="font-weight-bold">{{ firm.record__recipient__firm_alias }}</span></td>
+						<td>{{ firm.y_fin_m_in }}</td>
+						<td>
+							{% for utk in firm.y_ved_utk %}
+							<p>
+								{{ utk|truncatechars:80|safe }}
+							</p>
+							{% endfor %}
+							</td>
+						</tr>
 						{% endfor %}
-						  </td>
-				    </tr>
-                    {% endfor %}
-              </tbody>
-			</table>
-	  	</div>
-	  </div>
-		
+				</tbody>
+				</table>
+			</div>
+		</div>
+			
+		</div>
 	</div>
+
 </div>
 
 
