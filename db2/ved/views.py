@@ -126,6 +126,41 @@ def test(request):
     return render(request,'ved/test.html',context)
 
 
+def Youscore_get(competitors_top):
+    api_key='1f0900000ebe229bcca6e39128b59d5be1fa2bb7'
+    fin_data={}
+    for c_top in competitors_top:
+        edrpou=c_top['record__recipient__edrpou']
+        ysr="https://api.youscore.com.ua/v1/financialIndicators/"+str(edrpou)+"/years/"+str(int(year)-1)+"?apiKey="+api_key
+        headers = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.67 Safari/537.36'}
+        ret_fin=''
+        if Youscore.objects.filter(request=ysr):
+            db_reply=Youscore.objects.filter(request=ysr).values('jsonreply')
+            ret_fin=str(db_reply[0]['jsonreply'])
+
+        else:
+            result = requests.get(ysr, headers=headers)
+            save_result=Youscore.objects.create(request=ysr,jsonreply=result.text)
+            ret_fin=result
+
+        #api.youscore.com.ua/v1/externalEconomies/38797324?apiKey=1f0900000ebe229bcca6e39128b59d5be1fa2bb7
+        """         
+        ysr="https://api.youscore.com.ua/v1/externalEconomies/"+str(edrpou)+"?apiKey="+api_key
+        headers = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.67 Safari/537.36'}
+        
+        if Youscore.objects.filter(request=ysr):
+            reply=Youscore.objects.filter(request=ysr)
+        else:
+            print(ysr)
+            #result = requests.get(ysr, headers=headers)
+            #reply=Youscore.objects.create(request=ysr,jsonreply=result.json()) """
+
+
+        fin_data.update({edrpou:json.loads(ret_fin)})
+    ret_dict={
+        'fin':fin_data,
+    }
+    return ret_dict
 
 
 @login_required(login_url='login')
@@ -201,7 +236,6 @@ def CompetitorsComparse(request):
         'search_form':search_form
         }
     return render(request,'ved/CompetitorsComparse.html',context)
-
 
 @login_required(login_url='login')
 def IndividualReport(request):
@@ -335,6 +369,7 @@ def TrademarkReportSearch(request):
     context.update({'dates': dates})
     return render(request,'ved/TMReportSearch.html',context)
 
+@login_required(login_url='login')
 def TrademarkReportShow(request,trademark_name):
     context=dict()
     start_date=year+'-01-01'
@@ -362,6 +397,7 @@ def TrademarkReportShow(request,trademark_name):
     context.update({'request':request})
     return render(request,'ved/TMReportShow.html',context)
 
+@login_required(login_url='login')
 def TrademarkReportRaw(request,trademark_name,edrpou_num):
     logUserData(request)
     context=dict()
@@ -466,34 +502,16 @@ def CompetitorsCatalog(request):
     max_year_date=Records.objects.filter(Q(date__range=[start_date, end_date])).latest('date').date
     max_yearprev_date=Records.objects.filter(Q(date__range=[start_date, end_date])).latest('date').date
  
-
-
     competitors=GtdRecords.objects.filter(Q(record__recipient__edrpou__in=Competitors.objects.all().values('competitor_code')))\
         .values('record__recipient__edrpou','record__recipient__name','record__recipient__firm_alias')\
             .annotate(total_cost=Sum('cost_fact'),total_cost_eur=Sum((F('record__exchange__usd_nbu')/F('record__exchange__eur_nbu'))*F('cost_fact')),\
                 total_count=Count('cost_fact')).order_by('-total_cost')
     competitors_top=competitors[:10]
-    api_key='1f0900000ebe229bcca6e39128b59d5be1fa2bb7'
-    for c_top in competitors_top:
-        edrpou=c_top['record__recipient__edrpou']
-        ysr="https://api.youscore.com.ua/v1/financialIndicators/"+str(edrpou)+"/years/"+str(int(year)-1)+"?apiKey="+api_key
-        headers = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.67 Safari/537.36'}
-
-        if Youscore.objects.filter(request=ysr):
-            reply=Youscore.objects.filter(request=ysr)
-        else:
-            result = requests.get(ysr, headers=headers)
-            reply=Youscore.objects.create(request=ysr,jsonreply=result.json())
-    #api.youscore.com.ua/v1/externalEconomies/38797324?apiKey=1f0900000ebe229bcca6e39128b59d5be1fa2bb7
-        ysr="https://api.youscore.com.ua/v1/externalEconomies/"+str(edrpou)+"?apiKey="+api_key
-        headers = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.67 Safari/537.36'}
-        
-        if Youscore.objects.filter(request=ysr):
-            reply=Youscore.objects.filter(request=ysr)
-        else:
-            print(ysr)
-            #result = requests.get(ysr, headers=headers)
-            #reply=Youscore.objects.create(request=ysr,jsonreply=result.json())
+    yresult=Youscore_get(competitors_top)
+    for e in  yresult['fin']:
+        for f in yresult['fin'][e]['indicators']:
+            if f['field'] == 'Разом доходи' or f['field'] == 'Валовий: прибуток' :
+                print(str(f['min'])+" - "+str(f['max']))
 
     context={
         'competitors':competitors,
