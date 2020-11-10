@@ -18,4 +18,5 @@ urlpatterns = [
     path('HRKReport/', views.HRKReport, name = 'HRKReport'),
     path('CompetitorsCatalog/', views.CompetitorsCatalog, name = 'CompetitorsCatalog'),
     path('ProductCodesCatalog/', views.ProductCodesCatalog, name = 'ProductCodesCatalog'),
+    path('TnvedGroupCatalog/', views.TnvedGroupCatalog, name = 'TnvedGroupCatalog'),
 ]

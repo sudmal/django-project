@@ -229,7 +229,7 @@ class TnvedGroup(models.Model):
     id = models.BigIntegerField(primary_key=True)
     gname = models.TextField(blank=True, null=True)
     gcodes = models.TextField(blank=True, null=True)
-
+    
     class Meta:
         managed = False
         db_table = 'tnved_group'

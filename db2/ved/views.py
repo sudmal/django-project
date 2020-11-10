@@ -6,7 +6,7 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.cache import cache_page
 from .models import Competitors
-from .models import Organisation,GtdRecords,Records,Trademark,Sender,Country,TnvedGroup,Exchange,filter_codes,Youscore
+from .models import Organisation,GtdRecords,Records,Trademark,Sender,Country,TnvedGroup,Exchange,filter_codes,TnvedGroup,Youscore
 from .forms import SearchForm,SearchFormOrg
 from django.db.models import Count, Sum, Q, Avg, Subquery, OuterRef, F, FloatField, Max
 import datetime
@@ -79,7 +79,6 @@ def getRecDates():
                 dates_dict[y][m]=True
             else:
                 dates_dict[y][m]=False
-    print(dates_dict.keys())
     return dates_dict
 
 def generateOrder(request,default_sort_order,default_sort_field):
@@ -569,3 +568,9 @@ def ProductCodesCatalog(request):
         }
     return render(request,'ved/ProductCodesCatalog.html',context)
 
+def TnvedGroupCatalog(request):
+    TnvedGroupData=TnvedGroup.objects.values('gname').distinct().annotate(codes=ArrayAgg('gcodes')).order_by('gname')
+    context={
+        'TnvedGroup':TnvedGroupData,
+        }
+    return  render(request, 'ved/TnvedGroupCatalog.html', context)
