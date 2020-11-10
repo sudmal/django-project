@@ -25,10 +25,10 @@
             <li class="breadcrumb-item active" aria-current="page">Структура рынка (по категориям) 
   
             <div class="center-block">
-                 <span class="blockquote text-center blockquote-footer">Отчет находится в разработке </span>
-              {% comment %}
-                <span class="blockquote text-center blockquote-footer">Отчет построен для списка конкурентов по заданному профилю товаров по курсу НБУ </span>
-                {% endcomment %}
+               {% comment %}  <span class="blockquote text-center blockquote-footer">Отчет находится в разработке </span>{% endcomment %}
+              
+                <span class="blockquote text-center blockquote-footer">При расчетах использованы сотношения валют по курсу НБУ на дату ГТД</span>
+                
             </div>
             </li>
         </ol>
@@ -44,7 +44,7 @@
   <div class="col-md-2">
   </div>
   <div class="col-md-4">
-        <p class="text-center">Структура рынка</p>
+        <p class="text-center"><a href={% url 'ved:TnvedGroupCatalog' %} target=_blank>Структура рынка</a></p>
   </div>
   <div class="col-md-2">
   </div>
