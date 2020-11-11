@@ -3,23 +3,26 @@
 {% load cache %}
 
 {% block title %}
-ВЭД :: Справочник товарных кодов
+ВЭД :: Товарные группы
 {% endblock title %}
 
 {% block js-before %}
 
 {% endblock js-before %}
 
+{% block period_button %}
+<a class="btn btn-light" target=_blank href="https://customs-invecta.com.ua/ukt-ved/"><u>Коды УКТВЭД Украины 2020: поиск и расшифровка кода УКТЗЕД</u></a>
+{% endblock period_button %}
+
 {% block content %}
 {% cache 7200 ProductCodesCatalog ProductCodes.query %}
-{% block period_button %}
-{% endblock period_button %}
+
 <div class="container">
 
 
     <ul class="nav nav-tabs">
       <li class="nav-item">
-        <a class="nav-link bg-secondary text-light active" data-toggle="tab" href="#tab_1">Товарные коды</a>
+        <a class="nav-link bg-secondary text-light active" data-toggle="tab" href="#tab_1">Товарные группы</a>
       </li>
     </ul>
 
@@ -31,7 +34,7 @@
 			    <tr class="table-secondary">
 			      <th scope="col">№</th>
 			      <th scope="col">Полный код</th>
-			      <th scope="col">Короткий код</th>
+			      <th scope="col">Товарная группа</th>
 			      <th scope="col">Описание</th>
 			    </tr>
 			  </thead>

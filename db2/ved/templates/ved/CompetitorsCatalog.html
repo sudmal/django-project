@@ -9,11 +9,12 @@
 {% block js-before %}
 
 {% endblock js-before %}
-
-{% block content %}
-{% cache 3600 CompetitorsCatalog competitors.query %}
 {% block period_button %}
+<a class="btn btn-light" target=_blank href="https://customs-invecta.com.ua/ukt-ved/"><u>Коды УКТВЭД Украины 2020: поиск и расшифровка кода УКТЗЕД</u></a>
 {% endblock period_button %}
+{% block content %}
+{% cache 3 CompetitorsCatalog competitors.query %}
+
 <div class="row">
 	<div class="col-md ml-5 mr-5">
 		<ul class="nav nav-tabs">
@@ -28,12 +29,12 @@
 				<table class="table table-hover table-secondary table-bordered table-striped">
 				<thead>
 					<tr class="table-secondary">
-					<th scope="col">№</th>
-					<th scope="col">ЕДРПОУ</th>
-					<th scope="col">Наименование</th>
-					<th scope="col">Псевдоним</th>
-					<th scope="col" width=20%>YS::Доход (2019, тыс. грн.)</th>
-					<th scope="col" width=40%>YS::Группы товаров (ТОП) (2019)</th>
+					<th width="3%">№</th>
+					<th width="5%">ЕДРПОУ</th>
+					<th width="10%">Наименование</th>
+					<th width="8%">Псевдоним</th>
+					<th width="15%">YS::Доход (2019, тыс. грн.)</th>
+					<th width="59%">YS::Группы товаров (ТОП) (2019)</th>
 					</tr>
 				</thead>
 				<tbody><tr>
@@ -46,7 +47,7 @@
 						<td>
 							{% for utk in firm.y_ved_utk %}
 							<p>
-								{{ utk|truncatechars:80|safe }}
+								{{ utk|truncatechars:120|safe }}
 							</p>
 							{% endfor %}
 							</td>
