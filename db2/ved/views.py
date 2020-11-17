@@ -574,3 +574,9 @@ def TnvedGroupCatalog(request):
         'TnvedGroup':TnvedGroupData,
         }
     return  render(request, 'ved/TnvedGroupCatalog.html', context)
+
+def CompetitorsCatalogPeriodDetail(request,edrpou_num):
+    context={
+            
+        }
+    return  render(request, 'ved/CompetitorsCatalogPeriodDetail.html', context)

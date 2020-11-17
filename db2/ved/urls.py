@@ -17,6 +17,7 @@ urlpatterns = [
     path('TrademarkReport/<str:trademark_name>/<int:edrpou_num>/', views.TrademarkReportRaw, name = 'TrademarkReportRaw'),
     path('HRKReport/', views.HRKReport, name = 'HRKReport'),
     path('CompetitorsCatalog/', views.CompetitorsCatalog, name = 'CompetitorsCatalog'),
+    path('CompetitorsCatalog/<int:edrpou_num>/PeriodDetail', views.CompetitorsCatalogPeriodDetail, name = 'CompetitorsCatalogPeriodDetail'),
     path('ProductCodesCatalog/', views.ProductCodesCatalog, name = 'ProductCodesCatalog'),
     path('TnvedGroupCatalog/', views.TnvedGroupCatalog, name = 'TnvedGroupCatalog'),
 ]
