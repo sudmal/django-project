@@ -589,6 +589,18 @@ def CompetitorsCatalogPeriodDetail(request,edrpou_num):
         search_form = SearchForm(request.GET)
         end_date=request.GET.get('end_date')
     CompetitorsDetailRaw = RecordsStaging.objects.filter(Q(recipient_code=edrpou_num) & Q(date__range=[start_date, end_date]))
+    """ \
+        .extra(select={
+            'Дата': 'date',
+            'ГТД': 'gtd',
+            'Страна': 'country',
+            'Отправитель': 'sender_name',
+            'Товарный код': 'product_code',
+            'Торговая марка': 'trademark',
+            'Описание': 'description',
+            })\
+            .values('Дата','ГТД','Страна','Отправитель','Товарный код','Торговая марка','Описание') """
+    print(CompetitorsDetailRaw.query)
     table = CompetitorsComparsePeriodDetailTable(CompetitorsDetailRaw)
     RequestConfig(request).configure(table)
     context={
