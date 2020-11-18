@@ -42,6 +42,24 @@ class Country(models.Model):
         db_table = 'country'
 
 
+class RecordsStaging(models.Model):
+    sender_name = models.TextField(blank=True, null=True)
+    recipient_code = models.BigIntegerField(blank=True, null=True)
+    recipient_name = models.TextField(blank=True, null=True)
+    product_code = models.BigIntegerField(blank=True, null=True)
+    trademark = models.TextField(blank=True, null=True)
+    description = models.TextField(blank=True, null=True)
+    country = models.TextField(blank=True, null=True)
+    cost_customs = models.FloatField(blank=True, null=True)
+    cost_fact = models.FloatField(blank=True, null=True)
+    date = models.DateTimeField(blank=True, null=True)
+    gtd = models.TextField(blank=True, null=True)
+    hash = models.BigIntegerField(primary_key=True)
+
+    class Meta:
+        managed = False
+        db_table = 'records_staging'
+
 class CreditStaging(models.Model):
     doc_id = models.TextField(blank=True, null=True)
     seller_region = models.TextField(blank=True, null=True)

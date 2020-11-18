@@ -6,7 +6,7 @@ from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.cache import cache_page
 from .models import Competitors
-from .models import Organisation,GtdRecords,Records,Trademark,Sender,Country,TnvedGroup,Exchange,filter_codes,TnvedGroup,Youscore
+from .models import Organisation,GtdRecords,Records,Trademark,Sender,Country,TnvedGroup,Exchange,filter_codes,TnvedGroup,Youscore,RecordsStaging
 from .forms import SearchForm,SearchFormOrg
 from django.db.models import Count, Sum, Q, Avg, Subquery, OuterRef, F, FloatField, Max
 import datetime
@@ -586,13 +586,14 @@ def CompetitorsCatalogPeriodDetail(request,edrpou_num):
     if request.GET.get('end_date'):
         search_form = SearchForm(request.GET)
         end_date=request.GET.get('end_date')
-
+    CompetitorsDetailRaw = RecordsStaging.objects.filter(Q(recipient_code=edrpou_num) & Q(date__range=[start_date, end_date]))
     context={
         'search_form': search_form,
         'edrpou_num':edrpou_num,
         'start_date':start_date,
         'end_date':end_date,
         'year':year,  
-        'dates':dates,      
+        'dates':dates,
+        'CompetitorsDetailRaw':CompetitorsDetailRaw,
         }
     return  render(request, 'ved/CompetitorsCatalogPeriodDetail.html', context)

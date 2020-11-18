@@ -1,4 +1,5 @@
 {% extends 'main/base.html' %}
+{% load render_table from django_tables2 %}
 {% load bold_in_quotes %}
 {% load cache %}
 
@@ -16,9 +17,10 @@
 {% endblock DatePeriod %}
 
 {% block content %}
-{% cache 3600 CompetitorsCatalogPeriodDetail %}
+{% cache 3600 CompetitorsCatalogPeriodDetail CompetitorsDetailRaw.query %}
 
 
+{% render_table CompetitorsDetailRaw %}
 
 {% endcache %}
 {% include 'ved/periods.html' %}
