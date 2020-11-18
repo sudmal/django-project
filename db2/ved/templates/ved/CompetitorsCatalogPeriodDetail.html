@@ -1,0 +1,24 @@
+{% extends 'main/base.html' %}
+{% load bold_in_quotes %}
+{% load cache %}
+
+{% block title %}
+ВЭД :: Конкуренты :: Сравнительный анализ
+{% endblock title %}
+
+{% block DatePeriod %}
+    <form method="get" action={% url 'ved:CompetitorsComparse' %}>
+         {{ search_form.start_date }}
+        -
+        {{ search_form.end_date }}
+        <button type="submit" class="btn btn-info">Изменить</button>
+
+{% endblock DatePeriod %}
+
+{% block content %}
+{% cache 3600 CompetitorsComparse comparse.query %}
+
+
+
+
+{% endblock content %}
