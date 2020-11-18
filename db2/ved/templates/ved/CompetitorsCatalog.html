@@ -31,9 +31,10 @@
 					<tr class="table-secondary">
 					<th width="3%">№</th>
 					<th width="5%">ЕДРПОУ</th>
-					<th width="10%">Наименование</th>
-					<th width="8%">Псевдоним</th>
-					<th width="15%">YS::Доход (2019, тыс. грн.)</th>
+					<th width="8%">Наименование</th>
+					<th width="6%">Псевдоним</th>
+					<th width="6%%">Журнал импорта</th>
+					<th width="13%">YS::Доход (2019, тыс. грн.)</th>
 					<th width="59%">YS::Группы товаров (ТОП) (2019)</th>
 					</tr>
 				</thead>
@@ -43,6 +44,7 @@
 						<td><a class="btn btn-secondary font-weight-bold" href="{% url 'ved:IndividualReportFirmShow' firm.record__recipient__edrpou %}?start_date={{ start_date }}&end_date={{ end_date }}">{{ firm.record__recipient__edrpou | cut:' ' }}</a></td>
 						<td>{% autoescape off %} {{ firm.record__recipient__name|bold_in_quotes }} {% endautoescape %}</td>
 						<td><span class="font-weight-bold">{{ firm.record__recipient__firm_alias }}</span></td>
+						<td><a name="" id="" class="btn btn-secondary" href="{% url 'ved:CompetitorsCatalogPeriodDetail' firm.record__recipient__edrpou  %}" role="button">Перейти</a></td>
 						<td>{{ firm.y_fin_m_in }}</td>
 						<td>
 							{% for utk in firm.y_ved_utk %}

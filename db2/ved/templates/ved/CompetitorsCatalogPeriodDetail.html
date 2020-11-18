@@ -3,11 +3,11 @@
 {% load cache %}
 
 {% block title %}
-ВЭД :: Конкуренты :: Сравнительный анализ
+ВЭД :: Конкуренты :: Подробный журнал импорта (за период)
 {% endblock title %}
 
 {% block DatePeriod %}
-    <form method="get" action={% url 'ved:CompetitorsComparse' %}>
+    <form method="get" action={% url 'ved:CompetitorsCatalogPeriodDetail' edrpou_num %}>
          {{ search_form.start_date }}
         -
         {{ search_form.end_date }}
@@ -16,9 +16,10 @@
 {% endblock DatePeriod %}
 
 {% block content %}
-{% cache 3600 CompetitorsComparse comparse.query %}
+{% cache 3600 CompetitorsCatalogPeriodDetail %}
 
 
 
-
+{% endcache %}
+{% include 'ved/periods.html' %}
 {% endblock content %}

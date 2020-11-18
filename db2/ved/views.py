@@ -576,7 +576,23 @@ def TnvedGroupCatalog(request):
     return  render(request, 'ved/TnvedGroupCatalog.html', context)
 
 def CompetitorsCatalogPeriodDetail(request,edrpou_num):
+    start_date=year+'-01-01'
+    end_date=year+'-12-31'
+    search_form=SearchForm()
+    dates=getRecDates()
+    if request.GET.get('start_date'):
+        search_form = SearchForm(request.GET)
+        start_date=request.GET.get('start_date')
+    if request.GET.get('end_date'):
+        search_form = SearchForm(request.GET)
+        end_date=request.GET.get('end_date')
+
     context={
-            
+        'search_form': search_form,
+        'edrpou_num':edrpou_num,
+        'start_date':start_date,
+        'end_date':end_date,
+        'year':year,  
+        'dates':dates,      
         }
     return  render(request, 'ved/CompetitorsCatalogPeriodDetail.html', context)
