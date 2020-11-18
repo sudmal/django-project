@@ -8,12 +8,14 @@ from django.views.decorators.cache import cache_page
 from .models import Competitors
 from .models import Organisation,GtdRecords,Records,Trademark,Sender,Country,TnvedGroup,Exchange,filter_codes,TnvedGroup,Youscore,RecordsStaging
 from .forms import SearchForm,SearchFormOrg
+from .tables import CompetitorsComparsePeriodDetailTable
 from django.db.models import Count, Sum, Q, Avg, Subquery, OuterRef, F, FloatField, Max
 import datetime
 import requests
 import json 
 
 from django.contrib.postgres.aggregates import ArrayAgg
+from django_tables2 import RequestConfig
 
 
 # if now is not jan or feb, year is current year, other way - previus
@@ -587,6 +589,8 @@ def CompetitorsCatalogPeriodDetail(request,edrpou_num):
         search_form = SearchForm(request.GET)
         end_date=request.GET.get('end_date')
     CompetitorsDetailRaw = RecordsStaging.objects.filter(Q(recipient_code=edrpou_num) & Q(date__range=[start_date, end_date]))
+    table = CompetitorsComparsePeriodDetailTable(CompetitorsDetailRaw)
+    RequestConfig(request).configure(table)
     context={
         'search_form': search_form,
         'edrpou_num':edrpou_num,
@@ -594,6 +598,6 @@ def CompetitorsCatalogPeriodDetail(request,edrpou_num):
         'end_date':end_date,
         'year':year,  
         'dates':dates,
-        'CompetitorsDetailRaw':CompetitorsDetailRaw,
+        'table':table,
         }
     return  render(request, 'ved/CompetitorsCatalogPeriodDetail.html', context)

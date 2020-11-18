@@ -1,11 +1,17 @@
 {% extends 'main/base.html' %}
 {% load render_table from django_tables2 %}
 {% load bold_in_quotes %}
-{% load cache %}
+{% load static %}
 
 {% block title %}
 ВЭД :: Конкуренты :: Подробный журнал импорта (за период)
 {% endblock title %}
+
+{% block js-before %}
+<link rel="stylesheet" href="{% static 'django_tables2/themes/paleblue/css/screen.css' %}" />
+{% endblock js-before %}
+
+
 
 {% block DatePeriod %}
     <form method="get" action={% url 'ved:CompetitorsCatalogPeriodDetail' edrpou_num %}>
@@ -17,11 +23,9 @@
 {% endblock DatePeriod %}
 
 {% block content %}
-{% cache 3600 CompetitorsCatalogPeriodDetail CompetitorsDetailRaw.query %}
 
 
-{% render_table CompetitorsDetailRaw %}
+{% render_table table %}
 
-{% endcache %}
 {% include 'ved/periods.html' %}
 {% endblock content %}
