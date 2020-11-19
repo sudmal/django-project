@@ -112,10 +112,21 @@
       </li>
     </ul>
   </div>
-  
+  <div class="my-2 my-lg-0">
+    <nav class="nav justify-content-center">
+     <nav class="input-group">
+      {% block export_button %}
+      {% endblock export_button %}
+     </nav>
+    </nav>
+  </div>
+ 
+  <div class="col md-2 ml-2 mr-2" width="40px">
+  </div>
     <div class="my-2 my-lg-0 ">
      <nav class="input-group date" data-provide="datepicker">
       <div class="input-group input-daterange mr-5">
+
       {% block period_button %}
       <button type="button" class="btn btn-outline-success" data-toggle="modal" data-target="#periodsModal">
         Доступные периоды

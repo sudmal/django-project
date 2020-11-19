@@ -30,7 +30,7 @@ INTERNAL_IPS = ('127.0.0.1',)
 
 # Application definition
 ## pip install django-tables2
-## pip install tablib    ## needs for export tables to excel
+## pip install tablib[all]    ## needs for export tables to excel
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',

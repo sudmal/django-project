@@ -5,6 +5,9 @@ from urllib.parse import unquote
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.cache import cache_page
+import django_tables2 as tables
+from django_tables2.export.export import TableExport
+from django_tables2.export.views import ExportMixin
 from .models import Competitors
 from .models import Organisation,GtdRecords,Records,Trademark,Sender,Country,TnvedGroup,Exchange,filter_codes,TnvedGroup,Youscore,RecordsStaging
 from .forms import SearchForm,SearchFormOrg
@@ -588,7 +591,7 @@ def CompetitorsCatalogPeriodDetail(request,edrpou_num):
     if request.GET.get('end_date'):
         search_form = SearchForm(request.GET)
         end_date=request.GET.get('end_date')
-    CompetitorsDetailRaw = RecordsStaging.objects.filter(Q(recipient_code=edrpou_num) & Q(date__range=[start_date, end_date]))
+    CompetitorsDetailRaw = RecordsStaging.objects.filter(Q(recipient_code=edrpou_num) & Q(date__range=[start_date, end_date])).values('date','gtd','country', 'sender_name', 'recipient_name','recipient_code','product_code','trademark','description','cost_fact','cost_customs').order_by('date')
     """ \
         .extra(select={
             'Дата': 'date',
@@ -600,9 +603,12 @@ def CompetitorsCatalogPeriodDetail(request,edrpou_num):
             'Описание': 'description',
             })\
             .values('Дата','ГТД','Страна','Отправитель','Товарный код','Торговая марка','Описание') """
-    print(CompetitorsDetailRaw.query)
     table = CompetitorsComparsePeriodDetailTable(CompetitorsDetailRaw)
-    RequestConfig(request).configure(table)
+    RequestConfig(request, paginate={"per_page": 50}).configure(table)
+    export_format = request.GET.get("_export", None)
+    if TableExport.is_valid_format(export_format):
+        exporter = TableExport(export_format, table)
+        return exporter.response(filename="VEDImport_{0}_{1}_{2}.{3}".format(edrpou_num,start_date,end_date,export_format))
     context={
         'search_form': search_form,
         'edrpou_num':edrpou_num,
@@ -613,3 +619,4 @@ def CompetitorsCatalogPeriodDetail(request,edrpou_num):
         'table':table,
         }
     return  render(request, 'ved/CompetitorsCatalogPeriodDetail.html', context)
+
