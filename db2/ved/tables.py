@@ -4,7 +4,7 @@ from django_tables2 import columns
 from .models import RecordsStaging
 
 class CompetitorsComparsePeriodDetailTable(tables.Table):
-    export_formats = ['csv', 'xls']
+    export_formats = ['csv', 'xls', 'xlsx']
     num = tables.TemplateColumn("{{ row_counter }}")
 
     recipient_name = columns.Column(visible=False,exclude_from_export=True)

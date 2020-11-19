@@ -592,7 +592,10 @@ def CompetitorsCatalogPeriodDetail(request,edrpou_num):
         search_form = SearchForm(request.GET)
         end_date=request.GET.get('end_date')
     firm=Organisation.objects.get(edrpou = edrpou_num)
+    period_summ = str(RecordsStaging.objects.filter(recipient_code=edrpou_num,date__range=[start_date, end_date]).aggregate(Sum('cost_fact'))['cost_fact__sum'])
+    print(period_summ)
     CompetitorsDetailRaw = RecordsStaging.objects.filter(Q(recipient_code=edrpou_num) & Q(date__range=[start_date, end_date])).values('date','gtd','country', 'sender_name', 'recipient_name','recipient_code','product_code','trademark','description','cost_fact','cost_customs').order_by('date')
+    
     """ \
         .extra(select={
             'Дата': 'date',
@@ -618,6 +621,7 @@ def CompetitorsCatalogPeriodDetail(request,edrpou_num):
         'year':year,  
         'dates':dates,
         'table':table,
+        'period_summ':period_summ,
         'firm': firm,
         'edrpou_num':edrpou_num,
         }
