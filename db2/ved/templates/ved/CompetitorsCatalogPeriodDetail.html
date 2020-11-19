@@ -13,7 +13,7 @@
 {% endblock js-before %}
 
 {% block export_button %}
-    <a href="{% querystring '_export'='xlsx' %}">Export XLSX</a>
+    <a href="{% querystring '_export'='xlsx' %}"><button type="button" class="btn btn-outline-success">Export to EXCEL</button></a>
 {% endblock export_button %}
 
 
@@ -30,7 +30,17 @@
 
 {% block content %}
 
-
+{% autoescape off %}
+<div class="row">
+    <div class="col">
+        <b>{{ firm.name }}</b>
+    </div>
+    <div class="col">
+        ЕДРПОУ: <b>{{ edrpou_num|cut:' '  }}</b>
+    </div>
+    <div class="col-md-6"></div>
+</div>
+{% endautoescape %}
 {% render_table table %}
 
 {% include 'ved/periods.html' %}

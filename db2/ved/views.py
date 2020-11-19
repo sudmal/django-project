@@ -517,7 +517,7 @@ def CompetitorsCatalog(request):
         .values('record__recipient__edrpou','record__recipient__name','record__recipient__firm_alias')\
             .annotate(total_cost=Sum('cost_fact'),total_cost_eur=Sum((F('record__exchange__usd_nbu')/F('record__exchange__eur_nbu'))*F('cost_fact')),\
                 total_count=Count('cost_fact')).order_by('-total_cost')
-    competitors_top=competitors[:10]
+    competitors_top=competitors[:42]
     yresults_dict={}
     yresult=Youscore_get(competitors_top)
     
@@ -591,6 +591,7 @@ def CompetitorsCatalogPeriodDetail(request,edrpou_num):
     if request.GET.get('end_date'):
         search_form = SearchForm(request.GET)
         end_date=request.GET.get('end_date')
+    firm=Organisation.objects.get(edrpou = edrpou_num)
     CompetitorsDetailRaw = RecordsStaging.objects.filter(Q(recipient_code=edrpou_num) & Q(date__range=[start_date, end_date])).values('date','gtd','country', 'sender_name', 'recipient_name','recipient_code','product_code','trademark','description','cost_fact','cost_customs').order_by('date')
     """ \
         .extra(select={
@@ -607,7 +608,7 @@ def CompetitorsCatalogPeriodDetail(request,edrpou_num):
     RequestConfig(request, paginate={"per_page": 50}).configure(table)
     export_format = request.GET.get("_export", None)
     if TableExport.is_valid_format(export_format):
-        exporter = TableExport(export_format, table)
+        exporter = TableExport(export_format, table, dataset_kwargs={"title": firm.name})
         return exporter.response(filename="VEDImport_{0}_{1}_{2}.{3}".format(edrpou_num,start_date,end_date,export_format))
     context={
         'search_form': search_form,
@@ -617,6 +618,8 @@ def CompetitorsCatalogPeriodDetail(request,edrpou_num):
         'year':year,  
         'dates':dates,
         'table':table,
+        'firm': firm,
+        'edrpou_num':edrpou_num,
         }
     return  render(request, 'ved/CompetitorsCatalogPeriodDetail.html', context)
 
