@@ -43,7 +43,7 @@ class Country(models.Model):
 
 
 class RecordsStaging(models.Model):
-    sender_name = models.TextField(blank=True, null=True)
+    sender_name = models.TextField(blank=True, null=True, verbose_name='Отправитель')
     recipient_code = models.BigIntegerField(blank=True, null=True)
     recipient_name = models.TextField(blank=True, null=True)
     product_code = models.BigIntegerField(blank=True, null=True)

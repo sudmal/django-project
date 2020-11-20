@@ -10,6 +10,8 @@ class CompetitorsComparsePeriodDetailTable(tables.Table):
     recipient_name = columns.Column(visible=False,exclude_from_export=True)
     recipient_code = columns.Column(visible=False,exclude_from_export=True)
     hash = columns.Column(visible=False,exclude_from_export=True)
+    #rename columns
+    # devenv = tables.Column(verbose_name= 'Development Environment' )
     class Meta:
         export_formats = ['csv', 'xls', 'xlsx']
         model = RecordsStaging
