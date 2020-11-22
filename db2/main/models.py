@@ -7,7 +7,6 @@ class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     bio = models.TextField(max_length=500, blank=True)
     currency = models.CharField(max_length=30, blank=True)
-    lastlogin = models.DateField(blank=True, null=True )
     delimiter = models.CharField(max_length=30, blank=True)
 
 

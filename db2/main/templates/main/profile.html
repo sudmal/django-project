@@ -12,7 +12,8 @@
           <h2>{{ user.get_full_name }}</h2>
             <ul>
               <li>Имя пользователя: {{ user.profile.bio }}</li>
-              <li>Последний вход: {{ user.profile.lastlogin }}</li>
+              <li>Последний вход: {{ user.last_login }}</li>
+              <li>Разделитель целой и дробной части: {{ user.profile.delimiter }}</li>
               <li>Валюта: {{ user.profile.currency }}</li>
             </ul>
         </div>

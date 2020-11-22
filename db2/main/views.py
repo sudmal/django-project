@@ -37,9 +37,7 @@ def login_user(request):
             if user is not None:
                 login (request,user)
                 user = User.objects.get(username=alogin)
-                user.profile.lastlogin=datetime.datetime.now()
                 user.save()
-            #print(alogin)
         
         return HttpResponseRedirect(reverse('home'))
     return render(request, 'main/login.html', context)
