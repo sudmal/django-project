@@ -142,8 +142,15 @@
         <!--<a class="nav-link active" href="{% url 'about' %}">About</a>-->
          {% if request.user.is_authenticated  %}
             <nav class="nav justify-content-center m-3">
-              {{ request.user.get_full_name }} ({{ request.user.username }})
+              <a href="#"  data-toggle="modal" data-target="#profileModal">{{ request.user.get_full_name }} ({{ request.user.username }})</a>
             </nav>
+            <nav class="nav justify-content-center m-3">
+             {% comment '' %}
+                          Валюта {{ user.profile.currency }}
+             {% endcomment %}
+
+            </nav>
+
             <nav class="nav justify-content-center m-3">
               <a href="{% url 'logout' %}"> Выйти </a>
             </nav>
@@ -186,6 +193,7 @@ $(function () {
     {% endblock content %}
 </div>
 
+{% include 'main/profile.html' %}
 
 {% block js %}
 {% endblock js %}

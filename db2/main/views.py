@@ -2,11 +2,13 @@ from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import login,authenticate,logout
+from django.contrib.auth.models import User
 from django.urls import reverse
 from django.utils.http import is_safe_url,urlunquote
+from .models import Profile
 import json 
 from urllib.request import Request, urlopen
-
+import datetime
 
 
 from .forms import LoginForm
@@ -34,8 +36,11 @@ def login_user(request):
             user = authenticate(request,username=alogin,password=apassword)
             if user is not None:
                 login (request,user)
-
-            print(alogin)
+                user = User.objects.get(username=alogin)
+                user.profile.lastlogin=datetime.datetime.now()
+                user.save()
+            #print(alogin)
+        
         return HttpResponseRedirect(reverse('home'))
     return render(request, 'main/login.html', context)
 
