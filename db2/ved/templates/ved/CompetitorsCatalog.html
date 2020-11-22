@@ -7,19 +7,35 @@
 {% endblock title %}
 
 {% block js-before %}
-
+<script>
+$(document).ready(function(){
+  $("#myInput").on("keyup", function() {
+    var value = $(this).val().toLowerCase();
+    $("#myTable tr").filter(function() {
+      $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+    });
+  });
+});
+</script>
 {% endblock js-before %}
 {% block period_button %}
 <a class="btn btn-light" target=_blank href="https://customs-invecta.com.ua/ukt-ved/"><u>Коды УКТВЭД Украины 2020: поиск и расшифровка кода УКТЗЕД</u></a>
 {% endblock period_button %}
 {% block content %}
-{% cache 3 CompetitorsCatalog competitors.query %}
-
+{% cache 3600 CompetitorsCatalog competitors.query %}
+<div class="row">
+	<div class="col">
+		
+	</div>
+</div>
 <div class="row">
 	<div class="col-md ml-5 mr-5">
 		<ul class="nav nav-tabs">
 		<li class="nav-item">
 			<a class="nav-link bg-secondary text-light active" data-toggle="tab" href="#tab_1">Конкуренты</a>
+		</li>
+		<li class="nav nav-item">
+			<input id="myInput" type="text" placeholder="Поиск..">
 		</li>
 		</ul>
 
@@ -38,7 +54,7 @@
 					<th width="59%">YS::Группы товаров (ТОП) (2019)</th>
 					</tr>
 				</thead>
-				<tbody><tr>
+				<tbody id="myTable"><tr>
 						{% for firm in competitors %}
 						<th scope="row">{{ forloop.counter }}</th>
 						<td><a class="btn btn-secondary font-weight-bold" href="{% url 'ved:IndividualReportFirmShow' firm.record__recipient__edrpou %}?start_date={{ start_date }}&end_date={{ end_date }}">{{ firm.record__recipient__edrpou | cut:' ' }}</a></td>
