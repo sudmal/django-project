@@ -1,7 +1,7 @@
 {% extends 'main/base.html' %}
 
 {% block title %}
-    Профиль пользователя {{ request.user.username }}
+    Профиль пользователя {{ user.profile.bio }}
 {% endblock title %}
 
 {% block period_button %}
@@ -11,7 +11,7 @@
 {% block content %}
 
 <div class="container">
-  <h2>{{ user.get_full_name }}</h2>
+  <h2>{{ user.profile.bio }}</h2>
   <form method=POST action="{% url 'ProfileUpdate' %}">
   {% csrf_token %}
   <table class="table">
