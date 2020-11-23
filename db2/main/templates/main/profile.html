@@ -1,26 +1,43 @@
-<div class="modal fade" id="profileModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
-  <div class="modal-dialog modal-lg" role="document">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h5 class="modal-title pr-2" id="exampleModalLabel">Настройки:</h5>
-        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body">
-        <div class="container">
-          <h2>{{ user.get_full_name }}</h2>
-            <ul>
-              <li>Имя пользователя: {{ user.profile.bio }}</li>
-              <li>Последний вход: {{ user.last_login }}</li>
-              <li>Разделитель целой и дробной части: {{ user.profile.delimiter }}</li>
-              <li>Валюта: {{ user.profile.currency }}</li>
-            </ul>
-        </div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-      </div>
-    </div>
-  </div>
+{% extends 'main/base.html' %}
+
+{% block title %}
+    Профиль пользователя {{ request.user.username }}
+{% endblock title %}
+
+{% block period_button %}
+{% endblock period_button %}
+
+
+{% block content %}
+
+<div class="container">
+  <h2>{{ user.get_full_name }}</h2>
+  <form method=POST action="{% url 'ProfileUpdate' %}">
+  {% csrf_token %}
+  <table class="table">
+    <tbody>
+      <tr>
+        <td scope="row">Имя пользователя:</td><td>
+          <input type="text" class="form-control" name="bio" id="" aria-describedby="helpId" value="{{ user.profile.bio }}" placeholder="Фамилия Имя"></td>
+      </tr>
+        <td>Валюта:</td><td>
+          <select class="form-control" name="currency" id="exampleFormControlSelect1">
+            <option value="USD" {% if user.profile.currency == "USD"  %} selected = "selected" {% endif %} >USD</option>
+            <option value="EUR" {% if user.profile.currency == "EUR"  %} selected = "selected" {% endif %} >EUR</option>
+            <option value="UAH" {% if user.profile.currency == "UAH"  %} selected = "selected" {% endif %} >UAH</option>
+          </select>
+          <input type="hidden" name="ref" value="{{ ref }}">
+        </td>
+      </tr>
+      <tr>
+        <td scope="row"></td>
+        <td>
+        <button type="submit" class="btn btn-secondary" data-dismiss="modal">Сохранить</button>
+        </td>
+
+      </tr>
+    </tbody>
+  </table>
 </div>
+
+{% endblock content %}

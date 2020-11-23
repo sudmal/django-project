@@ -6,6 +6,7 @@ from django.contrib.auth.models import User
 from django.urls import reverse
 from django.utils.http import is_safe_url,urlunquote
 from .models import Profile
+from .forms import ProfileForm
 import json 
 from urllib.request import Request, urlopen
 import datetime
@@ -62,3 +63,14 @@ def FirmInfo(request,edrpou_num):
         'data':data,
     }
     return render(request, 'main/FirmInfo.html', context)
+
+def ProfileUpdate(request):
+    context= dict({'ref':request.META.get('HTTP_REFERER')})
+    if request.method == 'POST':
+        userProfile=Profile.objects.get(user__username=request.user.username)
+        userProfile.bio = request.POST.get('bio')
+        userProfile.currency = request.POST.get('currency')
+        userProfile.save()
+        print(request.POST.get('ref'))
+        return HttpResponseRedirect(request.POST.get('ref'))
+    return render(request,'main/profile.html',context)
