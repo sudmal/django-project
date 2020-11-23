@@ -20,7 +20,7 @@
         <td scope="row">Имя пользователя:</td><td>
           <input type="text" class="form-control" name="bio" id="" aria-describedby="helpId" value="{{ user.profile.bio }}" placeholder="Фамилия Имя"></td>
       </tr>
-        <td>Валюта:</td><td>
+        <td>Основная валюта:</td><td>
           <select class="form-control" name="currency" id="exampleFormControlSelect1">
             <option value="USD" {% if user.profile.currency == "USD"  %} selected = "selected" {% endif %} >USD</option>
             <option value="EUR" {% if user.profile.currency == "EUR"  %} selected = "selected" {% endif %} >EUR</option>
