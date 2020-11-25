@@ -14,8 +14,8 @@ class Profile(models.Model):
     bio = models.TextField(max_length=500, blank=True)
     currency = models.CharField(max_length=30, blank=True, choices=CHOICES)
     delimiter = models.CharField(max_length=30, blank=True)
-    ved_part = BooleanField(default=False)
-    nal_part = BooleanField(default=False)
+    ved_part = BooleanField("Доступ к отчетам ВЭД",default=False)
+    nal_part = BooleanField("Доступ к отчетам Внутреннего рынка",default=False)
     def __str__(self):
         return str(self.bio) + " [" + str(self.user.username) +"]"
 
