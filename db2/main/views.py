@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import user_passes_test
 from django.contrib.auth import login,authenticate,logout
 from django.contrib.auth.models import User
 from django.urls import reverse
@@ -49,6 +50,7 @@ def logout_user(request):
     return HttpResponseRedirect(reverse('login'))
 
 @login_required(login_url='login')
+@user_passes_test(lambda u: u.profile.nal_part, login_url='/')
 def about(request):
     return render(request, 'main/info.html')
 

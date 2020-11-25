@@ -32,6 +32,7 @@
   </button>
   <div class="collapse navbar-collapse" id="navbarNavDropdown">
     <ul class="navbar-nav">
+      {% if user.profile.ved_part %}
       <li class="nav-item dropdown">
         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
           ВЭД
@@ -70,6 +71,8 @@
           </li>
         </ul>
       </li>
+      {% endif %}
+      {% if user.profile.nal_part %}
       <li class="nav-item dropdown">
         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
           Внутренний рынок
@@ -110,6 +113,7 @@
           </li>
         </ul>
       </li>
+      {% endif %}
     </ul>
   </div>
   <div class="my-2 my-lg-0">

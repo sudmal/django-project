@@ -3,7 +3,7 @@ from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.urls import reverse
 from urllib.parse import unquote
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
-from django.contrib.auth.decorators import login_required
+from django.contrib.auth.decorators import login_required,user_passes_test
 from django.views.decorators.cache import cache_page
 import django_tables2 as tables
 from django_tables2.export.export import TableExport
@@ -249,6 +249,7 @@ def CompetitorsComparse(request):
     return render(request,'ved/CompetitorsComparse.html',context)
 
 @login_required(login_url='login')
+@user_passes_test(lambda u: u.profile.ved_part, login_url='/')
 def IndividualReport(request):
     logUserData(request)
     context=dict()
