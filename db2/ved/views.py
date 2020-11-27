@@ -411,14 +411,24 @@ def TrademarkReportShow(request,trademark_name):
 
 @login_required(login_url='login')
 def TrademarkReportRaw(request,trademark_name,edrpou_num):
-    logUserData(request)
+    start_date=year+'-01-01'
+    end_date=year+'-12-31'
+    if request.GET.get('start_date'):
+        search_form = SearchForm(request.GET)
+        start_date=request.GET.get('start_date')
+    if request.GET.get('end_date'):
+        search_form = SearchForm(request.GET)
+        end_date=request.GET.get('end_date')
     context=dict()
     dates=getRecDates()
     trademark_name=unquote(trademark_name)
     firm=Organisation.objects.get(edrpou = edrpou_num)
-    queryset_list = GtdRecords.objects.filter((Q(record__recipient__edrpou=edrpou_num) & Q(trademark__name=trademark_name)))\
+    queryset_list = GtdRecords.objects.filter(Q(record__recipient__edrpou=edrpou_num) & Q(trademark__name=trademark_name) & Q(record__date__range=[start_date, end_date]))\
             .values('record__sender__name','record__sender__country__name','record__date','product_code','description','cost_fact')\
                 .annotate(cost_eur=Sum((F('record__exchange__usd_nbu')/F('record__exchange__eur_nbu'))*F('cost_fact')),).order_by('record__date')
+    summ = GtdRecords.objects.filter(Q(record__recipient__edrpou=edrpou_num) & Q(trademark__name=trademark_name) & Q(record__date__range=[start_date, end_date]))\
+                .aggregate(cost_usd=Sum('cost_fact'))
+    tm_firm_summ=summ['cost_usd']
     paginator = Paginator(queryset_list, 10)
     page_number = request.GET.get('page')
     records = paginator.get_page(page_number)
@@ -430,6 +440,7 @@ def TrademarkReportRaw(request,trademark_name,edrpou_num):
                 'records': records,
                 'trademark_name': trademark_name,
                 'edrpou_num':edrpou_num,
+                'tm_firm_summ':tm_firm_summ,
             }
     return render(request,'ved/TMReportRaw.html',context)
 

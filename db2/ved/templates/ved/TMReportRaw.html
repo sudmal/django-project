@@ -27,10 +27,20 @@ TODO:
         </nav> 
     </div>
     <div class="table-responsive p-3 m-3">
-        {% autoescape off %}
-        <b>{{ trademark_name }}</b><br> {{ firm.name|bold_in_quotes }}
-        {% endautoescape %}
+        <div class="row">
+            <div class="col-md-2">
+                        {% autoescape off %}
+                            <b>{{ trademark_name }}</b><br> {{ firm.name|bold_in_quotes }}
+                        {% endautoescape %}
+            </div>
+            <div class="col-md-8">
 
+            </div>
+            <div class="col-md-2">
+                Импорт на сумму:<br>
+                <b>{{ tm_firm_summ }} $</b>
+            </div>
+        </div>
         <table class="table table-striped border border-secondary">
         <thead>
         <!-- 'record__sender__name','record__sender__country__name','record__date','product_code','trademark__name','description','cost_fact' -->
