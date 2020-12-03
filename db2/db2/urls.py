@@ -7,6 +7,7 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('main.urls')),
     path('ved/',include('ved.urls',namespace='ved'), name = 'ved'),
+    path('inner/',include('inner.urls',namespace='inner'), name = 'inner'),
 ]
 if settings.DEBUG:
     import debug_toolbar
