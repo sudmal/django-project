@@ -6,16 +6,32 @@
 
 {% block content %}
     <h3>Продажи :: Индивидуальный анализ (поиск)</h3>
+<form method="GET" action="{% url 'inner:SalesIndividual' %}">
+    {% csrf_token %}
+    <div class="row">
+        <div class="col">
+            <div class="input-group mb-3 ml-5">
+            {{ searchFormOrg.search_string }} 
+                <div class="input-group-append">
+                    <button type="submit" class="btn btn-outline-secondary">Поиск</button>
+                </div>
+            </div>
+        </div>
+        <div class="col">
+            
+        </div>
+    </div>
+</form>
     {% for org in organisations %}
         <div class="row">
             <div class="col-md-1">
                 {{ forloop.counter }}
             </div>
             <div class="col-md-1">
-                {{ org.edrpou }}
+                {{ org.seller__edrpou }}
             </div>
             <div class="col">
-                {{ org.name }}
+                {{ org.seller__name }}
             </div>
         </div>
         {% endfor %}

@@ -10,6 +10,7 @@ from django_tables2.export.export import TableExport
 from django_tables2.export.views import ExportMixin
 from .models import Exchange,Youscore,ReestrStaging,CreditStaging,NlCredit,NlOrg,NlProduct,NlReestr
 from django.db.models import Count, Sum, Q, Avg, Subquery, OuterRef, F, FloatField, Max
+from .forms import SearchFormOrg
 import datetime
 import requests
 import json 
@@ -90,8 +91,17 @@ def test(request):
 
 @login_required(login_url='login')
 def SalesIndividual(request):
-    organisations=NlOrg.objects.all()
+    start_date=year+'-01-01'
+    end_date=year+'-12-31'
+    searchFormOrg=SearchFormOrg()
+    organisations=[]
+    if request.GET.get('search_string'):
+        searchFormOrg = SearchFormOrg(request.GET)
+        organisations=NlReestr.objects.filter(Q(seller__name__icontains=request.GET.get('search_string'))|Q(seller__edrpou__icontains=request.GET.get('search_string')))\
+            .values('seller__name','seller__edrpou').distinct()
+        #print(organisations.query)
     context={
         'organisations':organisations,
+        'searchFormOrg':searchFormOrg,
     }
     return render(request,'inner/SalesIndividual.html',context)
