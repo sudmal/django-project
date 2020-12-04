@@ -1,0 +1,87 @@
+{% extends 'main/base.html' %}
+
+{% load bold_in_quotes %}
+{% load static %}
+{% load cache %}
+
+{% block title %}
+    Продажи :: Индивидуальный анализ ({{ edrpou_num| cut:' ' }})
+{% endblock title %}
+
+{% block js-before %}
+<style>
+  .ui-autocomplete-loading {
+    background: white url("{% static 'ui-anim_basic_16x16.gif' %}") right center no-repeat;
+  }
+</style>
+{% endblock js-before %}
+
+{% block period_button %}
+
+{% endblock period_button %}
+
+{% block DatePeriod %}
+    <form method="get" class="form-inline" action={% url 'inner:SalesIndividualFirmShow' edrpou_num  %}>
+        {{ DatesForm.start_date }}
+        -
+        {{ DatesForm.end_date }}
+        <button type="submit" class="btn btn-info">Изменить</button>
+
+{% endblock DatePeriod %}
+
+{% block content %}
+<div class="container m-2">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'home' %}">Внутренний рынок</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'home' %}">Продажи</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Индивидульный анализ ({{ edrpou_num| cut:' ' }} ) - {{ seller_name }}</li>
+        </ol>
+   </nav> 
+</div>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>#</th>
+            <th>ЕДРПОУ</th>
+            <th>ИМЯ</th>
+            <th>СУММА</th>
+        </tr>
+    </thead>
+    <tbody>
+
+            {% for f in buyers %}
+            <tr>
+                <td scope="row">{{ forloop.counter }}</td>
+                <td>{{ f.buyer__edrpou|cut:' ' }}</td>
+                <td>
+                {% if f.buyer__edrpou == 0 %}
+                    Иностранные предприятия/неплательщики                
+                {% else %}
+                    {% autoescape off %}{{ f.buyer__name|bold_in_quotes }}{% endautoescape %}
+                {% endif %}
+                
+                </td>
+                <td>{{ f.sum |floatformat:2 }}</td>
+            </tr>
+            {% endfor %}
+        
+    </tbody>
+</table>
+
+
+
+{% endblock content %}
+
+
+{% block js %}
+<script>
+    $(function () {
+        $("#org_search").autocomplete({
+            source: '{% url 'inner:sales_autocomplete_org' %}',
+            minLength: 1
+        });
+    });
+</script>
+{% endblock js %}

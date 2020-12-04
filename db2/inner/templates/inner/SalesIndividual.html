@@ -16,11 +16,20 @@
 </style>
 {% endblock js-before %}
 
-{% block period_button %}
+{% block DatePeriod %}
+    <form method="get" class="form-inline" action={% url 'inner:SalesIndividual' %}>
+        {{ DatesForm.start_date }}
+        -
+        {{ DatesForm.end_date }}
+        <button type="submit" class="btn btn-info">Изменить</button>
 
+{% endblock DatePeriod %}
+
+{% block period_button %}
 {% endblock period_button %}
 
 {% block content %}
+
 <div class="container m-2">
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
@@ -46,6 +55,7 @@
         </div>
     </div>
 </form>
+{% if organisations %}
 <div class"container">
        <div class="row bg-secondary mx-3 py-2 text-light">
             <div class="col-md-1">
@@ -83,6 +93,9 @@
         </div>
         {% endfor %}
 </div>
+{% else %}
+Пожалуйста выполните запрос
+{% endif %}
 {% endblock content %}
 
 

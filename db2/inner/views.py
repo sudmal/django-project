@@ -10,13 +10,14 @@ from django_tables2.export.export import TableExport
 from django_tables2.export.views import ExportMixin
 from .models import Exchange,Youscore,ReestrStaging,CreditStaging,NlCredit,NlOrg,NlProduct,NlReestr
 from django.db.models import Count, Sum, Q, Avg, Subquery, OuterRef, F, FloatField, Max
-from .forms import SearchFormOrg
+from .forms import SearchFormOrg,DatesStartEndForm
 import datetime
 import requests
 import json 
 
 from django.contrib.postgres.aggregates import ArrayAgg
 from django_tables2 import RequestConfig
+from django.contrib.auth.models import User
 
 
 # if now is not jan or feb, year is current year, other way - previus
@@ -98,6 +99,13 @@ def test(request):
 def SalesIndividual(request):
     start_date=year+'-01-01'
     end_date=year+'-12-31'
+    DatesForm=DatesStartEndForm()
+    if request.GET.get('start_date'):
+        DatesForm = DatesStartEndForm(request.GET)
+        start_date=request.GET.get('start_date')
+    if request.GET.get('end_date'):
+        DatesForm.end_date = request.GET.get('end_date')
+        end_date=request.GET.get('end_date')
     searchFormOrg=SearchFormOrg()
     organisations=[]
     if request.GET.get('search_string'):
@@ -105,10 +113,11 @@ def SalesIndividual(request):
         organisations=NlReestr.objects.filter(Q(seller__name__icontains=request.GET.get('search_string'))|Q(seller__edrpou__icontains=request.GET.get('search_string')))\
             .annotate(sum=Sum(F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2)).distinct().order_by('-sum')\
                 .values('seller__name','seller__edrpou').distinct().annotate(sum=Sum(F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2)).order_by('-sum')
-        print(organisations.query)
+        #print(organisations.query)
     context={
         'organisations':organisations,
         'searchFormOrg':searchFormOrg,
+        'DatesForm':DatesForm,
         'start_date':start_date,
         'end_date':end_date,
     }
@@ -116,4 +125,26 @@ def SalesIndividual(request):
 
 @login_required(login_url='login')
 def SalesIndividualFirmShow(request,edrpou_num):
-    pass
+    user = User.objects.get(username=request.user)
+    print(user.profile.currency)
+    start_date=year+'-01-01'
+    end_date=year+'-12-31'
+    DatesForm=DatesStartEndForm()
+    if request.GET.get('start_date'):
+        DatesForm = DatesStartEndForm(request.GET)
+        start_date=request.GET.get('start_date')
+    if request.GET.get('end_date'):
+        DatesForm.end_date = request.GET.get('end_date')
+        end_date=request.GET.get('end_date')
+    seller_name=NlOrg.objects.get(edrpou=edrpou_num).name
+    buyers=NlReestr.objects.filter(seller__edrpou=edrpou_num,ordering_date__range=[start_date, end_date]).values('buyer__edrpou','buyer__name').distinct()\
+        .annotate(sum=Sum(F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2)).distinct().order_by('-sum')
+    context={
+        'buyers':buyers,
+        'edrpou_num':edrpou_num,
+        'seller_name':seller_name,
+        'DatesForm':DatesForm,
+        'start_date':start_date,
+        'end_date':end_date,
+    }
+    return render(request,'inner/SalesIndividualFirmShow.html',context)
