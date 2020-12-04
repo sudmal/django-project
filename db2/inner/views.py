@@ -34,9 +34,7 @@ def sales_autocomplete_org(request):
     if 'term' in request.GET:
         found_org = NlReestr.objects.filter(Q(seller__name__icontains=request.GET.get('term')) |Q(seller__edrpou__startswith=request.GET.get('term')) )\
             .values('seller__name').annotate(sum=Sum(F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2)).distinct().order_by('-sum')
-        print(found_org.query)
         for tm in found_org:
-            print(tm)
             titles.append(tm['seller__name'])
     if len(titles)==0:
         titles.append("Ничего не найдено")
@@ -91,8 +89,6 @@ def index(request):
 
 @login_required(login_url='login')
 def test(request):
- 
-
     context={
         'year':year,
     }
@@ -107,10 +103,17 @@ def SalesIndividual(request):
     if request.GET.get('search_string'):
         searchFormOrg = SearchFormOrg(request.GET)
         organisations=NlReestr.objects.filter(Q(seller__name__icontains=request.GET.get('search_string'))|Q(seller__edrpou__icontains=request.GET.get('search_string')))\
-            .values('seller__name','seller__edrpou').distinct()
-        #print(organisations.query)
+            .annotate(sum=Sum(F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2)).distinct().order_by('-sum')\
+                .values('seller__name','seller__edrpou').distinct().annotate(sum=Sum(F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2)).order_by('-sum')
+        print(organisations.query)
     context={
         'organisations':organisations,
         'searchFormOrg':searchFormOrg,
+        'start_date':start_date,
+        'end_date':end_date,
     }
     return render(request,'inner/SalesIndividual.html',context)
+
+@login_required(login_url='login')
+def SalesIndividualFirmShow(request,edrpou_num):
+    pass

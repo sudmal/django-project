@@ -9,6 +9,7 @@ urlpatterns = [
     path('sales_autocomplete_org/', views.sales_autocomplete_org, name='sales_autocomplete_org'),
     path('test/', views.test, name = 'test'),
     path('SalesIndividual/', views.SalesIndividual, name = 'SalesIndividual'),
+    path('SalesIndividual/<int:edrpou_num>/', views.SalesIndividualFirmShow, name = 'SalesIndividualFirmShow'),
     #path('CompetitorsComparse/', views.CompetitorsComparse, name = 'CompetitorsComparse'),
     #path('IndividualReport/', views.IndividualReport, name = 'IndividualReport'),
     #path('IndividualReport/<int:edrpou_num>/', views.IndividualReportFirmShow, name = 'IndividualReportFirmShow'),

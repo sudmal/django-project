@@ -16,8 +16,20 @@
 </style>
 {% endblock js-before %}
 
+{% block period_button %}
+
+{% endblock period_button %}
+
 {% block content %}
-    <h3>Продажи :: Индивидуальный анализ (поиск)</h3>
+<div class="container m-2">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'home' %}">Внутренний рынок</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'home' %}">Продажи</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Индивидульный анализ (Поиск)</li>
+        </ol>
+   </nav> 
+</div>
 <form method="GET" action="{% url 'inner:SalesIndividual' %}">
     {% csrf_token %}
     <div class="row">
@@ -34,19 +46,43 @@
         </div>
     </div>
 </form>
-    {% for org in organisations %}
-        <div class="row">
+<div class"container">
+       <div class="row bg-secondary mx-3 py-2 text-light">
             <div class="col-md-1">
-                {{ forloop.counter }}
+                <b>#</b>
             </div>
             <div class="col-md-1">
-                {{ org.seller__edrpou }}
+                <b>ЕДРПОУ</b>
             </div>
             <div class="col">
-                {{ org.seller__name }}
+               <b> Наименование </b>
+            </div>
+            <div class="col">
+               <b> Сумма (за период) </b>
+            </div>
+        </div>
+    {% for org in organisations %}
+        <div class="row  mx-3 py-2 border-bottom">
+            <div class="col-md-1 d-flex justify-content-center align-items-center">
+                <b>{{ forloop.counter }}</b>
+            </div>
+            <div class="col-md-1 d-flex justify-content-center align-items-center">
+                <a class="btn btn-primary font-weight-bold" href="{% url 'inner:SalesIndividualFirmShow' org.seller__edrpou %}?start_date={{ start_date }}&end_date={{ end_date }}">{{ org.seller__edrpou | cut:' ' }}</a>
+            </div>
+            <div class="col align-items-center">
+                {% autoescape off %}
+                {{ org.seller__name| bold_in_quotes }}
+                {% endautoescape %}
+            </div>
+            <div class="col" style="text-align: right;">
+                {{ org.sum | floatformat:2 }}
+
+            </div>
+            <div class="col-md-4" style="text-align: right;">
             </div>
         </div>
         {% endfor %}
+</div>
 {% endblock content %}
 
 
