@@ -1,8 +1,20 @@
 {% extends 'main/base.html' %}
 
+{% load bold_in_quotes %}
+{% load static %}
+{% load cache %}
+
 {% block title %}
     Продажи :: Индивидуальный анализ (поиск)
 {% endblock title %}
+
+{% block js-before %}
+<style>
+  .ui-autocomplete-loading {
+    background: white url("{% static 'ui-anim_basic_16x16.gif' %}") right center no-repeat;
+  }
+</style>
+{% endblock js-before %}
 
 {% block content %}
     <h3>Продажи :: Индивидуальный анализ (поиск)</h3>
@@ -37,3 +49,14 @@
         {% endfor %}
 {% endblock content %}
 
+
+{% block js %}
+<script>
+    $(function () {
+        $("#org_search").autocomplete({
+            source: '{% url 'inner:sales_autocomplete_org' %}',
+            minLength: 1
+        });
+    });
+</script>
+{% endblock js %}
