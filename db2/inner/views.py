@@ -88,3 +88,10 @@ def test(request):
     }
     return render(request,'inner/test.html',context)
 
+@login_required(login_url='login')
+def SalesIndividual(request):
+    organisations=NlOrg.objects.all()
+    context={
+        'organisations':organisations,
+    }
+    return render(request,'inner/SalesIndividual.html',context)

@@ -1,0 +1,23 @@
+{% extends 'main/base.html' %}
+
+{% block title %}
+    Продажи :: Индивидуальный анализ (поиск)
+{% endblock title %}
+
+{% block content %}
+    <h3>Продажи :: Индивидуальный анализ (поиск)</h3>
+    {% for org in organisations %}
+        <div class="row">
+            <div class="col-md-1">
+                {{ forloop.counter }}
+            </div>
+            <div class="col-md-1">
+                {{ org.edrpou }}
+            </div>
+            <div class="col">
+                {{ org.name }}
+            </div>
+        </div>
+        {% endfor %}
+{% endblock content %}
+

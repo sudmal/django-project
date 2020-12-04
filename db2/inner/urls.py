@@ -8,6 +8,7 @@ urlpatterns = [
     path('ajax-tm/', views.autocomplete_tm, name='autocomplete_tm'),
     path('ajax-org/', views.autocomplete_org, name='autocomplete_org'),
     path('test/', views.test, name = 'test'),
+    path('SalesIndividual/', views.SalesIndividual, name = 'SalesIndividual'),
     #path('CompetitorsComparse/', views.CompetitorsComparse, name = 'CompetitorsComparse'),
     #path('IndividualReport/', views.IndividualReport, name = 'IndividualReport'),
     #path('IndividualReport/<int:edrpou_num>/', views.IndividualReportFirmShow, name = 'IndividualReportFirmShow'),
