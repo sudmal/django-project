@@ -1,6 +1,8 @@
 from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.urls import reverse
+from django.db import models
+from django.db.models import Func
 from urllib.parse import unquote
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.contrib.auth.decorators import login_required,user_passes_test
@@ -18,6 +20,7 @@ import json
 from django.contrib.postgres.aggregates import ArrayAgg
 from django_tables2 import RequestConfig
 from django.contrib.auth.models import User
+from django.db.models.functions import TruncMonth
 
 
 # if now is not jan or feb, year is current year, other way - previus
@@ -25,6 +28,14 @@ year = str((datetime.date.today() - datetime.timedelta(days=59)).year)
 
 def logUserData(request):
     print(request.META['REMOTE_ADDR'])
+
+
+
+class Month(Func):
+    function = 'EXTRACT'
+    template = '%(function)s(MONTH from %(expressions)s)'
+    output_field = models.IntegerField()
+
 
 def autocomplete_tm(request):
     titles = list()
@@ -109,6 +120,7 @@ def SalesIndividual(request):
         end_date=request.GET.get('end_date')
     searchFormOrg=SearchFormOrg()
     organisations=[]
+
     if request.GET.get('search_string'):
         searchFormOrg = SearchFormOrg(request.GET)
         organisations=NlReestr.objects.filter(Q(seller__name__icontains=request.GET.get('search_string'))|Q(seller__edrpou__icontains=request.GET.get('search_string')))\
@@ -143,21 +155,46 @@ def SalesIndividualFirmShow(request,edrpou_num):
         DatesForm.end_date = request.GET.get('end_date')
         end_date=request.GET.get('end_date')
     seller_name=NlOrg.objects.get(edrpou=edrpou_num).name
+    buyers_dict = {}
     buyers=NlReestr.objects.filter(seller__edrpou=edrpou_num,ordering_date__range=[start_date, end_date]).values('buyer__edrpou','buyer__name').distinct()
     if currency == 'UAH':
         buyers=buyers.annotate(sum=Sum(F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2)).distinct().order_by('-sum')
     elif currency == 'EUR':
-        buyers=buyers.annotate(sum=Sum((F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2)/32)).distinct().order_by('-sum')
+        buyers=buyers.annotate(sum=Sum((F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2)/F('exchange__eur_mb_sale'))).distinct().order_by('-sum')
     elif currency == 'USD':
-        buyers=buyers.annotate(sum=Sum((F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2)/28)).distinct().order_by('-sum')
-
+        buyers=buyers.annotate(sum=Sum((F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2)/F('exchange__usd_com'))).distinct().order_by('-sum')
+    #print(buyers.query)
+    buyers_list=[]
+    for b in buyers:
+        cur_firm={}
+        cur_firm.update({'buyer__name':b['buyer__name']})
+        cur_firm.update({'buyer__edrpou':b['buyer__edrpou']})
+        cur_firm.update({'sum':b['sum']})
+        per_mnth_sum= NlReestr.objects.filter(seller__edrpou=edrpou_num,buyer__edrpou=cur_firm['buyer__edrpou'],ordering_date__range=[start_date, end_date]).annotate(m=Month('ordering_date')).values('m')
+        if currency == 'UAH':
+            per_mnth_sum=per_mnth_sum.annotate(sum=Sum(F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2)).distinct()
+        elif currency == 'EUR':
+            per_mnth_sum=per_mnth_sum.annotate(sum=Sum((F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2)/F('exchange__eur_mb_sale'))).distinct()
+        elif currency == 'USD':
+            per_mnth_sum=per_mnth_sum.annotate(sum=Sum((F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2)/F('exchange__usd_com'))).distinct()
+        mnth_summ_dict={}
+        for m in range(1,13):
+            for pms in per_mnth_sum:
+                if  pms['m'] == m:
+                    mnth_summ_dict.update({str(m):pms['sum']})
+        cur_firm.update(mnth_summ_dict)
+        buyers_list.append(cur_firm)
+        print(buyers_list)
+        #Needs for django template generation
+        mnth_list=[1,2,3,4,5,6,7,8,9,0,11,12]
     context={
-        'buyers':buyers,
+        'buyers_list':buyers_list,
         'edrpou_num':edrpou_num,
         'seller_name':seller_name,
         'currency':currency,
         'DatesForm':DatesForm,
         'start_date':start_date,
         'end_date':end_date,
+        'mnth_list':mnth_list,
     }
     return render(request,'inner/SalesIndividualFirmShow.html',context)

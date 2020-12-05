@@ -30,12 +30,12 @@
 {% endblock DatePeriod %}
 
 {% block content %}
-<div class="container m-2">
+<div class="row mx-2">
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="{% url 'home' %}">Внутренний рынок</a></li>
             <li class="breadcrumb-item"><a href="{% url 'home' %}">Продажи</a></li>
-            <li class="breadcrumb-item active" aria-current="page">Индивидульный анализ ({{ edrpou_num| cut:' ' }} ) - {{ seller_name }}</li>
+            <li class="breadcrumb-item active" aria-current="page">Индивидульный анализ ({{ edrpou_num| cut:' ' }}) - {{ seller_name }}</li>
         </ol>
    </nav> 
 </div>
@@ -46,12 +46,15 @@
             <th>#</th>
             <th>ЕДРПОУ</th>
             <th>ИМЯ</th>
+            {% for m in mnth_list %}
+                <th> {{m}} </th>
+            {% endfor %}
             <th>СУММА, {{ currency }}</th>
         </tr>
     </thead>
     <tbody>
 
-            {% for f in buyers %}
+            {% for f in buyers_list %}
             <tr>
                 <td scope="row">{{ forloop.counter }}</td>
                 <td>{{ f.buyer__edrpou|cut:' ' }}</td>
@@ -63,6 +66,10 @@
                 {% endif %}
                 
                 </td>
+                {% for m in f.per_mnth_summ %}
+                        <td> {{f.m}} </td>
+                {% endfor %}
+
                 <td>{{ f.sum |floatformat:2 }}</td>
             </tr>
             {% endfor %}
