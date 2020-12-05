@@ -99,6 +99,7 @@ def test(request):
 def SalesIndividual(request):
     start_date=year+'-01-01'
     end_date=year+'-12-31'
+    currency = User.objects.get(username=request.user).profile.currency
     DatesForm=DatesStartEndForm()
     if request.GET.get('start_date'):
         DatesForm = DatesStartEndForm(request.GET)
@@ -111,11 +112,16 @@ def SalesIndividual(request):
     if request.GET.get('search_string'):
         searchFormOrg = SearchFormOrg(request.GET)
         organisations=NlReestr.objects.filter(Q(seller__name__icontains=request.GET.get('search_string'))|Q(seller__edrpou__icontains=request.GET.get('search_string')))\
-            .annotate(sum=Sum(F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2)).distinct().order_by('-sum')\
-                .values('seller__name','seller__edrpou').distinct().annotate(sum=Sum(F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2)).order_by('-sum')
-        #print(organisations.query)
+            .values('seller__name','seller__edrpou').distinct()
+        if currency == 'UAH':
+            organisations=organisations.annotate(sum=Sum(F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2)).distinct().order_by('-sum')
+        elif currency == 'EUR':
+            organisations=organisations.annotate(sum=Sum((F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2)/32)).distinct().order_by('-sum')
+        elif currency == 'USD':
+            organisations=organisations.annotate(sum=Sum((F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2)/28)).distinct().order_by('-sum')    
     context={
         'organisations':organisations,
+        'currency':currency,
         'searchFormOrg':searchFormOrg,
         'DatesForm':DatesForm,
         'start_date':start_date,
@@ -125,8 +131,7 @@ def SalesIndividual(request):
 
 @login_required(login_url='login')
 def SalesIndividualFirmShow(request,edrpou_num):
-    user = User.objects.get(username=request.user)
-    print(user.profile.currency)
+    currency = User.objects.get(username=request.user).profile.currency
     start_date=year+'-01-01'
     end_date=year+'-12-31'
     DatesForm=DatesStartEndForm()
@@ -137,12 +142,19 @@ def SalesIndividualFirmShow(request,edrpou_num):
         DatesForm.end_date = request.GET.get('end_date')
         end_date=request.GET.get('end_date')
     seller_name=NlOrg.objects.get(edrpou=edrpou_num).name
-    buyers=NlReestr.objects.filter(seller__edrpou=edrpou_num,ordering_date__range=[start_date, end_date]).values('buyer__edrpou','buyer__name').distinct()\
-        .annotate(sum=Sum(F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2)).distinct().order_by('-sum')
+    buyers=NlReestr.objects.filter(seller__edrpou=edrpou_num,ordering_date__range=[start_date, end_date]).values('buyer__edrpou','buyer__name').distinct()
+    if currency == 'UAH':
+        buyers=buyers.annotate(sum=Sum(F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2)).distinct().order_by('-sum')
+    elif currency == 'EUR':
+        buyers=buyers.annotate(sum=Sum((F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2)/32)).distinct().order_by('-sum')
+    elif currency == 'USD':
+        buyers=buyers.annotate(sum=Sum((F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2)/28)).distinct().order_by('-sum')
+
     context={
         'buyers':buyers,
         'edrpou_num':edrpou_num,
         'seller_name':seller_name,
+        'currency':currency,
         'DatesForm':DatesForm,
         'start_date':start_date,
         'end_date':end_date,
