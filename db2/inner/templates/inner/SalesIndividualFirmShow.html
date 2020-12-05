@@ -66,8 +66,8 @@
                 {% endif %}
                 
                 </td>
-                {% for m in f.per_mnth_summ %}
-                        <td> {{f.m}} </td>
+                {% for m_sum in f.per_mnth_sums %}
+                        <td> {{m_sum}} </td>
                 {% endfor %}
 
                 <td>{{ f.sum |floatformat:2 }}</td>

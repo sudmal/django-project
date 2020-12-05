@@ -177,14 +177,16 @@ def SalesIndividualFirmShow(request,edrpou_num):
             per_mnth_sum=per_mnth_sum.annotate(sum=Sum((F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2)/F('exchange__eur_mb_sale'))).distinct()
         elif currency == 'USD':
             per_mnth_sum=per_mnth_sum.annotate(sum=Sum((F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2)/F('exchange__usd_com'))).distinct()
-        mnth_summ_dict={}
-        for m in range(1,13):
+        mnth_summ_list=[]
+        for m in range(12):
+            mnth_summ_list.append(0)
+        for m in range(12):
             for pms in per_mnth_sum:
-                if  pms['m'] == m:
-                    mnth_summ_dict.update({str(m):pms['sum']})
-        cur_firm.update(mnth_summ_dict)
+                    mnth_summ_list[pms['m']-1]=pms['sum']
+        #print (mnth_summ_list)
+        cur_firm.update({'per_month_sums':mnth_summ_list})
         buyers_list.append(cur_firm)
-        print(buyers_list)
+        #print(buyers_list)
         #Needs for django template generation
         mnth_list=[1,2,3,4,5,6,7,8,9,0,11,12]
     context={
