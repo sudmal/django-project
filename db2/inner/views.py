@@ -101,8 +101,13 @@ def index(request):
 
 @login_required(login_url='login')
 def test(request):
+    start_date=year+'-01-01'
+    end_date=year+'-12-31'
+    testq=NlCredit.objects.filter(seller__edrpou=1111111,ordering_date__range=[start_date, end_date]).values('buyer__edrpou','buyer__name').distinct().annotate(month=TruncMonth('ordering_date')).values('month').annotate(c=Count('id')).order_by()
+    print(testq.query)
     context={
         'year':year,
+        'testq':testq,
     }
     return render(request,'inner/test.html',context)
 
@@ -170,7 +175,7 @@ def SalesIndividualFirmShow(request,edrpou_num):
         cur_firm.update({'buyer__name':b['buyer__name']})
         cur_firm.update({'buyer__edrpou':b['buyer__edrpou']})
         cur_firm.update({'sum':b['sum']})
-        per_mnth_sum= NlReestr.objects.filter(seller__edrpou=edrpou_num,buyer__edrpou=cur_firm['buyer__edrpou'],ordering_date__range=[start_date, end_date]).annotate(m=Month('ordering_date')).values('m')
+        """per_mnth_sum= NlReestr.objects.filter(seller__edrpou=edrpou_num,buyer__edrpou=cur_firm['buyer__edrpou'],ordering_date__range=[start_date, end_date]).annotate(m=Month('ordering_date')).values('m')
         if currency == 'UAH':
             per_mnth_sum=per_mnth_sum.annotate(sum=Sum(F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2)).distinct()
         elif currency == 'EUR':
@@ -184,7 +189,7 @@ def SalesIndividualFirmShow(request,edrpou_num):
             for pms in per_mnth_sum:
                     mnth_summ_list[pms['m']-1]=pms['sum']
         #print (mnth_summ_list)
-        cur_firm.update({'per_month_sums':mnth_summ_list})
+        cur_firm.update({'per_month_sums':mnth_summ_list})"""
         buyers_list.append(cur_firm)
         #print(buyers_list)
         #Needs for django template generation
