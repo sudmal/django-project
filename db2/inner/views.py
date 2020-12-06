@@ -161,7 +161,7 @@ def SalesIndividualFirmShow(request,edrpou_num):
         end_date=request.GET.get('end_date')
     seller_name=NlOrg.objects.get(edrpou=edrpou_num).name
     buyers_dict = {}
-    buyers=NlReestr.objects.filter(seller__edrpou=edrpou_num,ordering_date__range=[start_date, end_date]).values('buyer__edrpou','buyer__name').distinct()
+    buyers=NlReestr.objects.filter(seller__edrpou=edrpou_num,ordering_date__range=[start_date, end_date]).values('buyer_id','buyer__edrpou','buyer__name').distinct()
     if currency == 'UAH':
         buyers=buyers.annotate(sum=Sum(F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2)).distinct().order_by('-sum')
     elif currency == 'EUR':
@@ -172,11 +172,22 @@ def SalesIndividualFirmShow(request,edrpou_num):
     buyers_list=[]
     for b in buyers:
         cur_firm={}
+        cur_firm.update({'buyer_id':b['buyer_id']})
         cur_firm.update({'buyer__name':b['buyer__name']})
         cur_firm.update({'buyer__edrpou':b['buyer__edrpou']})
         cur_firm.update({'sum':b['sum']})
-        """per_mnth_sum= NlReestr.objects.filter(seller__edrpou=edrpou_num,buyer__edrpou=cur_firm['buyer__edrpou'],ordering_date__range=[start_date, end_date]).annotate(m=Month('ordering_date')).values('m')
-        if currency == 'UAH':
+        #print (cur_firm['buyer__edrpou'])
+        b_pms=NlReestr.objects.filter(seller__edrpou=edrpou_num,buyer_id=cur_firm['buyer_id'],ordering_date__year=year).values('buyer__edrpou').annotate(month=TruncMonth('ordering_date')).values('buyer__edrpou','month').annotate(sum=Sum((F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2)/F('exchange__eur_mb_sale'))).order_by()
+        cur_firm.update({'pms':b_pms})
+        #for bb in b_pms:
+            #print(bb)
+            #cur_firm.update(bb)
+        #print(b_pms.query)
+        #NlReestr.objects.filter(buyer_id=cur_firm['buyer_id'],ordering_date__year=year,ordering_date__month=m).annotate(month=TruncMonth('cdate')).values('month').annotate(c=Count('id')).order_by()
+            #if not per_mnth_sum:
+                #per_mnth_sum=0
+        #print(buyers.query)
+        """if currency == 'UAH':
             per_mnth_sum=per_mnth_sum.annotate(sum=Sum(F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2)).distinct()
         elif currency == 'EUR':
             per_mnth_sum=per_mnth_sum.annotate(sum=Sum((F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2)/F('exchange__eur_mb_sale'))).distinct()
@@ -203,5 +214,6 @@ def SalesIndividualFirmShow(request,edrpou_num):
         'start_date':start_date,
         'end_date':end_date,
         'mnth_list':mnth_list,
+
     }
     return render(request,'inner/SalesIndividualFirmShow.html',context)

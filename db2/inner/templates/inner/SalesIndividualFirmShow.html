@@ -40,6 +40,7 @@
    </nav> 
 </div>
 
+
 <table class="table">
     <thead>
         <tr>
@@ -66,8 +67,8 @@
                 {% endif %}
                 
                 </td>
-                {% for m_sum in f.per_mnth_sums %}
-                        <td> {{m_sum}} </td>
+                {% for pp in f.pms %}
+                        <td> {{pp.sum}} </td>
                 {% endfor %}
 
                 <td>{{ f.sum |floatformat:2 }}</td>
