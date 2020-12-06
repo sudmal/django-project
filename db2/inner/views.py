@@ -177,7 +177,15 @@ def SalesIndividualFirmShow(request,edrpou_num):
         cur_firm.update({'buyer__edrpou':b['buyer__edrpou']})
         cur_firm.update({'sum':b['sum']})
         #print (cur_firm['buyer__edrpou'])
-        b_pms=NlReestr.objects.filter(seller__edrpou=edrpou_num,buyer_id=cur_firm['buyer_id'],ordering_date__year=year).values('buyer__edrpou').annotate(month=TruncMonth('ordering_date')).values('buyer__edrpou','month').annotate(sum=Sum((F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2)/F('exchange__eur_mb_sale'))).order_by()
+        b_pms=NlReestr.objects.filter(seller__edrpou=edrpou_num,buyer_id=cur_firm['buyer_id'],ordering_date__year=year).annotate(month=TruncMonth('ordering_date')).values('buyer__edrpou','month').annotate(sum=Sum((F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2)/F('exchange__eur_mb_sale'))).order_by()
+        for m in range(1,13):
+            ### FIX THIS!
+            cur_firm.update({'pms':{
+                'month': datetime.date(int(year), m, 1), 
+                'sum': 0
+                }
+            })
+        print(cur_firm)
         cur_firm.update({'pms':b_pms})
         #for bb in b_pms:
             #print(bb)
