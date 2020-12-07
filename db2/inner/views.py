@@ -13,6 +13,7 @@ from django_tables2.export.views import ExportMixin
 from .models import Exchange,Youscore,ReestrStaging,CreditStaging,NlCredit,NlOrg,NlProduct,NlReestr
 from django.db.models import Count, Sum, Q, Avg, Subquery, OuterRef, F, FloatField, Max
 from .forms import SearchFormOrg,DatesStartEndForm
+import pandas as pd
 import datetime
 import requests
 import json 
@@ -103,11 +104,27 @@ def index(request):
 def test(request):
     start_date=year+'-01-01'
     end_date=year+'-12-31'
-    testq=NlCredit.objects.filter(seller__edrpou=1111111,ordering_date__range=[start_date, end_date]).values('buyer__edrpou','buyer__name').distinct().annotate(month=TruncMonth('ordering_date')).values('month').annotate(c=Count('id')).order_by()
-    print(testq.query)
+            ### FIX THIS!  # Получаем все записи из базы, соответствующие buyer_id и передаем в словарь {buyer_id,date,cost}
+                           # считаем сумму для каждого месяца
+                           # for m in 1...12
+    print('Get data from db')
+    df=pd.DataFrame(list(NlReestr.objects.filter(seller__edrpou=41189553,ordering_date__range=[start_date, end_date]).values('buyer__edrpou','ordering_date','one_product_cost','count','exchange__eur_com','exchange__eur_nbu','exchange__usd_com','exchange__usd_nbu','exchange__eur_mb_buy','exchange__eur_mb_sale')))
+    '''print('Generate df_data list')
+    df_data=[]
+    for t in ttt1:
+        df_data.append(t)
+    print('done')
+    df=pd.DataFrame(df_data)'''
+    df['ordering_date'] = pd.to_datetime(df['ordering_date'])
+    print(df.head())
+    print(df.dtypes)
+    edrpous=df['buyer__edrpou'].unique()
+    print (edrpous)
+    for e in edrpous:    
+        df1=df[df['buyer__edrpou']==e].groupby(df['ordering_date'].dt.strftime('%m'))['one_product_cost'].sum()
+
     context={
         'year':year,
-        'testq':testq,
     }
     return render(request,'inner/test.html',context)
 
@@ -179,13 +196,16 @@ def SalesIndividualFirmShow(request,edrpou_num):
         #print (cur_firm['buyer__edrpou'])
         b_pms=NlReestr.objects.filter(seller__edrpou=edrpou_num,buyer_id=cur_firm['buyer_id'],ordering_date__year=year).annotate(month=TruncMonth('ordering_date')).values('buyer__edrpou','month').annotate(sum=Sum((F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2)/F('exchange__eur_mb_sale'))).order_by()
         for m in range(1,13):
-            ### FIX THIS!
+            ### FIX THIS!  # Получаем все записи из базы, соответствующие buyer_id и передаем в словарь {buyer_id,date,cost}
+                           # считаем сумму для каждого месяца
+                           # for m in 1...12
+
             cur_firm.update({'pms':{
                 'month': datetime.date(int(year), m, 1), 
                 'sum': 0
                 }
             })
-        print(cur_firm)
+        #print(cur_firm)
         cur_firm.update({'pms':b_pms})
         #for bb in b_pms:
             #print(bb)
