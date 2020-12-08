@@ -67,8 +67,8 @@
                 {% endif %}
                 
                 </td>
-                {% for pp in f.pms %}
-                        <td> {{ pp.month }} {{pp.sum}} </td>
+                {% for s in f.pms %}
+                        <td> {{ s | floatformat:'2' }} </td>
                 {% endfor %}
 
                 <td>{{ f.sum |floatformat:2 }}</td>
