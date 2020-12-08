@@ -202,7 +202,7 @@ def SalesIndividualFirmShow(request,edrpou_num):
             bb['month'] = int(str(bb['month'])[5:7])
             pms[bb['month']-1]=bb['sum']
         cur_firm.update({'pms':pms})
-        print(cur_firm)
+        #print(cur_firm)
         """if currency == 'UAH':
             per_mnth_sum=per_mnth_sum.annotate(sum=Sum(F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2)).distinct()
         elif currency == 'EUR':
@@ -218,7 +218,7 @@ def SalesIndividualFirmShow(request,edrpou_num):
         #print (mnth_summ_list)
         cur_firm.update({'per_month_sums':mnth_summ_list})"""
         buyers_list.append(cur_firm)
-        print(buyers_list)
+        #print(buyers_list)
         #Needs for django template generation
         mnth_list=[1,2,3,4,5,6,7,8,9,0,11,12]
     context={
