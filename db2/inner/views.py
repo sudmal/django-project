@@ -177,24 +177,15 @@ def SalesIndividualFirmShow(request,edrpou_num):
         cur_firm.update({'buyer__edrpou':b['buyer__edrpou']})
         cur_firm.update({'sum':b['sum']})
         #print (cur_firm['buyer__edrpou'])
-        b_pms=NlReestr.objects.filter(seller__edrpou=edrpou_num,buyer_id=cur_firm['buyer_id'],ordering_date__year=year).annotate(month=TruncMonth('ordering_date')).values('buyer__edrpou','month').annotate(sum=Sum((F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2)/F('exchange__eur_mb_sale'))).order_by()
+        b_pms=NlReestr.objects.filter(seller__edrpou=edrpou_num,buyer_id=cur_firm['buyer_id'],ordering_date__year=year).annotate(month=TruncMonth('ordering_date')).values('month').annotate(sum=Sum((F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2)/F('exchange__eur_mb_sale'))).order_by()
+        pms={} # per_monnth_summs
         for m in range(1,13):
-            ### FIX THIS!
-            cur_firm.update({'pms':{
-                'month': datetime.date(int(year), m, 1), 
-                'sum': 0
-                }
-            })
+            pms.update({m:float(0.0)})
+        for bb in b_pms:
+            bb['month'] = int(str(bb['month'])[5:7])
+            pms.update({bb['month']:bb['sum']})
+        cur_firm.update({'pms':pms})
         print(cur_firm)
-        cur_firm.update({'pms':b_pms})
-        #for bb in b_pms:
-            #print(bb)
-            #cur_firm.update(bb)
-        #print(b_pms.query)
-        #NlReestr.objects.filter(buyer_id=cur_firm['buyer_id'],ordering_date__year=year,ordering_date__month=m).annotate(month=TruncMonth('cdate')).values('month').annotate(c=Count('id')).order_by()
-            #if not per_mnth_sum:
-                #per_mnth_sum=0
-        #print(buyers.query)
         """if currency == 'UAH':
             per_mnth_sum=per_mnth_sum.annotate(sum=Sum(F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2)).distinct()
         elif currency == 'EUR':
@@ -210,7 +201,7 @@ def SalesIndividualFirmShow(request,edrpou_num):
         #print (mnth_summ_list)
         cur_firm.update({'per_month_sums':mnth_summ_list})"""
         buyers_list.append(cur_firm)
-        #print(buyers_list)
+        print(buyers_list)
         #Needs for django template generation
         mnth_list=[1,2,3,4,5,6,7,8,9,0,11,12]
     context={
@@ -222,6 +213,5 @@ def SalesIndividualFirmShow(request,edrpou_num):
         'start_date':start_date,
         'end_date':end_date,
         'mnth_list':mnth_list,
-
     }
     return render(request,'inner/SalesIndividualFirmShow.html',context)
