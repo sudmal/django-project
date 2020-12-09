@@ -10,6 +10,7 @@ urlpatterns = [
     path('test/', views.test, name = 'test'),
     path('SalesIndividual/', views.SalesIndividual, name = 'SalesIndividual'),
     path('SalesIndividual/<int:edrpou_num>/', views.SalesIndividualFirmShow, name = 'SalesIndividualFirmShow'),
+    path('SalesIndividual/<int:edrpou_num>/<int:buyer_code>/', views.SalesIndividualFirmRaw, name = 'SalesIndividualFirmRaw'),
     #path('CompetitorsComparse/', views.CompetitorsComparse, name = 'CompetitorsComparse'),
     #path('IndividualReport/', views.IndividualReport, name = 'IndividualReport'),
     #path('IndividualReport/<int:edrpou_num>/', views.IndividualReportFirmShow, name = 'IndividualReportFirmShow'),

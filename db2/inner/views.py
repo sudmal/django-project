@@ -194,7 +194,13 @@ def SalesIndividualFirmShow(request,edrpou_num):
         cur_firm.update({'buyer__edrpou':b['buyer__edrpou']})
         cur_firm.update({'sum':b['sum']})
         #print (cur_firm['buyer__edrpou'])
-        b_pms=NlReestr.objects.filter(seller__edrpou=edrpou_num,buyer_id=cur_firm['buyer_id'],ordering_date__year=year).annotate(month=TruncMonth('ordering_date')).values('month').annotate(sum=Sum((F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2)/F('exchange__eur_mb_sale'))).order_by()
+        b_pms=NlReestr.objects.filter(seller__edrpou=edrpou_num,buyer_id=cur_firm['buyer_id'],ordering_date__year=year).annotate(month=TruncMonth('ordering_date')).values('month') 
+        if currency == 'UAH':
+            b_pms=b_pms.annotate(sum=Sum(F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2)).order_by()
+        elif currency == 'EUR':
+            b_pms=b_pms.annotate(sum=Sum((F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2)/F('exchange__eur_mb_sale'))).order_by()
+        elif currency == 'USD':
+            b_pms=b_pms.annotate(sum=Sum((F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2)/F('exchange__usd_com'))).order_by()
         pms=[] # per_monnth_summs
         for m in range(1,13):
             pms.append(float(0.0))
@@ -203,24 +209,23 @@ def SalesIndividualFirmShow(request,edrpou_num):
             pms[bb['month']-1]=bb['sum']
         cur_firm.update({'pms':pms})
         #print(cur_firm)
-        """if currency == 'UAH':
-            per_mnth_sum=per_mnth_sum.annotate(sum=Sum(F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2)).distinct()
-        elif currency == 'EUR':
-            per_mnth_sum=per_mnth_sum.annotate(sum=Sum((F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2)/F('exchange__eur_mb_sale'))).distinct()
-        elif currency == 'USD':
-            per_mnth_sum=per_mnth_sum.annotate(sum=Sum((F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2)/F('exchange__usd_com'))).distinct()
-        mnth_summ_list=[]
-        for m in range(12):
-            mnth_summ_list.append(0)
-        for m in range(12):
-            for pms in per_mnth_sum:
-                    mnth_summ_list[pms['m']-1]=pms['sum']
-        #print (mnth_summ_list)
-        cur_firm.update({'per_month_sums':mnth_summ_list})"""
+
         buyers_list.append(cur_firm)
-        #print(buyers_list)
-        #Needs for django template generation
-        mnth_list=[1,2,3,4,5,6,7,8,9,0,11,12]
+
+
+    paginator = Paginator(buyers_list, 50)
+    page_number = request.GET.get('page')
+    try:
+        buyers_list = paginator.page(page_number)
+    except PageNotAnInteger:
+        buyers_list = paginator.page(1)
+    except EmptyPage:
+        buyers_list = paginator.page(paginator.num_pages) 
+
+    
+    #Needs for django template generation
+    mnth_list=[1,2,3,4,5,6,7,8,9,0,11,12]
+
     context={
         'buyers_list':buyers_list,
         'edrpou_num':edrpou_num,
@@ -230,5 +235,11 @@ def SalesIndividualFirmShow(request,edrpou_num):
         'start_date':start_date,
         'end_date':end_date,
         'mnth_list':mnth_list,
+        'year':year,
     }
     return render(request,'inner/SalesIndividualFirmShow.html',context)
+
+@login_required(login_url='login')
+def SalesIndividualFirmRaw(request,edrpou_num,buyer_code):
+    context={}
+    return render(request,'inner/SalesIndividualFirmRaw.html',context)

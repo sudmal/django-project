@@ -58,7 +58,7 @@
             {% for f in buyers_list %}
             <tr>
                 <td scope="row">{{ forloop.counter0|add:buyers_list.start_index }}</td>
-                <td><a class="btn btn-primary font-weight-bold" href="{% url 'inner:SalesIndividualFirmRaw' edrpou_num|cut:' '  f.buyer__edrpou|cut:' ' %}?year={{year}}">{{ f.buyer__edrpou|cut:' ' }}</a></td>
+                <td>{{ f.buyer__edrpou|cut:' ' }}</td>
                 <td>
                 {% if f.buyer__edrpou == 0 %}
                     Иностранные предприятия/неплательщики                
@@ -69,14 +69,14 @@
                 </td>
                 {% for s in f.pms %}
                     {% if s %}
-                        <td> <a class="btn btn-light border-secondary" href="{% url 'inner:SalesIndividualFirmRaw' edrpou_num|cut:' '  f.buyer__edrpou|cut:' ' %}?month={{ forloop.counter }}&year={{ year }}">{{ s | floatformat:'0' }} </a></td>
+                        <td> {{ s | floatformat:'0' }} </td>
                     {% else%}
                         <td> 0 </td>
                     {% endif %}
 
                 {% endfor %}
 
-                <td><a class="btn btn-light font-weight-bold border-secondary" href="{% url 'inner:SalesIndividualFirmRaw' edrpou_num|cut:' '  f.buyer__edrpou|cut:' ' %}?year={{year}}">{{ f.sum |floatformat:0 }}</a></td>
+                <td>{{ f.sum |floatformat:0 }}</td>
             </tr>
             {% endfor %}
         
