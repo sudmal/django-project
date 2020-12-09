@@ -10,8 +10,25 @@
 
 {% block js-before %}
 <style>
-.tableFixHead          { overflow-y: auto; height: 100px; }
-.tableFixHead thead th { position: sticky; top: 0; }
+/*Column Highlighting*/
+table {
+    overflow: hidden;
+}
+
+td, th {
+    position: relative;
+}
+td:hover::after,
+th:hover::after {
+    content: "";
+    position: absolute;
+    background-color: rgba(0,0,0,0.075);
+    left: 0;
+    top: -5000px;
+    height: 10000px;
+    width: 100%;
+    z-index: -1;
+}
 .ui-autocomplete-loading {
     background: white url("{% static 'ui-anim_basic_16x16.gif' %}") right center no-repeat;
   }
@@ -42,8 +59,8 @@
    </nav> 
 </div>
 
-<div class="tableFixHead">
-<table class="table">
+
+<table class="table table-stiped table-hover">
     <thead>
         <tr>
             <th>#</th>
@@ -71,7 +88,7 @@
                 </td>
                 {% for s in f.pms %}
                     {% if s %}
-                        <td> <a class="btn btn-light border-secondary" href="{% url 'inner:SalesIndividualFirmRaw' edrpou_num|cut:' '  f.buyer__edrpou|cut:' ' %}?month={{ forloop.counter }}&year={{ year }}">{{ s | floatformat:'0' }} </a></td>
+                        <td> <a class="btn btn-light border-secondary" style="min-width: 100px;" href="{% url 'inner:SalesIndividualFirmRaw' edrpou_num|cut:' '  f.buyer__edrpou|cut:' ' %}?month={{ forloop.counter }}&year={{ year }}">{{ s | floatformat:'0' }} </a></td>
                     {% else%}
                         <td> <span class="text-muted">-</td>
                     {% endif %}
@@ -84,7 +101,7 @@
         
     </tbody>
 </table>
-</div>
+
 <nav aria-label="Page navigation">
     <ul class="pagination justify-content-center">
         {% if buyers_list.has_previous %}
