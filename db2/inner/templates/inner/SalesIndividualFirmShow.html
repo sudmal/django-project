@@ -89,6 +89,14 @@ th:hover::after {
             {% endfor %}
             <th>{{ year }}, {{ currency }} </th>
         </tr>
+        <tr>
+            <th colspan=3>
+            </th>
+            {% for t in totals %}
+                <th> {{t|floatformat:'0'}} </th>
+            {% endfor %}
+            </th>
+        </tr>
     </thead>
     <tbody>
 
