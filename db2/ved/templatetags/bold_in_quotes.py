@@ -5,7 +5,7 @@ register = template.Library()
 def bold_in_quotes(str1):
     st=''
     result=''
-
+    
     if str1.find("«")>=0 and str1.find("»")>=0:
         str1=str1.replace("«","\"")
         str1=str1.replace("»","\"")
@@ -21,7 +21,7 @@ def bold_in_quotes(str1):
             result=result+s
         result=result+"\"</span>"    
     else:
-        result=str1
+        result="<span class=\"font-weight-bold\">\""+str1+"\"</span>"
     return(result)
 
 

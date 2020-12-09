@@ -231,7 +231,7 @@ def SalesIndividualFirmShow(request,edrpou_num):
         buyers_list.append(cur_firm)
 
 
-    paginator = Paginator(buyers_list, 20)
+    paginator = Paginator(buyers_list, 10)
     page_number = request.GET.get('page')
     try:
         buyers_list = paginator.page(page_number)
