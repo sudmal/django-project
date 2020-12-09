@@ -32,6 +32,24 @@ th:hover::after {
 .ui-autocomplete-loading {
     background: white url("{% static 'ui-anim_basic_16x16.gif' %}") right center no-repeat;
   }
+
+.fix-sticky {
+  position: fixed !important;
+  overflow: hidden;
+  z-index: 100;
+}
+
+.fix-sticky table thead {
+  background: #fff;
+}
+
+.fix-sticky table thead.thead-light {
+  background: #e9ecef;
+}
+
+.fix-sticky table thead.thead-dark {
+  background: #212529;
+}
 </style>
 {% endblock js-before %}
 
@@ -60,8 +78,8 @@ th:hover::after {
 </div>
 
 
-<table class="table table-stiped table-hover">
-    <thead>
+<table class="table table-stiped table-hover" id="table" data-show-columns="true">
+    <thead class="thead table-active sticky-header">
         <tr>
             <th>#</th>
             <th>ЕДРПОУ</th>
@@ -88,7 +106,7 @@ th:hover::after {
                 </td>
                 {% for s in f.pms %}
                     {% if s %}
-                        <td> <a class="btn btn-light border-secondary" style="min-width: 100px;" href="{% url 'inner:SalesIndividualFirmRaw' edrpou_num|cut:' '  f.buyer__edrpou|cut:' ' %}?month={{ forloop.counter }}&year={{ year }}">{{ s | floatformat:'0' }} </a></td>
+                        <td> <a class="btn btn-light border-secondary" style="min-width: 60px;" href="{% url 'inner:SalesIndividualFirmRaw' edrpou_num|cut:' '  f.buyer__edrpou|cut:' ' %}?month={{ forloop.counter }}&year={{ year }}">{{ s | floatformat:'0' }} </a></td>
                     {% else%}
                         <td> <span class="text-muted">-</td>
                     {% endif %}

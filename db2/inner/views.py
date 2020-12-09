@@ -224,7 +224,7 @@ def SalesIndividualFirmShow(request,edrpou_num):
 
     
     #Needs for django template generation
-    mnth_list=[1,2,3,4,5,6,7,8,9,0,11,12]
+    mnth_list=[1,2,3,4,5,6,7,8,9,10,11,12]
 
     context={
         'buyers_list':buyers_list,
