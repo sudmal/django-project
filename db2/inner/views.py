@@ -242,7 +242,7 @@ def SalesIndividualFirmShow(request,edrpou_num):
 
     
     #Needs for django template generation
-    mnth_list=[1,2,3,4,5,6,7,8,9,10,11,12]
+    mnth_list=["Январь","Февраль","Март","Апрель","Май","Июнь","Июль","Август","Сентябрь","Октябрь","Ноябрь","Декабрь"]
 
     context={
         'buyers_list':buyers_list,
