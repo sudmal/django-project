@@ -260,5 +260,37 @@ def SalesIndividualFirmShow(request,edrpou_num):
 
 @login_required(login_url='login')
 def SalesIndividualFirmRaw(request,edrpou_num,buyer_code):
-    context={}
+    currency = User.objects.get(username=request.user).profile.currency
+    start_date=year+'-01-01'
+    end_date=year+'-12-31'
+    DatesForm=DatesStartEndForm()
+    if request.GET.get('start_date'):
+        DatesForm = DatesStartEndForm(request.GET)
+        start_date=request.GET.get('start_date')
+    if request.GET.get('end_date'):
+        DatesForm.end_date = request.GET.get('end_date')
+        end_date=request.GET.get('end_date')
+    raw_records= NlReestr.objects.filter(seller__edrpou=edrpou_num,buyer__edrpou=buyer_code,ordering_date__year=year) 
+    if currency == 'UAH':
+        raw_records=raw_records.annotate(sum=Sum(F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2)).order_by()
+    elif currency == 'EUR':
+        raw_records=raw_records.annotate(sum=Sum((F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2)/F('exchange__eur_mb_sale'))).order_by()
+    elif currency == 'USD':
+        raw_records=raw_records.annotate(sum=Sum((F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2)/F('exchange__usd_com'))).order_by()
+    paginator = Paginator(raw_records, 25)
+    page_number = request.GET.get('page')
+    try:
+        raw_records = paginator.page(page_number)
+    except PageNotAnInteger:
+        raw_records = paginator.page(1)
+    except EmptyPage:
+        raw_records = paginator.page(paginator.num_pages) 
+    context={
+        'edrpou_num':edrpou_num,
+        'buyer_code':buyer_code,
+        'raw_records':raw_records,
+        'year':year,
+        'start_date':start_date,
+        'end_date':end_date,
+    }
     return render(request,'inner/SalesIndividualFirmRaw.html',context)

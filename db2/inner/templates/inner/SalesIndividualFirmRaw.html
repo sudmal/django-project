@@ -5,19 +5,13 @@
 {% load cache %}
 
 {% block title %}
-    Продажи :: Индивидуальный анализ ({{ edrpou_num| cut:' ' }})
+    Продажи :: Индивидуальный анализ :: Архив записей 
 {% endblock title %}
 
 {% block js-before %}
-<style>
-  .ui-autocomplete-loading {
-    background: white url("{% static 'ui-anim_basic_16x16.gif' %}") right center no-repeat;
-  }
-</style>
 {% endblock js-before %}
 
 {% block period_button %}
-
 {% endblock period_button %}
 
 {% block DatePeriod %}
@@ -26,7 +20,6 @@
         -
         {{ DatesForm.end_date }}
         <button type="submit" class="btn btn-info">Изменить</button>
-
 {% endblock DatePeriod %}
 
 {% block content %}
@@ -35,7 +28,7 @@
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="{% url 'home' %}">Внутренний рынок</a></li>
             <li class="breadcrumb-item"><a href="{% url 'home' %}">Продажи</a></li>
-            <li class="breadcrumb-item active" aria-current="page">Индивидульный анализ ({{ edrpou_num| cut:' ' }}) - {{ seller_name }}</li>
+            <li class="breadcrumb-item active" aria-current="page">Индивидульный анализ ({{ edrpou_num| cut:' ' }} - {{ buyer_code| cut:' ' }} за период {{ year|cut:' ' }} )</li>
         </ol>
    </nav> 
 </div>
