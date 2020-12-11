@@ -5,7 +5,7 @@ import datetime
 from django.db.models.functions import ExtractYear
 
 
-reestr_years = NlReestr.objects.extra(select={'year':"extract(year from ordering_date)"}).distinct(+.values('year').order_by()
+reestr_years = NlReestr.objects.extra(select={'year':"extract(year from ordering_date)"}).distinct().values('year').order_by()
 print(reestr_years)
 
 class DateInput(forms.DateInput):
