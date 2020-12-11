@@ -2,7 +2,11 @@ from django import forms
 from .models import NlReestr
 from django.db.models import Max
 import datetime 
+from django.db.models.functions import ExtractYear
 
+
+reestr_years = NlReestr.objects.extra(select={'year':"extract(year from ordering_date)"}).distinct(+.values('year').order_by()
+print(reestr_years)
 
 class DateInput(forms.DateInput):
     input_type='date'
@@ -15,3 +19,7 @@ class SearchFormOrg(forms.Form):
 class DatesStartEndForm(forms.Form):
     start_date = forms.DateField(input_formats='%Y,%m,%d',widget=DateInput(attrs={'class': 'form-control date-inline-select','value':year+'-01-01'}))
     end_date = forms.DateField(input_formats='%Y,%m,%d',widget=DateInput(attrs={'class': 'form-control date-inline-select','value':db_max_date}))
+
+class NlYearSelectForm(forms.Form):
+    CHOICES = [('2017','2017'), ('2018','2018'), ('2019','2019'), ('2020','2020')]
+    seleted_year = forms.ChoiceField(label='', choices=CHOICES, widget=forms.Select(attrs={'class':'form-control'}))

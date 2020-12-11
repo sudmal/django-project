@@ -18,11 +18,9 @@
 
 {% block DatePeriod %}
     <form method="get" class="form-inline" action={% url 'inner:SalesIndividual' %}>
-        {{ DatesForm.start_date }}
-        -
-        {{ DatesForm.end_date }}
+        {{ YearSelectForm }}
         <button type="submit" class="btn btn-info">Изменить</button>
-
+    </form>
 {% endblock DatePeriod %}
 
 {% block period_button %}

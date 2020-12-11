@@ -12,7 +12,7 @@ from django_tables2.export.export import TableExport
 from django_tables2.export.views import ExportMixin
 from .models import Exchange,Youscore,ReestrStaging,CreditStaging,NlCredit,NlOrg,NlProduct,NlReestr
 from django.db.models import Count, Sum, Q, Avg, Subquery, OuterRef, F, FloatField, Max
-from .forms import SearchFormOrg,DatesStartEndForm
+from .forms import SearchFormOrg,DatesStartEndForm,NlYearSelectForm
 import pandas as pd
 import datetime
 import requests
@@ -130,22 +130,17 @@ def test(request):
 
 @login_required(login_url='login')
 def SalesIndividual(request):
-    start_date=year+'-01-01'
-    end_date=year+'-12-31'
+    YearSelectForm=NlYearSelectForm()
+    YearSelectForm.seleted_year = year
+
     currency = User.objects.get(username=request.user).profile.currency
-    DatesForm=DatesStartEndForm()
-    if request.GET.get('start_date'):
-        DatesForm = DatesStartEndForm(request.GET)
-        start_date=request.GET.get('start_date')
-    if request.GET.get('end_date'):
-        DatesForm.end_date = request.GET.get('end_date')
-        end_date=request.GET.get('end_date')
+    if request.GET.get('year'):
+        YearSelectForm=NlYearSelectForm(request.GET)
     searchFormOrg=SearchFormOrg()
     organisations=[]
-
     if request.GET.get('search_string'):
         searchFormOrg = SearchFormOrg(request.GET)
-        organisations=NlReestr.objects.filter(Q(ordering_date__range=[start_date, end_date])&(Q(seller__name__icontains=request.GET.get('search_string'))|Q(seller__edrpou__icontains=request.GET.get('search_string'))))\
+        organisations=NlReestr.objects.filter(Q(ordering_date__year=YearSelectForm.seleted_year)&(Q(seller__name__icontains=request.GET.get('search_string'))|Q(seller__edrpou__icontains=request.GET.get('search_string'))))\
             .values('seller__name','seller__edrpou').distinct()
         if currency == 'UAH':
             organisations=organisations.annotate(sum=Sum(F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2)).order_by('-sum')
@@ -153,14 +148,11 @@ def SalesIndividual(request):
             organisations=organisations.annotate(sum=Sum((F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2)/F('exchange__eur_mb_sale'))).order_by('-sum')
         elif currency == 'USD':
             organisations=organisations.annotate(sum=Sum((F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2)/F('exchange__usd_com'))).order_by('-sum')   
-        
     context={
         'organisations':organisations,
         'currency':currency,
         'searchFormOrg':searchFormOrg,
-        'DatesForm':DatesForm,
-        'start_date':start_date,
-        'end_date':end_date,
+        'YearSelectForm':YearSelectForm,
     }
     return render(request,'inner/SalesIndividual.html',context)
 
@@ -261,14 +253,9 @@ def SalesIndividualFirmShow(request,edrpou_num):
 @login_required(login_url='login')
 def SalesIndividualFirmRaw(request,edrpou_num,buyer_code):
     currency = User.objects.get(username=request.user).profile.currency
-    start_date=year+'-01-01'
-    end_date=year+'-12-31'
-    DatesForm=DatesStartEndForm()
     if request.GET.get('start_date'):
-        DatesForm = DatesStartEndForm(request.GET)
         start_date=request.GET.get('start_date')
     if request.GET.get('end_date'):
-        DatesForm.end_date = request.GET.get('end_date')
         end_date=request.GET.get('end_date')
     raw_records= NlReestr.objects.filter(seller__edrpou=edrpou_num,buyer__edrpou=buyer_code,ordering_date__year=year).values('product__name','product__product_code','unit','count','ordering_date')
     if currency == 'UAH':
@@ -292,7 +279,5 @@ def SalesIndividualFirmRaw(request,edrpou_num,buyer_code):
         'buyer_code':buyer_code,
         'raw_records':raw_records,
         'year':year,
-        'start_date':start_date,
-        'end_date':end_date,
     }
     return render(request,'inner/SalesIndividualFirmRaw.html',context)
