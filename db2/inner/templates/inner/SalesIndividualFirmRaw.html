@@ -38,19 +38,18 @@
     <thead>
         <tr>
             <th>#</th>
-            <th>ЕДРПОУ</th>
-            <th>ИМЯ</th>
-            {% for m in mnth_list %}
-                <th> {{m}} </th>
-            {% endfor %}
-            <th>{{ year }}, {{ currency }} </th>
+            <th>Дата</th>
+            <th>Код товара</th>
+            <th>Наименование</th>
+            <th>Стоимость</th>
+            <th>Количество</th>
         </tr>
     </thead>
     <tbody>
 
-            {% for f in buyers_list %}
+            {% for f in raw_records %}
             <tr>
-                <td scope="row">{{ forloop.counter0|add:buyers_list.start_index }}</td>
+                <td scope="row">{{ forloop.counter0|add:raw_records.start_index }}</td>
                 <td>{{ f.buyer__edrpou|cut:' ' }}</td>
                 <td>
                 {% if f.buyer__edrpou == 0 %}
@@ -60,15 +59,7 @@
                 {% endif %}
                 
                 </td>
-                {% for s in f.pms %}
-                    {% if s %}
-                        <td> {{ s | floatformat:'0' }} </td>
-                    {% else%}
-                        <td> 0 </td>
-                    {% endif %}
-
-                {% endfor %}
-
+                
                 <td>{{ f.sum |floatformat:0 }}</td>
             </tr>
             {% endfor %}
@@ -77,25 +68,25 @@
 </table>
 <nav aria-label="Page navigation">
     <ul class="pagination justify-content-center">
-        {% if buyers_list.has_previous %}
+        {% if raw_records.has_previous %}
             <li class="page-item">
                 <a class="page-link" href="?page=1&search_string={{ search_string|urlencode:"" }}&start_date={{ start_date }}&end_date={{ end_date }}">&laquo;</a>
             </li>
              <li class="page-item">
-                <a class="page-link" href="?page={{ buyers_list.previous_page_number }}&search_string={{ search_string|urlencode:"" }}&start_date={{ start_date }}&end_date={{ end_date }}"> < </a>
+                <a class="page-link" href="?page={{ raw_records.previous_page_number }}&search_string={{ search_string|urlencode:"" }}&start_date={{ start_date }}&end_date={{ end_date }}"> < </a>
             </li>
         {% endif %}
 
         <li class="page-item">
-            <a class="page-link disabled" href="#"> Page {{ buyers_list.number }} of {{ buyers_list.paginator.num_pages }}</a>
+            <a class="page-link disabled" href="#"> Page {{ raw_records.number }} of {{ raw_records.paginator.num_pages }}</a>
         </li>
 
-        {% if buyers_list.has_next %}
+        {% if raw_records.has_next %}
             <li class="page-item">
-                <a class="page-link" href="?page={{ buyers_list.next_page_number }}&search_string={{ search_string|urlencode:"" }}&start_date={{ start_date }}&end_date={{ end_date }}"> > </a>
+                <a class="page-link" href="?page={{ raw_records.next_page_number }}&search_string={{ search_string|urlencode:"" }}&start_date={{ start_date }}&end_date={{ end_date }}"> > </a>
             </li>
             <li class="page-item">
-                <a class="page-link" href="?page={{ buyers_list.paginator.num_pages }}&search_string={{ search_string|urlencode:"" }}&start_date={{ start_date }}&end_date={{ end_date }}"> &raquo; </a>
+                <a class="page-link" href="?page={{ raw_records.paginator.num_pages }}&search_string={{ search_string|urlencode:"" }}&start_date={{ start_date }}&end_date={{ end_date }}"> &raquo; </a>
             </li>
         {% endif %}
     </ul>
@@ -106,12 +97,5 @@
 
 
 {% block js %}
-<script>
-    $(function () {
-        $("#org_search").autocomplete({
-            source: '{% url 'inner:sales_autocomplete_org' %}',
-            minLength: 1
-        });
-    });
-</script>
+
 {% endblock js %}
