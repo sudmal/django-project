@@ -15,11 +15,7 @@
 {% endblock period_button %}
 
 {% block DatePeriod %}
-    <form method="get" class="form-inline" action={% url 'inner:SalesIndividualFirmShow' edrpou_num  %}>
-        {{ DatesForm.start_date }}
-        -
-        {{ DatesForm.end_date }}
-        <button type="submit" class="btn btn-info">Изменить</button>
+
 {% endblock DatePeriod %}
 
 {% block content %}
@@ -33,7 +29,7 @@
    </nav> 
 </div>
 
-
+{# ('product__name','product__product_code','unit','one_product_cost','count','ordering_date') #}
 <table class="table">
     <thead>
         <tr>
@@ -43,24 +39,20 @@
             <th>Наименование</th>
             <th>Стоимость</th>
             <th>Количество</th>
+            <th>Сумма, {{ currency }}</th>
         </tr>
     </thead>
     <tbody>
 
-            {% for f in raw_records %}
+            {% for r in raw_records %}
             <tr>
                 <td scope="row">{{ forloop.counter0|add:raw_records.start_index }}</td>
-                <td>{{ f.buyer__edrpou|cut:' ' }}</td>
-                <td>
-                {% if f.buyer__edrpou == 0 %}
-                    Иностранные предприятия/неплательщики                
-                {% else %}
-                    {% autoescape off %}{{ f.buyer__name|bold_in_quotes }}{% endautoescape %}
-                {% endif %}
-                
-                </td>
-                
-                <td>{{ f.sum |floatformat:0 }}</td>
+                <td>{{ r.ordering_date }}</td>
+                <td>{{ r.product__product_code }}</td>
+                <td>{{ r.product__name }}</td>
+                <td>{{ r.one_product_cost|floatformat:2 }}</td>
+                <td>{{ r.count|floatformat:3 }}</td>
+                <td><b>{{ r.sum |floatformat:2 }}</b></td>
             </tr>
             {% endfor %}
         

@@ -82,6 +82,7 @@ class NlOrg(models.Model):
 class NlProduct(models.Model):
     id = models.BigAutoField(primary_key=True)
     name = models.TextField(blank=True, null=True)
+    product_code = models.BigIntegerField(blank=True, null=True)
 
     class Meta:
         managed = False

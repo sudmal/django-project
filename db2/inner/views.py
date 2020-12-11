@@ -270,13 +270,14 @@ def SalesIndividualFirmRaw(request,edrpou_num,buyer_code):
     if request.GET.get('end_date'):
         DatesForm.end_date = request.GET.get('end_date')
         end_date=request.GET.get('end_date')
-    raw_records= NlReestr.objects.filter(seller__edrpou=edrpou_num,buyer__edrpou=buyer_code,ordering_date__year=year) 
+    raw_records= NlReestr.objects.filter(seller__edrpou=edrpou_num,buyer__edrpou=buyer_code,ordering_date__year=year).values('product__name','product__product_code','unit','count','ordering_date')
     if currency == 'UAH':
-        raw_records=raw_records.annotate(sum=Sum(F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2)).order_by()
+        raw_records=raw_records.annotate(sum=Sum(F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2)).annotate(one_product_cost=Sum(F('one_product_cost')+F('one_product_cost')*0.2)).order_by('ordering_date')
     elif currency == 'EUR':
-        raw_records=raw_records.annotate(sum=Sum((F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2)/F('exchange__eur_mb_sale'))).order_by()
+        raw_records=raw_records.annotate(sum=Sum((F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2)/F('exchange__eur_mb_sale'))).annotate(one_product_cost=Sum((F('one_product_cost')+F('one_product_cost')*0.2)/F('exchange__eur_mb_sale'))).order_by('ordering_date')
     elif currency == 'USD':
-        raw_records=raw_records.annotate(sum=Sum((F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2)/F('exchange__usd_com'))).order_by()
+        raw_records=raw_records.annotate(sum=Sum((F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2)/F('exchange__usd_com'))).annotate(one_product_cost=Sum((F('one_product_cost')+F('one_product_cost')*0.2)/F('exchange__usd_com'))).order_by('ordering_date')
+    print(raw_records.query)
     paginator = Paginator(raw_records, 25)
     page_number = request.GET.get('page')
     try:
@@ -284,8 +285,9 @@ def SalesIndividualFirmRaw(request,edrpou_num,buyer_code):
     except PageNotAnInteger:
         raw_records = paginator.page(1)
     except EmptyPage:
-        raw_records = paginator.page(paginator.num_pages) 
+        raw_records = paginator.page(paginator.num_pages)
     context={
+        'currency':currency,
         'edrpou_num':edrpou_num,
         'buyer_code':buyer_code,
         'raw_records':raw_records,
