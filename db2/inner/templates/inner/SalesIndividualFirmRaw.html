@@ -48,7 +48,7 @@
             <tr>
                 <td scope="row">{{ forloop.counter0|add:raw_records.start_index }}</td>
                 <td>{{ r.ordering_date }}</td>
-                <td>{{ r.product__product_code }}</td>
+                <td>{{ r.product__product_code|cut:" " }}</td>
                 <td>{{ r.product__name }}</td>
                 <td>{{ r.one_product_cost|floatformat:2 }}</td>
                 <td>{{ r.count|floatformat:3 }}</td>
