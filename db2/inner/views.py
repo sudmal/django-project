@@ -252,7 +252,6 @@ def SalesIndividualFirmRaw(request,edrpou_num,buyer_code):
     currency = User.objects.get(username=request.user).profile.currency
     if request.GET.get('selected_year'):
         year=request.GET.get('selected_year')
-        print(year)
     raw_records= NlReestr.objects.filter(seller__edrpou=edrpou_num,buyer__edrpou=buyer_code,ordering_date__year=year).values('product__name','product__product_code','unit','count','ordering_date')
     if currency == 'UAH':
         raw_records=raw_records.annotate(sum=Sum(F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2)).annotate(one_product_cost=Sum(F('one_product_cost')+F('one_product_cost')*0.2)).order_by('ordering_date')
@@ -260,7 +259,10 @@ def SalesIndividualFirmRaw(request,edrpou_num,buyer_code):
         raw_records=raw_records.annotate(sum=Sum((F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2)/F('exchange__eur_mb_sale'))).annotate(one_product_cost=Sum((F('one_product_cost')+F('one_product_cost')*0.2)/F('exchange__eur_mb_sale'))).order_by('ordering_date')
     elif currency == 'USD':
         raw_records=raw_records.annotate(sum=Sum((F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2)/F('exchange__usd_com'))).annotate(one_product_cost=Sum((F('one_product_cost')+F('one_product_cost')*0.2)/F('exchange__usd_com'))).order_by('ordering_date')
-    raw_records = raw_records.filter(sum__gt=0)
+
+    if request.GET.get('month'):
+        raw_records = raw_records.filter(ordering_date__year=year,ordering_date__month=request.GET.get('month'))
+
     paginator = Paginator(raw_records, 25)
     page_number = request.GET.get('page')
     try:
