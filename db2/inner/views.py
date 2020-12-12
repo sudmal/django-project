@@ -25,12 +25,8 @@ from django.db.models.functions import TruncMonth
 
 
 # if now is not jan or feb, year is current year, other way - previus
-year = str((datetime.date.today() - datetime.timedelta(days=59)).year)
-
-def logUserData(request):
-    print(request.META['REMOTE_ADDR'])
-
-
+def getCurrentYear():
+    return str((datetime.date.today() - datetime.timedelta(days=59)).year)
 
 class Month(Func):
     function = 'EXTRACT'
@@ -102,6 +98,7 @@ def index(request):
 
 @login_required(login_url='login')
 def test(request):
+    year=getCurrentYear()
     start_date=year+'-01-01'
     end_date=year+'-12-31'
             ### FIX THIS!  # Получаем все записи из базы, соответствующие buyer_id и передаем в словарь {buyer_id,date,cost}
@@ -131,15 +128,16 @@ def test(request):
 @login_required(login_url='login')
 def SalesIndividual(request):
     YearSelectForm=NlYearSelectForm()
-
     currency = User.objects.get(username=request.user).profile.currency
+    year=getCurrentYear()
     if request.GET.get('selected_year'):
         YearSelectForm=NlYearSelectForm(request.GET)
+        year=request.GET.get('selected_year')
     searchFormOrg=SearchFormOrg()
     organisations=[]
     if request.GET.get('search_string'):
         searchFormOrg = SearchFormOrg(request.GET)
-        organisations=NlReestr.objects.filter(Q(ordering_date__year=YearSelectForm.selected_year)&(Q(seller__name__icontains=request.GET.get('search_string'))|Q(seller__edrpou__icontains=request.GET.get('search_string'))))\
+        organisations=NlReestr.objects.filter(Q(ordering_date__year=year)&(Q(seller__name__icontains=request.GET.get('search_string'))|Q(seller__edrpou__icontains=request.GET.get('search_string'))))\
             .values('seller__name','seller__edrpou').distinct()
         if currency == 'UAH':
             organisations=organisations.annotate(sum=Sum(F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2)).order_by('-sum')
@@ -152,11 +150,13 @@ def SalesIndividual(request):
         'currency':currency,
         'searchFormOrg':searchFormOrg,
         'YearSelectForm':YearSelectForm,
+        'year':year
     }
     return render(request,'inner/SalesIndividual.html',context)
 
 @login_required(login_url='login')
 def SalesIndividualFirmShow(request,edrpou_num):
+    year=getCurrentYear()
     YearSelectForm=NlYearSelectForm()
     if request.GET.get('selected_year'):
         YearSelectForm=NlYearSelectForm(request.GET)
@@ -245,6 +245,7 @@ def SalesIndividualFirmShow(request,edrpou_num):
 
 @login_required(login_url='login')
 def SalesIndividualFirmRaw(request,edrpou_num,buyer_code):
+    year=getCurrentYear()
     currency = User.objects.get(username=request.user).profile.currency
     if request.GET.get('start_date'):
         start_date=request.GET.get('start_date')
