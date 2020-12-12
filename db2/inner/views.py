@@ -32,7 +32,9 @@ class Month(Func):
     function = 'EXTRACT'
     template = '%(function)s(MONTH from %(expressions)s)'
     output_field = models.IntegerField()
-
+class Round(Func):
+    function = 'ROUND'
+    template='%(function)s(%(expressions)s::numeric, 0)'
 
 def autocomplete_tm(request):
     titles = list()
@@ -167,14 +169,15 @@ def SalesIndividualFirmShow(request,edrpou_num):
     buyers_dict = {}
     buyers=NlReestr.objects.filter(seller__edrpou=edrpou_num,ordering_date__year=year).values('buyer_id','buyer__edrpou','buyer__name').distinct()
     if currency == 'UAH':
-        buyers=buyers.annotate(sum=Sum(F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2)).order_by('-sum')
+        buyers=buyers.annotate(sum=Round(Sum(F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2))).order_by('-sum')
     elif currency == 'EUR':
-        buyers=buyers.annotate(sum=Sum((F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2)/F('exchange__eur_mb_sale'))).order_by('-sum')
+        buyers=buyers.annotate(sum=Round(Sum((F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2)/F('exchange__eur_mb_sale')))).order_by('-sum')
     elif currency == 'USD':
-        buyers=buyers.annotate(sum=Sum((F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2)/F('exchange__usd_com'))).order_by('-sum')
-    #print(buyers.query)
+        buyers=buyers.annotate(sum=Round(Sum((F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2)/F('exchange__usd_com')))).order_by('-sum')
+    buyers=buyers.filter(sum__isnull=False)
     buyers_list=[]
     totals=[]
+    # Total sums
     for m in range(1,13):
         t_sum=NlReestr.objects.filter(seller__edrpou=edrpou_num,ordering_date__year=year,ordering_date__month=m)
         if currency == 'UAH':
@@ -186,11 +189,11 @@ def SalesIndividualFirmShow(request,edrpou_num):
         totals.append(t_sum['sum'])
     t_sum=NlReestr.objects.filter(seller__edrpou=edrpou_num,ordering_date__year=year)
     if currency == 'UAH':
-        t_sum=t_sum.aggregate(sum=Sum(F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2))
+        t_sum=t_sum.aggregate(sum=Round(Sum(F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2)))
     elif currency == 'EUR':
-        t_sum=t_sum.aggregate(sum=Sum((F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2)/F('exchange__eur_mb_sale')))
+        t_sum=t_sum.aggregate(sum=Round(Sum((F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2)/F('exchange__eur_mb_sale'))))
     elif currency == 'USD':
-        t_sum=t_sum.aggregate(sum=Sum((F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2)/F('exchange__usd_com')))
+        t_sum=t_sum.aggregate(sum=Round(Sum((F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2)/F('exchange__usd_com'))))
     totals.append(t_sum['sum'])
     for b in buyers:
         cur_firm={}
@@ -201,11 +204,11 @@ def SalesIndividualFirmShow(request,edrpou_num):
         #print (cur_firm['buyer__edrpou'])
         b_pms=NlReestr.objects.filter(seller__edrpou=edrpou_num,buyer_id=cur_firm['buyer_id'],ordering_date__year=year).annotate(month=TruncMonth('ordering_date')).values('month') 
         if currency == 'UAH':
-            b_pms=b_pms.annotate(sum=Sum(F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2)).order_by()
+            b_pms=b_pms.annotate(sum=Round(Sum(F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2))).order_by()
         elif currency == 'EUR':
-            b_pms=b_pms.annotate(sum=Sum((F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2)/F('exchange__eur_mb_sale'))).order_by()
+            b_pms=b_pms.annotate(sum=Round(Sum((F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2)/F('exchange__eur_mb_sale')))).order_by()
         elif currency == 'USD':
-            b_pms=b_pms.annotate(sum=Sum((F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2)/F('exchange__usd_com'))).order_by()
+            b_pms=b_pms.annotate(sum=Round(Sum((F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2)/F('exchange__usd_com')))).order_by()
         pms=[] # per_monnth_summs
         for m in range(1,13):
             pms.append(float(0.0))
@@ -257,7 +260,7 @@ def SalesIndividualFirmRaw(request,edrpou_num,buyer_code):
         raw_records=raw_records.annotate(sum=Sum((F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2)/F('exchange__eur_mb_sale'))).annotate(one_product_cost=Sum((F('one_product_cost')+F('one_product_cost')*0.2)/F('exchange__eur_mb_sale'))).order_by('ordering_date')
     elif currency == 'USD':
         raw_records=raw_records.annotate(sum=Sum((F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2)/F('exchange__usd_com'))).annotate(one_product_cost=Sum((F('one_product_cost')+F('one_product_cost')*0.2)/F('exchange__usd_com'))).order_by('ordering_date')
-    print(raw_records.query)
+    raw_records = raw_records.filter(sum__gt=0)
     paginator = Paginator(raw_records, 25)
     page_number = request.GET.get('page')
     try:
