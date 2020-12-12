@@ -101,7 +101,7 @@ th:hover::after {
             {% for f in buyers_list %}
             <tr>
                 <td scope="row">{{ forloop.counter0|add:buyers_list.start_index }}</td>
-                <td><a class="btn btn-primary font-weight-bold" href="{% url 'inner:SalesIndividualFirmRaw' edrpou_num|cut:' '  f.buyer__edrpou|cut:' ' %}?year={{year}}">{{ f.buyer__edrpou|cut:' ' }}</a></td>
+                <td><a class="btn btn-primary font-weight-bold" href="{% url 'inner:SalesIndividualFirmRaw' edrpou_num|cut:' '  f.buyer__edrpou|cut:' ' %}?selected_year={{year}}">{{ f.buyer__edrpou|cut:' ' }}</a></td>
                 <td>
                 {% if f.buyer__edrpou == 0 %}
                     Иностранные предприятия/неплательщики                
@@ -119,7 +119,7 @@ th:hover::after {
 
                 {% endfor %}
 
-                <td><a class="btn btn-light font-weight-bold border-secondary" href="{% url 'inner:SalesIndividualFirmRaw' edrpou_num|cut:' '  f.buyer__edrpou|cut:' ' %}?year={{year}}">{{ f.sum |floatformat:0 }}</a></td>
+                <td><a class="btn btn-light font-weight-bold border-secondary" href="{% url 'inner:SalesIndividualFirmRaw' edrpou_num|cut:' '  f.buyer__edrpou|cut:' ' %}?selected_year={{year}}">{{ f.sum |floatformat:0 }}</a></td>
             </tr>
             {% endfor %}
         
