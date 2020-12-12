@@ -131,16 +131,15 @@ def test(request):
 @login_required(login_url='login')
 def SalesIndividual(request):
     YearSelectForm=NlYearSelectForm()
-    YearSelectForm.seleted_year = year
 
     currency = User.objects.get(username=request.user).profile.currency
-    if request.GET.get('year'):
+    if request.GET.get('selected_year'):
         YearSelectForm=NlYearSelectForm(request.GET)
     searchFormOrg=SearchFormOrg()
     organisations=[]
     if request.GET.get('search_string'):
         searchFormOrg = SearchFormOrg(request.GET)
-        organisations=NlReestr.objects.filter(Q(ordering_date__year=YearSelectForm.seleted_year)&(Q(seller__name__icontains=request.GET.get('search_string'))|Q(seller__edrpou__icontains=request.GET.get('search_string'))))\
+        organisations=NlReestr.objects.filter(Q(ordering_date__year=YearSelectForm.selected_year)&(Q(seller__name__icontains=request.GET.get('search_string'))|Q(seller__edrpou__icontains=request.GET.get('search_string'))))\
             .values('seller__name','seller__edrpou').distinct()
         if currency == 'UAH':
             organisations=organisations.annotate(sum=Sum(F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2)).order_by('-sum')
@@ -158,19 +157,15 @@ def SalesIndividual(request):
 
 @login_required(login_url='login')
 def SalesIndividualFirmShow(request,edrpou_num):
+    YearSelectForm=NlYearSelectForm()
+    if request.GET.get('selected_year'):
+        YearSelectForm=NlYearSelectForm(request.GET)
+        year=request.GET.get('selected_year')
+
     currency = User.objects.get(username=request.user).profile.currency
-    start_date=year+'-01-01'
-    end_date=year+'-12-31'
-    DatesForm=DatesStartEndForm()
-    if request.GET.get('start_date'):
-        DatesForm = DatesStartEndForm(request.GET)
-        start_date=request.GET.get('start_date')
-    if request.GET.get('end_date'):
-        DatesForm.end_date = request.GET.get('end_date')
-        end_date=request.GET.get('end_date')
     seller_name=NlOrg.objects.get(edrpou=edrpou_num).name
     buyers_dict = {}
-    buyers=NlReestr.objects.filter(seller__edrpou=edrpou_num,ordering_date__range=[start_date, end_date]).values('buyer_id','buyer__edrpou','buyer__name').distinct()
+    buyers=NlReestr.objects.filter(seller__edrpou=edrpou_num,ordering_date__year=year).values('buyer_id','buyer__edrpou','buyer__name').distinct()
     if currency == 'UAH':
         buyers=buyers.annotate(sum=Sum(F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2)).order_by('-sum')
     elif currency == 'EUR':
@@ -242,11 +237,9 @@ def SalesIndividualFirmShow(request,edrpou_num):
         'edrpou_num':edrpou_num,
         'seller_name':seller_name,
         'currency':currency,
-        'DatesForm':DatesForm,
-        'start_date':start_date,
-        'end_date':end_date,
         'mnth_list':mnth_list,
         'year':year,
+        'YearSelectForm':YearSelectForm,
     }
     return render(request,'inner/SalesIndividualFirmShow.html',context)
 

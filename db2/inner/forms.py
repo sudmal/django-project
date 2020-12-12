@@ -22,4 +22,4 @@ class DatesStartEndForm(forms.Form):
 
 class NlYearSelectForm(forms.Form):
     CHOICES = [('2017','2017'), ('2018','2018'), ('2019','2019'), ('2020','2020')]
-    seleted_year = forms.ChoiceField(label='', choices=CHOICES, widget=forms.Select(attrs={'class':'form-control'}))
+    selected_year = forms.ChoiceField(label='', choices=CHOICES,initial=year, widget=forms.Select(attrs={'class':'form-control'}))

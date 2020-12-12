@@ -58,12 +58,10 @@ th:hover::after {
 {% endblock period_button %}
 
 {% block DatePeriod %}
-    <form method="get" class="form-inline" action={% url 'inner:SalesIndividualFirmShow' edrpou_num  %}>
-        {{ DatesForm.start_date }}
-        -
-        {{ DatesForm.end_date }}
+    <form method="get" class="form-inline" action={% url 'inner:SalesIndividualFirmShow' edrpou_num|cut:' ' %}>
+        {{ YearSelectForm }}
         <button type="submit" class="btn btn-info">Изменить</button>
-
+    </form>
 {% endblock DatePeriod %}
 
 {% block content %}
