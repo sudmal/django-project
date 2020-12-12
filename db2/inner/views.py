@@ -213,7 +213,7 @@ def SalesIndividualFirmShow(request,edrpou_num):
             bb['month'] = int(str(bb['month'])[5:7])
             pms[bb['month']-1]=bb['sum']
         cur_firm.update({'pms':pms})
-        #print(cur_firm)
+        print(cur_firm)
 
         buyers_list.append(cur_firm)
 
