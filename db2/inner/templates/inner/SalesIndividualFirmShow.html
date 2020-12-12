@@ -112,7 +112,7 @@ th:hover::after {
                 </td>
                 {% for s in f.pms %}
                     {% if s %}
-                        <td> <a class="btn btn-light border-secondary" style="min-width: 60px;" href="{% url 'inner:SalesIndividualFirmRaw' edrpou_num|cut:' '  f.buyer__edrpou|cut:' ' %}?month={{ forloop.counter }}&year={{ year }}">{{ s | floatformat:'0' }} </a></td>
+                        <td> <a class="btn btn-light border-secondary" style="min-width: 60px;" href="{% url 'inner:SalesIndividualFirmRaw' edrpou_num|cut:' '  f.buyer__edrpou|cut:' ' %}?month={{ forloop.counter }}&selected_year={{ year }}">{{ s | floatformat:'0' }} </a></td>
                     {% else%}
                         <td> <span class="text-muted">-</td>
                     {% endif %}
