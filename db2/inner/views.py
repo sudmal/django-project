@@ -213,7 +213,7 @@ def SalesIndividualFirmShow(request,edrpou_num):
             bb['month'] = int(str(bb['month'])[5:7])
             pms[bb['month']-1]=bb['sum']
         cur_firm.update({'pms':pms})
-        print(cur_firm)
+        #print(cur_firm)
 
         buyers_list.append(cur_firm)
 
@@ -247,10 +247,8 @@ def SalesIndividualFirmShow(request,edrpou_num):
 def SalesIndividualFirmRaw(request,edrpou_num,buyer_code):
     year=getCurrentYear()
     currency = User.objects.get(username=request.user).profile.currency
-    if request.GET.get('start_date'):
-        start_date=request.GET.get('start_date')
-    if request.GET.get('end_date'):
-        end_date=request.GET.get('end_date')
+    if request.GET.get('selected_year'):
+        year=request.GET.get('selected_year')
     raw_records= NlReestr.objects.filter(seller__edrpou=edrpou_num,buyer__edrpou=buyer_code,ordering_date__year=year).values('product__name','product__product_code','unit','count','ordering_date')
     if currency == 'UAH':
         raw_records=raw_records.annotate(sum=Sum(F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2)).annotate(one_product_cost=Sum(F('one_product_cost')+F('one_product_cost')*0.2)).order_by('ordering_date')
