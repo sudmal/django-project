@@ -5,7 +5,7 @@
 {% load cache %}
 
 {% block title %}
-    Продажи :: Индивидуальный анализ ({{ edrpou_num| cut:' ' }})
+    Клиенты :: Индивидуальный анализ ({{ edrpou_num| cut:' ' }})
 {% endblock title %}
 
 {% block js-before %}
@@ -70,7 +70,7 @@ th:hover::after {
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="{% url 'home' %}">Внутренний рынок</a></li>
             <li class="breadcrumb-item"><a href="{% url 'home' %}">Продажи</a></li>
-            <li class="breadcrumb-item active" aria-current="page">Индивидульный анализ ({{ edrpou_num| cut:' ' }}) - {{ seller_name }}</li>
+            <li class="breadcrumb-item active" aria-current="page">Индивидульный анализ ({{ edrpou_num| cut:' ' }}) - {{ buyer_name }}</li>
         </ol>
    </nav> 
 </div>
@@ -98,28 +98,28 @@ th:hover::after {
     </thead>
     <tbody>
 
-            {% for f in buyers_list %}
+            {% for f in sellers_list %}
             <tr>
-                <td scope="row">{{ forloop.counter0|add:buyers_list.start_index }}</td>
-                <td><a class="btn btn-primary font-weight-bold" href="{% url 'inner:SalesIndividualFirmRaw' edrpou_num|cut:' '  f.buyer__edrpou|cut:' ' %}?selected_year={{year}}">{{ f.buyer__edrpou|cut:' ' }}</a></td>
+                <td scope="row">{{ forloop.counter0|add:sellers_list.start_index }}</td>
+                <td><a class="btn btn-primary font-weight-bold" href="{% url 'inner:SalesIndividualFirmRaw' edrpou_num|cut:' '  f.seller__edrpou|cut:' ' %}?selected_year={{year}}">{{ f.seller__edrpou|cut:' ' }}</a></td>
                 <td>
-                {% if f.buyer__edrpou == 0 %}
+                {% if f.seller__edrpou == 0 %}
                     Иностранные предприятия/неплательщики                
                 {% else %}
-                    {% autoescape off %}{{ f.buyer__name|bold_in_quotes }}{% endautoescape %}
+                    {% autoescape off %}{{ f.seller__name|bold_in_quotes }}{% endautoescape %}
                 {% endif %}
                 
                 </td>
                 {% for s in f.pms %}
                     {% if s %}
-                        <td> <a class="btn btn-light border-secondary" style="min-width: 60px;" href="{% url 'inner:SalesIndividualFirmRaw' edrpou_num|cut:' '  f.buyer__edrpou|cut:' ' %}?month={{ forloop.counter }}&selected_year={{ year }}">{{ s | floatformat:'0' }} </a></td>
+                        <td> <a class="btn btn-light border-secondary" style="min-width: 60px;" href="{% url 'inner:ClientsCompetitorsIndividualRaw' edrpou_num|cut:' '  f.seller__edrpou|cut:' ' %}?month={{ forloop.counter }}&selected_year={{ year }}">{{ s | floatformat:'0' }} </a></td>
                     {% else%}
                         <td> <span class="text-muted">-</td>
                     {% endif %}
 
                 {% endfor %}
 
-                <td><a class="btn btn-light font-weight-bold border-secondary" href="{% url 'inner:SalesIndividualFirmRaw' edrpou_num|cut:' '  f.buyer__edrpou|cut:' ' %}?selected_year={{year}}">{{ f.sum |floatformat:0 }}</a></td>
+                <td><a class="btn btn-light font-weight-bold border-secondary" href="{% url 'inner:ClientsCompetitorsIndividualRaw' edrpou_num|cut:' '  f.seller__edrpou|cut:' ' %}?selected_year={{year}}">{{ f.sum |floatformat:0 }}</a></td>
             </tr>
             {% endfor %}
         
@@ -128,25 +128,25 @@ th:hover::after {
 
 <nav aria-label="Page navigation">
     <ul class="pagination justify-content-center">
-        {% if buyers_list.has_previous %}
+        {% if sellers_list.has_previous %}
             <li class="page-item">
                 <a class="page-link" href="?page=1&selected_year={{year}}">&laquo;</a>
             </li>
              <li class="page-item">
-                <a class="page-link" href="?page={{ buyers_list.previous_page_number }}&selected_year={{year}}"> < </a>
+                <a class="page-link" href="?page={{ sellers_list.previous_page_number }}&selected_year={{year}}"> < </a>
             </li>
         {% endif %}
 
         <li class="page-item">
-            <a class="page-link disabled" href="#"> Page {{ buyers_list.number }} of {{ buyers_list.paginator.num_pages }}</a>
+            <a class="page-link disabled" href="#"> Page {{ sellers_list.number }} of {{ sellers_list.paginator.num_pages }}</a>
         </li>
 
-        {% if buyers_list.has_next %}
+        {% if sellers_list.has_next %}
             <li class="page-item">
-                <a class="page-link" href="?page={{ buyers_list.next_page_number }}&selected_year={{year}}"> > </a>
+                <a class="page-link" href="?page={{ sellers_list.next_page_number }}&selected_year={{year}}"> > </a>
             </li>
             <li class="page-item">
-                <a class="page-link" href="?page={{ buyers_list.paginator.num_pages }}&selected_year={{year}}"> &raquo; </a>
+                <a class="page-link" href="?page={{ sellers_list.paginator.num_pages }}&selected_year={{year}}"> &raquo; </a>
             </li>
         {% endif %}
     </ul>

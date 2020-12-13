@@ -17,7 +17,7 @@
 {% endblock js-before %}
 
 {% block DatePeriod %}
-    <form method="get" class="form-inline" action={% url 'inner:SalesIndividual' %}>
+    <form method="get" class="form-inline" action={% url 'inner:ClientsCompetitorsIndividualSearch' %}>
         {{ YearSelectForm }}
         <input type=hidden name="search_string" value="{{ request.GET.search_string }}">
         <button type="submit" class="btn btn-info">Изменить</button>
@@ -107,7 +107,7 @@
 <script>
     $(function () {
         $("#org_search").autocomplete({
-            source: '{% url 'inner:sales_autocomplete_org' %}',
+            source: '{% url 'inner:clients_autocomplete_org' %}',
             minLength: 1
         });
     });
