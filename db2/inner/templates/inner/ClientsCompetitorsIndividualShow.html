@@ -69,7 +69,7 @@ th:hover::after {
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="{% url 'home' %}">Внутренний рынок</a></li>
-            <li class="breadcrumb-item"><a href="{% url 'home' %}">Продажи</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'home' %}">Закупки клиентов</a></li>
             <li class="breadcrumb-item active" aria-current="page">Индивидульный анализ ({{ edrpou_num| cut:' ' }}) - {{ buyer_name }}</li>
         </ol>
    </nav> 
@@ -79,16 +79,20 @@ th:hover::after {
 <table class="table table-stiped table-hover" id="table" data-show-columns="true">
     <thead class="thead table-active sticky-header">
         <tr>
+			<th colspan="3"><center>Продавцы</center></th><th colspan="13"><center>Период анализа / Суммы в {{ currency }} с НДС</center></th>
+	    </tr>
+        <tr>
             <th>#</th>
             <th>ЕДРПОУ</th>
             <th>ИМЯ</th>
             {% for m in mnth_list %}
                 <th> {{m}} </th>
             {% endfor %}
-            <th>{{ year }}, {{ currency }} </th>
+            <th>{{ year }} </th>
         </tr>
         <tr>
             <th colspan=3>
+                <center>Всего</center>
             </th>
             {% for t in totals %}
                 <th> {{t|floatformat:'0'}} </th>
@@ -101,7 +105,7 @@ th:hover::after {
             {% for f in sellers_list %}
             <tr>
                 <td scope="row">{{ forloop.counter0|add:sellers_list.start_index }}</td>
-                <td><a class="btn btn-primary font-weight-bold" href="{% url 'inner:SalesIndividualFirmRaw' edrpou_num|cut:' '  f.seller__edrpou|cut:' ' %}?selected_year={{year}}">{{ f.seller__edrpou|cut:' ' }}</a></td>
+                <td><a class="btn btn-primary font-weight-bold" href="{% url 'inner:ClientsCompetitorsIndividualRaw' edrpou_num|cut:' '  f.seller__edrpou|cut:' ' %}?selected_year={{year}}">{{ f.seller__edrpou|cut:' ' }}</a></td>
                 <td>
                 {% if f.seller__edrpou == 0 %}
                     Иностранные предприятия/неплательщики                

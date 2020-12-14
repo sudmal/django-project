@@ -79,6 +79,9 @@ th:hover::after {
 <table class="table table-stiped table-hover" id="table" data-show-columns="true">
     <thead class="thead table-active sticky-header">
         <tr>
+			<th colspan="3"><center>Покупатели</center></th><th colspan="13"><center>Период анализа / Суммы в {{ currency }} с НДС</center></th>
+	    </tr>
+        <tr>
             <th>#</th>
             <th>ЕДРПОУ</th>
             <th>ИМЯ</th>
@@ -89,6 +92,7 @@ th:hover::after {
         </tr>
         <tr>
             <th colspan=3>
+                <center>Всего</center>
             </th>
             {% for t in totals %}
                 <th> {{t|floatformat:'0'}} </th>

@@ -419,16 +419,38 @@ def ClientsCompetitorsIndividualShow(request,edrpou_num):
     }
     return render(request,'inner/ClientsCompetitorsIndividualShow.html',context)
 
-def ClientsCompetitorsIndividualRaw(request):
+def ClientsCompetitorsIndividualRaw(request,edrpou_num,seller_code):
     year=getCurrentYear()
     currency = User.objects.get(username=request.user).profile.currency
     if request.GET.get('selected_year'):
         year=request.GET.get('selected_year')
+    raw_records= NlReestr.objects.filter(buyer__edrpou=edrpou_num,seller__edrpou=seller_code,ordering_date__year=year).values('product__name','product__product_code','unit','count','ordering_date')
+    if currency == 'UAH':
+        raw_records=raw_records.annotate(sum=Sum(F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2)).annotate(one_product_cost=Sum(F('one_product_cost')+F('one_product_cost')*0.2)).order_by('ordering_date')
+    elif currency == 'EUR':
+        raw_records=raw_records.annotate(sum=Sum((F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2)/F('exchange__eur_mb_sale'))).annotate(one_product_cost=Sum((F('one_product_cost')+F('one_product_cost')*0.2)/F('exchange__eur_mb_sale'))).order_by('ordering_date')
+    elif currency == 'USD':
+        raw_records=raw_records.annotate(sum=Sum((F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2)/F('exchange__usd_com'))).annotate(one_product_cost=Sum((F('one_product_cost')+F('one_product_cost')*0.2)/F('exchange__usd_com'))).order_by('ordering_date')
+
+    if request.GET.get('month'):
+        raw_records = raw_records.filter(ordering_date__year=year,ordering_date__month=request.GET.get('month'))
+
+    paginator = Paginator(raw_records, 25)
+    page_number = request.GET.get('page')
+    try:
+        raw_records = paginator.page(page_number)
+    except PageNotAnInteger:
+        raw_records = paginator.page(1)
+    except EmptyPage:
+        raw_records = paginator.page(paginator.num_pages)
     context={
         'currency':currency,
+        'edrpou_num':edrpou_num,
+        'seller_code':seller_code,
+        'raw_records':raw_records,
         'year':year,
     }
-    return render(request,'ClientsCompetitorsIndividualRaw.html',context)
+    return render(request,'inner/ClientsCompetitorsIndividualRaw.html',context)
 
 def ClientsCompetitorsComparse(request):
     year=getCurrentYear()
