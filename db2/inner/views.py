@@ -62,6 +62,17 @@ def clients_autocomplete_org(request):
         titles.append("Ничего не найдено")
     return JsonResponse(titles, safe=False)
 
+def purchases_autocomplete_org(request):
+    titles = list()
+    if 'term' in request.GET:
+        found_org = NlReestr.objects.filter(Q(seller__name__icontains=request.GET.get('term')) |Q(seller__edrpou__startswith=request.GET.get('term')) )\
+            .values('seller__name').annotate(sum=Sum(F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2)).distinct().order_by('-sum')
+        for tm in found_org:
+            titles.append(tm['seller__name'])
+    if len(titles)==0:
+        titles.append("Ничего не найдено")
+    return JsonResponse(titles, safe=False)
+
 def getFirmName(str1):
     st=''
     result=''
@@ -291,6 +302,7 @@ def SalesIndividualFirmRaw(request,edrpou_num,buyer_code):
     }
     return render(request,'inner/SalesIndividualFirmRaw.html',context)
 
+@login_required(login_url='login')
 def SalesCompetitorsComparse(request):
     year=getCurrentYear()
     currency = User.objects.get(username=request.user).profile.currency
@@ -302,6 +314,7 @@ def SalesCompetitorsComparse(request):
     }
     return render(request,'inner/SalesCompetitorsComparse.html',context)
 
+@login_required(login_url='login')
 def ClientsCompetitorsIndividualSearch(request):
     YearSelectForm=NlYearSelectForm()
     currency = User.objects.get(username=request.user).profile.currency
@@ -330,6 +343,7 @@ def ClientsCompetitorsIndividualSearch(request):
     }
     return render(request,'inner/ClientsCompetitorsIndividualSearch.html',context)
 
+@login_required(login_url='login')
 def ClientsCompetitorsIndividualShow(request,edrpou_num):
     year=getCurrentYear()
     YearSelectForm=NlYearSelectForm()
@@ -419,6 +433,7 @@ def ClientsCompetitorsIndividualShow(request,edrpou_num):
     }
     return render(request,'inner/ClientsCompetitorsIndividualShow.html',context)
 
+@login_required(login_url='login')
 def ClientsCompetitorsIndividualRaw(request,edrpou_num,seller_code):
     year=getCurrentYear()
     currency = User.objects.get(username=request.user).profile.currency
@@ -452,6 +467,7 @@ def ClientsCompetitorsIndividualRaw(request,edrpou_num,seller_code):
     }
     return render(request,'inner/ClientsCompetitorsIndividualRaw.html',context)
 
+@login_required(login_url='login')
 def ClientsCompetitorsComparse(request):
     year=getCurrentYear()
     currency = User.objects.get(username=request.user).profile.currency
@@ -462,3 +478,40 @@ def ClientsCompetitorsComparse(request):
         'year':year,
     }
     return render(request,'inner/ClientsCompetitorsComparse.html',context)
+
+@login_required(login_url='login')
+def PurchasesIndividualSearch(request):
+    YearSelectForm=NlYearSelectForm()
+    currency = User.objects.get(username=request.user).profile.currency
+    year=getCurrentYear()
+    if request.GET.get('selected_year'):
+        YearSelectForm=NlYearSelectForm(request.GET)
+        year=request.GET.get('selected_year')
+    searchFormOrg=SearchFormOrg()
+    organisations=[]
+    if request.GET.get('search_string'):
+        searchFormOrg = SearchFormOrg(request.GET)
+        organisations=NlCredit.objects.filter(Q(ordering_date__year=year)&(Q(buyer__name__icontains=request.GET.get('search_string'))|Q(buyer__edrpou__icontains=request.GET.get('search_string'))))\
+            .values('buyer__name','buyer__edrpou').distinct()
+        if currency == 'UAH':
+            organisations=organisations.annotate(sum=Sum(F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2)).order_by('-sum')
+        elif currency == 'EUR':
+            organisations=organisations.annotate(sum=Sum((F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2)/F('exchange__eur_mb_sale'))).order_by('-sum')
+        elif currency == 'USD':
+            organisations=organisations.annotate(sum=Sum((F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2)/F('exchange__usd_com'))).order_by('-sum')   
+    context={
+        'organisations':organisations,
+        'currency':currency,
+        'searchFormOrg':searchFormOrg,
+        'YearSelectForm':YearSelectForm,
+        'year':year
+    }
+    return render(request,'inner/PurchasesIndividualSearch.html',context)
+
+def PurchasesIndividualFirmShow(request):
+    context={}
+    return render(request,'inner/PurchasesIndividualFirmShow.html',context)
+
+def PurchasesIndividualFirmRaw(request):
+    context={}
+    return render(request,'inner/PurchasesIndividualFirmRaw.html',context)

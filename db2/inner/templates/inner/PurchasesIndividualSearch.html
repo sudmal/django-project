@@ -1,0 +1,115 @@
+{% extends 'main/base.html' %}
+
+{% load bold_in_quotes %}
+{% load static %}
+{% load cache %}
+
+{% block title %}
+    Закупки :: Индивидуальный анализ (поиск)
+{% endblock title %}
+
+{% block js-before %}
+<style>
+  .ui-autocomplete-loading {
+    background: white url("{% static 'ui-anim_basic_16x16.gif' %}") right center no-repeat;
+  }
+</style>
+{% endblock js-before %}
+
+{% block DatePeriod %}
+    <form method="get" class="form-inline" action={% url 'inner:ClientsCompetitorsIndividualSearch' %}>
+        {{ YearSelectForm }}
+        <input type=hidden name="search_string" value="{{ request.GET.search_string }}">
+        <button type="submit" class="btn btn-info">Изменить</button>
+    </form>
+{% endblock DatePeriod %}
+
+{% block period_button %}
+{% endblock period_button %}
+
+{% block content %}
+
+<div class="row">
+        <div class="col">
+            <form method="GET" action="{% url 'inner:ClientsCompetitorsIndividualSearch' %}">
+                {% csrf_token %}
+                <div class="input-group mb-3 ml-5">
+                {{ searchFormOrg.search_string }} 
+                <input type=hidden name="selected_year" value="{{ request.GET.selected_year }}">
+                    <div class="input-group-append">
+                        <button type="submit" class="btn btn-outline-secondary">Поиск</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="col-md-3"></div>
+        <div class="col">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="{% url 'home' %}">Внутренний рынок</a></li>
+                    <li class="breadcrumb-item"><a href="{% url 'home' %}">Закупки</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Индивидульный анализ (Поиск)</li>
+                </ol>
+            </nav> 
+        </div>
+</div>
+
+
+{% if organisations %}
+<div class"container">
+       <div class="row bg-secondary mx-3 py-2 text-light">
+            <div class="col-md-1">
+                <b>#</b>
+            </div>
+            <div class="col-md-1">
+                <b>ЕДРПОУ</b>
+            </div>
+            <div class="col">
+               <b> Наименование </b>
+            </div>
+            <div class="col">
+               <b> Сумма (за период), {{ currency }}</b>
+            </div>
+        </div>
+    {% for org in organisations %}
+        <div class="row  mx-3 py-2 border-bottom">
+            <div class="col-md-1 d-flex justify-content-center align-items-center">
+                <b>{{ forloop.counter }}</b>
+            </div>
+            <div class="col-md-1 d-flex justify-content-center align-items-center">
+                <a class="btn btn-primary font-weight-bold" href="{% url 'inner:PurchasesIndividualShow' org.buyer__edrpou %}?selected_year={{ year }}">{{ org.buyer__edrpou | cut:' ' }}</a>
+            </div>
+            <div class="col align-items-center">
+                {% autoescape off %}
+                {{ org.buyer__name| bold_in_quotes }}
+                {% endautoescape %}
+            </div>
+            <div class="col" style="text-align: right;">
+                {{ org.sum | floatformat:2 }}
+
+            </div>
+            <div class="col-md-4" style="text-align: right;">
+            </div>
+        </div>
+        {% endfor %}
+</div>
+{% else %}
+    {% if request.GET.search_string|length > 0 %}
+        По заданному запросу зв выбранный период записей не обнаружено
+    {% else %}
+        Пожалуйста выполните запрос
+    {% endif %}
+{% endif %}
+{% endblock content %}
+
+
+{% block js %}
+<script>
+    $(function () {
+        $("#org_search").autocomplete({
+            source: '{% url 'inner:purchases_autocomplete_org' %}',
+            minLength: 1
+        });
+    });
+</script>
+{% endblock js %}

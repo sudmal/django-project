@@ -1,0 +1,93 @@
+{% extends 'main/base.html' %}
+
+{% load bold_in_quotes %}
+{% load static %}
+{% load cache %}
+
+{% block title %}
+    Продажи :: Анализ клиентов конкурентов :: Архив записей 
+{% endblock title %}
+
+{% block js-before %}
+{% endblock js-before %}
+
+{% block period_button %}
+{% endblock period_button %}
+
+{% block DatePeriod %}
+
+{% endblock DatePeriod %}
+
+{% block content %}
+<div class="row mx-2">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="{% url 'home' %}">Внутренний рынок</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'home' %}">Продажи</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Анализ Клиентов конкурентов ({{ edrpou_num| cut:' ' }} - {{ seller_code| cut:' ' }} за период {{ year|cut:' ' }} )</li>
+        </ol>
+   </nav> 
+</div>
+
+{# ('product__name','product__product_code','unit','one_product_cost','count','ordering_date') #}
+<table class="table">
+    <thead>
+        <tr>
+            <th>#</th>
+            <th>Дата</th>
+            <th>Код товара</th>
+            <th>Наименование</th>
+            <th>Стоимость</th>
+            <th>Количество</th>
+            <th>Сумма, {{ currency }}</th>
+        </tr>
+    </thead>
+    <tbody>
+
+            {% for r in raw_records %}
+            <tr>
+                <td scope="row">{{ forloop.counter0|add:raw_records.start_index }}</td>
+                <td>{{ r.ordering_date }}</td>
+                <td>{{ r.product__product_code|cut:" " }}</td>
+                <td>{{ r.product__name }}</td>
+                <td>{{ r.one_product_cost|floatformat:2 }}</td>
+                <td>{{ r.count|floatformat:3 }}</td>
+                <td><b>{{ r.sum |floatformat:2 }}</b></td>
+            </tr>
+            {% endfor %}
+        
+    </tbody>
+</table>
+<nav aria-label="Page navigation">
+    <ul class="pagination justify-content-center">
+        {% if raw_records.has_previous %}
+            <li class="page-item">
+                <a class="page-link" href="?page=1&selected_year={{year}}">&laquo;</a>
+            </li>
+             <li class="page-item">
+                <a class="page-link" href="?page={{ raw_records.previous_page_number }}&selected_year={{year}}"> < </a>
+            </li>
+        {% endif %}
+
+        <li class="page-item">
+            <a class="page-link disabled" href="#"> Page {{ raw_records.number }} of {{ raw_records.paginator.num_pages }}</a>
+        </li>
+
+        {% if raw_records.has_next %}
+            <li class="page-item">
+                <a class="page-link" href="?page={{ raw_records.next_page_number }}&selected_year={{year}}"> > </a>
+            </li>
+            <li class="page-item">
+                <a class="page-link" href="?page={{ raw_records.paginator.num_pages }}&selected_year={{year}}"> &raquo; </a>
+            </li>
+        {% endif %}
+    </ul>
+ </nav>  
+
+
+{% endblock content %}
+
+
+{% block js %}
+
+{% endblock js %}
