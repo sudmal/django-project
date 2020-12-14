@@ -508,10 +508,124 @@ def PurchasesIndividualSearch(request):
     }
     return render(request,'inner/PurchasesIndividualSearch.html',context)
 
-def PurchasesIndividualFirmShow(request):
-    context={}
+def PurchasesIndividualFirmShow(request,edrpou_num):
+    year=getCurrentYear()
+    YearSelectForm=NlYearSelectForm()
+    if request.GET.get('selected_year'):
+        YearSelectForm=NlYearSelectForm(request.GET)
+        year=request.GET.get('selected_year')
+
+    currency = User.objects.get(username=request.user).profile.currency
+    buyer_name=NlOrg.objects.get(edrpou=edrpou_num).name
+    sellers_dict = {}
+    sellers=NlCredit.objects.filter(buyer__edrpou=edrpou_num,ordering_date__year=year).values('seller_id','seller__edrpou','seller__name').distinct()
+    if currency == 'UAH':
+        sellers=sellers.annotate(sum=Round(Sum(F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2))).order_by('-sum')
+    elif currency == 'EUR':
+        sellers=sellers.annotate(sum=Round(Sum((F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2)/F('exchange__eur_mb_sale')))).order_by('-sum')
+    elif currency == 'USD':
+        sellers=sellers.annotate(sum=Round(Sum((F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2)/F('exchange__usd_com')))).order_by('-sum')
+    sellers=sellers.filter(sum__isnull=False)
+    sellers_list=[]
+    totals=[]
+    # Total sums
+    for m in range(1,13):
+        t_sum=NlReestr.objects.filter(buyer__edrpou=edrpou_num,ordering_date__year=year,ordering_date__month=m)
+        if currency == 'UAH':
+            t_sum=t_sum.aggregate(sum=Sum(F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2))
+        elif currency == 'EUR':
+            t_sum=t_sum.aggregate(sum=Sum((F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2)/F('exchange__eur_mb_sale')))
+        elif currency == 'USD':
+            t_sum=t_sum.aggregate(sum=Sum((F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2)/F('exchange__usd_com')))
+        totals.append(t_sum['sum'])
+    t_sum=NlReestr.objects.filter(buyer__edrpou=edrpou_num,ordering_date__year=year)
+    if currency == 'UAH':
+        t_sum=t_sum.aggregate(sum=Round(Sum(F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2)))
+    elif currency == 'EUR':
+        t_sum=t_sum.aggregate(sum=Round(Sum((F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2)/F('exchange__eur_mb_sale'))))
+    elif currency == 'USD':
+        t_sum=t_sum.aggregate(sum=Round(Sum((F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2)/F('exchange__usd_com'))))
+    totals.append(t_sum['sum'])
+    for b in sellers:
+        cur_firm={}
+        cur_firm.update({'seller_id':b['seller_id']})
+        cur_firm.update({'seller__name':b['seller__name']})
+        cur_firm.update({'seller__edrpou':b['seller__edrpou']})
+        cur_firm.update({'sum':b['sum']})
+        #print (cur_firm['seller__edrpou'])
+        b_pms=NlReestr.objects.filter(buyer__edrpou=edrpou_num,seller_id=cur_firm['seller_id'],ordering_date__year=year).annotate(month=TruncMonth('ordering_date')).values('month') 
+        if currency == 'UAH':
+            b_pms=b_pms.annotate(sum=Round(Sum(F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2))).order_by()
+        elif currency == 'EUR':
+            b_pms=b_pms.annotate(sum=Round(Sum((F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2)/F('exchange__eur_mb_sale')))).order_by()
+        elif currency == 'USD':
+            b_pms=b_pms.annotate(sum=Round(Sum((F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2)/F('exchange__usd_com')))).order_by()
+        pms=[] # per_monnth_summs
+        for m in range(1,13):
+            pms.append(float(0.0))
+        for bb in b_pms:
+            bb['month'] = int(str(bb['month'])[5:7])
+            pms[bb['month']-1]=bb['sum']
+        cur_firm.update({'pms':pms})
+        #print(cur_firm)
+
+        sellers_list.append(cur_firm)
+
+
+    paginator = Paginator(sellers_list, 10)
+    page_number = request.GET.get('page')
+    try:
+        sellers_list = paginator.page(page_number)
+    except PageNotAnInteger:
+        sellers_list = paginator.page(1)
+    except EmptyPage:
+        sellers_list = paginator.page(paginator.num_pages) 
+
+    
+    #Needs for django template generation
+    mnth_list=["Январь","Февраль","Март","Апрель","Май","Июнь","Июль","Август","Сентябрь","Октябрь","Ноябрь","Декабрь"]
+
+    context={
+        'sellers_list':sellers_list,
+        'totals':totals,
+        'edrpou_num':edrpou_num,
+        'buyer_name':buyer_name,
+        'currency':currency,
+        'mnth_list':mnth_list,
+        'year':year,
+        'YearSelectForm':YearSelectForm,
+    }
     return render(request,'inner/PurchasesIndividualFirmShow.html',context)
 
-def PurchasesIndividualFirmRaw(request):
-    context={}
+def PurchasesIndividualFirmRaw(request,edrpou_num,seller_code):
+    year=getCurrentYear()
+    currency = User.objects.get(username=request.user).profile.currency
+    if request.GET.get('selected_year'):
+        year=request.GET.get('selected_year')
+    raw_records= NlCredit.objects.filter(buyer__edrpou=edrpou_num,seller__edrpou=seller_code,ordering_date__year=year).values('product__name','product__product_code','unit','count','ordering_date')
+    if currency == 'UAH':
+        raw_records=raw_records.annotate(sum=Sum(F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2)).annotate(one_product_cost=Sum(F('one_product_cost')+F('one_product_cost')*0.2)).order_by('ordering_date')
+    elif currency == 'EUR':
+        raw_records=raw_records.annotate(sum=Sum((F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2)/F('exchange__eur_mb_sale'))).annotate(one_product_cost=Sum((F('one_product_cost')+F('one_product_cost')*0.2)/F('exchange__eur_mb_sale'))).order_by('ordering_date')
+    elif currency == 'USD':
+        raw_records=raw_records.annotate(sum=Sum((F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2)/F('exchange__usd_com'))).annotate(one_product_cost=Sum((F('one_product_cost')+F('one_product_cost')*0.2)/F('exchange__usd_com'))).order_by('ordering_date')
+
+    if request.GET.get('month'):
+        raw_records = raw_records.filter(ordering_date__year=year,ordering_date__month=request.GET.get('month'))
+
+    paginator = Paginator(raw_records, 25)
+    page_number = request.GET.get('page')
+    try:
+        raw_records = paginator.page(page_number)
+    except PageNotAnInteger:
+        raw_records = paginator.page(1)
+    except EmptyPage:
+        raw_records = paginator.page(paginator.num_pages)
+    context={
+        'currency':currency,
+        'edrpou_num':edrpou_num,
+        'seller_code':seller_code,
+        'raw_records':raw_records,
+        'year':year,
+    }
     return render(request,'inner/PurchasesIndividualFirmRaw.html',context)

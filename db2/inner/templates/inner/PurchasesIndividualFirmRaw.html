@@ -5,7 +5,7 @@
 {% load cache %}
 
 {% block title %}
-    Продажи :: Анализ клиентов конкурентов :: Архив записей 
+    Закупки :: Индивидуальный анализ :: Архив записей 
 {% endblock title %}
 
 {% block js-before %}
@@ -23,8 +23,8 @@
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="{% url 'home' %}">Внутренний рынок</a></li>
-            <li class="breadcrumb-item"><a href="{% url 'home' %}">Продажи</a></li>
-            <li class="breadcrumb-item active" aria-current="page">Анализ Клиентов конкурентов ({{ edrpou_num| cut:' ' }} - {{ seller_code| cut:' ' }} за период {{ year|cut:' ' }} )</li>
+            <li class="breadcrumb-item"><a href="{% url 'home' %}">Закупки</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Индивидуальный анализ ({{ edrpou_num| cut:' ' }} - {{ seller_code| cut:' ' }} за период {{ year|cut:' ' }} )</li>
         </ol>
    </nav> 
 </div>

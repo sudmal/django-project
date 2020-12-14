@@ -161,12 +161,5 @@ th:hover::after {
 
 
 {% block js %}
-<script>
-    $(function () {
-        $("#org_search").autocomplete({
-            source: '{% url 'inner:sales_autocomplete_org' %}',
-            minLength: 1
-        });
-    });
-</script>
+
 {% endblock js %}
