@@ -77,7 +77,7 @@
                 <b>{{ forloop.counter }}</b>
             </div>
             <div class="col-md-1 d-flex justify-content-center align-items-center">
-                <a class="btn btn-primary font-weight-bold" href="{% url 'inner:PurchasesIndividualShow' org.buyer__edrpou %}?selected_year={{ year }}">{{ org.buyer__edrpou | cut:' ' }}</a>
+                <a class="btn btn-primary font-weight-bold" href="{% url 'inner:PurchasesIndividualFirmShow' org.buyer__edrpou %}?selected_year={{ year }}">{{ org.buyer__edrpou | cut:' ' }}</a>
             </div>
             <div class="col align-items-center">
                 {% autoescape off %}
@@ -95,7 +95,7 @@
 </div>
 {% else %}
     {% if request.GET.search_string|length > 0 %}
-        По заданному запросу зв выбранный период записей не обнаружено
+        По заданному запросу за выбранный период записей не обнаружено
     {% else %}
         Пожалуйста выполните запрос
     {% endif %}
