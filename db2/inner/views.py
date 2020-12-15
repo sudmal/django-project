@@ -10,7 +10,7 @@ from django.views.decorators.cache import cache_page
 import django_tables2 as tables
 from django_tables2.export.export import TableExport
 from django_tables2.export.views import ExportMixin
-from .models import Exchange,Youscore,ReestrStaging,CreditStaging,NlCredit,NlOrg,NlProduct,NlReestr
+from .models import Exchange,Youscore,ReestrStaging,CreditStaging,NlCredit,NlOrg,NlProduct,NlReestr,Competitors
 from django.db.models import Count, Sum, Q, Avg, Subquery, OuterRef, F, FloatField, Max
 from .forms import SearchFormOrg,DatesStartEndForm,NlYearSelectForm
 import pandas as pd
@@ -308,6 +308,12 @@ def SalesCompetitorsComparse(request):
     currency = User.objects.get(username=request.user).profile.currency
     if request.GET.get('selected_year'):
         year=request.GET.get('selected_year')
+    competitors= Competitors.objects.all().values_list('competitor_code', flat=True) 
+    for c in competitors:   
+        print(c)
+    organisations = NlReestr.objects.filter(seller__edrpou__in=competitors,ordering_date__year=year).values('seller__name').distinct()
+    organisations = organisations.annotate(sum=Sum(F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2)).order_by('-sum')
+    print(organisations.query)
     context={
         'currency':currency,
         'year':year,
