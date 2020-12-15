@@ -311,10 +311,24 @@ def SalesCompetitorsComparse(request):
     competitors= Competitors.objects.all().values_list('competitor_code', flat=True) 
     for c in competitors:   
         print(c)
-    organisations = NlReestr.objects.filter(seller__edrpou__in=competitors,ordering_date__year=year).values('seller__name').distinct()
+    organisations = NlReestr.objects.filter(seller__edrpou__in=competitors,ordering_date__year=year).values('seller__name','seller__edrpou').distinct()
     organisations = organisations.annotate(sum=Sum(F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2)).order_by('-sum')
+    for o in organisations:
+        print(o)
     print(organisations.query)
+    paginator = Paginator(organisations, 50)
+    page_number = request.GET.get('page')
+    try:
+        organisations = paginator.page(page_number)
+    except PageNotAnInteger:
+        organisations = paginator.page(1)
+    except EmptyPage:
+        organisations = paginator.page(paginator.num_pages)
+    mnth_list=["Январь","Февраль","Март","Апрель","Май","Июнь","Июль","Август","Сентябрь","Октябрь","Ноябрь","Декабрь"]
     context={
+        'mnth_list':mnth_list,
+        'competitors':competitors,
+        'organisations':organisations,
         'currency':currency,
         'year':year,
     }

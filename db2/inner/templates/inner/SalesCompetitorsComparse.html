@@ -58,7 +58,7 @@ th:hover::after {
 {% endblock period_button %}
 
 {% block DatePeriod %}
-    <form method="get" class="form-inline" action={% url 'inner:SalesIndividualFirmShow' edrpou_num|cut:' ' %}>
+    <form method="get" class="form-inline" action={% url 'inner:SalesCompetitorsComparse' %} >
         {{ YearSelectForm }}
         <button type="submit" class="btn btn-info">Изменить</button>
     </form>
@@ -102,28 +102,28 @@ th:hover::after {
     </thead>
     <tbody>
 
-            {% for f in buyers_list %}
+            {% for f in organisations %}
             <tr>
-                <td scope="row">{{ forloop.counter0|add:buyers_list.start_index }}</td>
-                <td><a class="btn btn-primary font-weight-bold" href="{% url 'inner:SalesIndividualFirmRaw' edrpou_num|cut:' '  f.buyer__edrpou|cut:' ' %}?selected_year={{year}}">{{ f.buyer__edrpou|cut:' ' }}</a></td>
+                <td scope="row">{{ forloop.counter0|add:organisations.start_index }}</td>
+                <td><a class="btn btn-primary font-weight-bold" href="{% url 'inner:SalesIndividualFirmShow' f.seller__edrpou|cut:' ' %}?selected_year={{year}}">{{ f.seller__edrpou|cut:' ' }}</a></td>
                 <td>
                 {% if f.buyer__edrpou == 0 %}
                     Иностранные предприятия/неплательщики                
                 {% else %}
-                    {% autoescape off %}{{ f.buyer__name|bold_in_quotes }}{% endautoescape %}
+                    {% autoescape off %}{{ f.seller__name|bold_in_quotes }}{% endautoescape %}
                 {% endif %}
                 
                 </td>
                 {% for s in f.pms %}
                     {% if s %}
-                        <td> <a class="btn btn-light border-secondary" style="min-width: 60px;" href="{% url 'inner:SalesIndividualFirmRaw' edrpou_num|cut:' '  f.buyer__edrpou|cut:' ' %}?month={{ forloop.counter }}&selected_year={{ year }}">{{ s | floatformat:'0' }} </a></td>
+                        <td> <a class="btn btn-light border-secondary" style="min-width: 60px;" href="{% url 'inner:SalesIndividualFirmShow' f.seller__edrpou|cut:' ' %}?month={{ forloop.counter }}&selected_year={{ year }}">{{ s | floatformat:'0' }} </a></td>
                     {% else%}
                         <td> <span class="text-muted">-</td>
                     {% endif %}
 
                 {% endfor %}
 
-                <td><a class="btn btn-light font-weight-bold border-secondary" href="{% url 'inner:SalesIndividualFirmRaw' edrpou_num|cut:' '  f.buyer__edrpou|cut:' ' %}?selected_year={{year}}">{{ f.sum |floatformat:0 }}</a></td>
+                <td><a class="btn btn-light font-weight-bold border-secondary" href="{% url 'inner:SalesIndividualFirmShow' f.seller__edrpou|cut:' ' %}?selected_year={{year}}">{{ f.sum |floatformat:0 }}</a></td>
             </tr>
             {% endfor %}
         
@@ -132,25 +132,25 @@ th:hover::after {
 
 <nav aria-label="Page navigation">
     <ul class="pagination justify-content-center">
-        {% if buyers_list.has_previous %}
+        {% if organisations.has_previous %}
             <li class="page-item">
                 <a class="page-link" href="?page=1&selected_year={{year}}">&laquo;</a>
             </li>
              <li class="page-item">
-                <a class="page-link" href="?page={{ buyers_list.previous_page_number }}&selected_year={{year}}"> < </a>
+                <a class="page-link" href="?page={{ organisations.previous_page_number }}&selected_year={{year}}"> < </a>
             </li>
         {% endif %}
 
         <li class="page-item">
-            <a class="page-link disabled" href="#"> Page {{ buyers_list.number }} of {{ buyers_list.paginator.num_pages }}</a>
+            <a class="page-link disabled" href="#"> Page {{ organisations.number }} of {{ organisations.paginator.num_pages }}</a>
         </li>
 
-        {% if buyers_list.has_next %}
+        {% if organisations.has_next %}
             <li class="page-item">
-                <a class="page-link" href="?page={{ buyers_list.next_page_number }}&selected_year={{year}}"> > </a>
+                <a class="page-link" href="?page={{ organisations.next_page_number }}&selected_year={{year}}"> > </a>
             </li>
             <li class="page-item">
-                <a class="page-link" href="?page={{ buyers_list.paginator.num_pages }}&selected_year={{year}}"> &raquo; </a>
+                <a class="page-link" href="?page={{ organisations.paginator.num_pages }}&selected_year={{year}}"> &raquo; </a>
             </li>
         {% endif %}
     </ul>
@@ -161,12 +161,5 @@ th:hover::after {
 
 
 {% block js %}
-<script>
-    $(function () {
-        $("#org_search").autocomplete({
-            source: '{% url 'inner:sales_autocomplete_org' %}',
-            minLength: 1
-        });
-    });
-</script>
+
 {% endblock js %}
