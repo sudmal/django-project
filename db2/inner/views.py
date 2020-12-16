@@ -10,9 +10,9 @@ from django.views.decorators.cache import cache_page
 import django_tables2 as tables
 from django_tables2.export.export import TableExport
 from django_tables2.export.views import ExportMixin
-from .models import Exchange,Youscore,ReestrStaging,CreditStaging,NlCredit,NlOrg,NlProduct,NlReestr,Competitors
+from .models import Exchange,Youscore,ReestrStaging,CreditStaging,NlCredit,NlOrg,NlProduct,NlReestr,Competitors,Organisation
 from django.db.models import Count, Sum, Q, Avg, Subquery, OuterRef, F, FloatField, Max
-from .forms import SearchFormOrg,DatesStartEndForm,NlYearSelectForm
+from .forms import SearchFormOrg,DatesStartEndForm,NlYearSelectForm,FirmTypeSelectForm
 import pandas as pd
 import datetime
 import requests
@@ -306,36 +306,86 @@ def SalesIndividualFirmRaw(request,edrpou_num,buyer_code):
 def SalesCompetitorsComparse(request):
     year=getCurrentYear()
     currency = User.objects.get(username=request.user).profile.currency
+    YearSelectForm=NlYearSelectForm()
+    firmTypeSelectForm = FirmTypeSelectForm()
     if request.GET.get('selected_year'):
+        YearSelectForm=NlYearSelectForm(request.GET)
         year=request.GET.get('selected_year')
-    competitors= Competitors.objects.all().values_list('competitor_code', flat=True) 
-    for c in competitors:   
-        print(c)
-    organisations = NlReestr.objects.filter(seller__edrpou__in=competitors,ordering_date__year=year).values('seller__name','seller__edrpou').distinct()
+    competitors= Competitors.objects.all().values_list('competitor_code', flat=True)
+    organisations = NlReestr.objects.filter(seller__edrpou__in=competitors,ordering_date__year=year).values('seller_id','seller__name','seller__edrpou').distinct()
     if currency == 'UAH':
             organisations=organisations.annotate(sum=Round(Sum(F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2))).order_by('-sum')
     elif currency == 'EUR':
             organisations=organisations.annotate(sum=Round(Sum((F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2)/F('exchange__eur_mb_sale')))).order_by('-sum')
     elif currency == 'USD':
             organisations=organisations.annotate(sum=Round(Sum((F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2)/F('exchange__usd_com')))).order_by('-sum')
+    organisations=organisations.filter(sum__isnull=False)
+    organisations_list=[]
+    totals=[]
+    # Total sums
+    for m in range(1,13):
+        t_sum=NlReestr.objects.filter(seller__edrpou__in=competitors,ordering_date__year=year,ordering_date__month=m)
+        if currency == 'UAH':
+            t_sum=t_sum.aggregate(sum=Sum(F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2))
+        elif currency == 'EUR':
+            t_sum=t_sum.aggregate(sum=Sum((F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2)/F('exchange__eur_mb_sale')))
+        elif currency == 'USD':
+            t_sum=t_sum.aggregate(sum=Sum((F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2)/F('exchange__usd_com')))
+        totals.append(t_sum['sum'])
+    importers=[]
     for o in organisations:
-        print(o)
-    print(organisations.query)
-    paginator = Paginator(organisations, 50)
+        try:
+            imp=Organisation.objects.get(edrpou=o['seller__edrpou'])
+        except Organisation.DoesNotExist:
+            imp = False
+        cur_firm={}
+        if imp:
+            cur_firm.update({'is_importer':True})
+        else:
+            cur_firm.update({'is_importer':False})
+        
+        cur_firm.update({'seller_id':o['seller_id']})
+        cur_firm.update({'seller__name':o['seller__name']})
+        cur_firm.update({'seller__edrpou':o['seller__edrpou']})
+        cur_firm.update({'sum':o['sum']})
+        #print (cur_firm['seller__edrpou'])
+        o_pms=NlReestr.objects.filter(seller__edrpou__in=competitors,seller_id=cur_firm['seller_id'],ordering_date__year=year).annotate(month=TruncMonth('ordering_date')).values('month') 
+        if currency == 'UAH':
+            o_pms=o_pms.annotate(sum=Round(Sum(F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2))).order_by()
+        elif currency == 'EUR':
+            o_pms=o_pms.annotate(sum=Round(Sum((F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2)/F('exchange__eur_mb_sale')))).order_by()
+        elif currency == 'USD':
+            o_pms=o_pms.annotate(sum=Round(Sum((F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2)/F('exchange__usd_com')))).order_by()
+        pms=[] # per_monnth_summs
+        for m in range(1,13):
+            pms.append(float(0.0))
+        for oo in o_pms:
+            oo['month'] = int(str(oo['month'])[5:7])
+            pms[oo['month']-1]=oo['sum']
+        cur_firm.update({'pms':pms})
+        #print(cur_firm)
+
+        organisations_list.append(cur_firm)
+
+
+    paginator = Paginator(organisations_list, 50)
     page_number = request.GET.get('page')
     try:
-        organisations = paginator.page(page_number)
+        organisations_list = paginator.page(page_number)
     except PageNotAnInteger:
-        organisations = paginator.page(1)
+        organisations_list = paginator.page(1)
     except EmptyPage:
-        organisations = paginator.page(paginator.num_pages)
+        organisations_list = paginator.page(paginator.num_pages)
     mnth_list=["Январь","Февраль","Март","Апрель","Май","Июнь","Июль","Август","Сентябрь","Октябрь","Ноябрь","Декабрь"]
     context={
         'mnth_list':mnth_list,
         'competitors':competitors,
-        'organisations':organisations,
+        'organisations':organisations_list,
+        'totals':totals,
         'currency':currency,
         'year':year,
+        'YearSelectForm':YearSelectForm,
+        'firmTypeSelectForm':firmTypeSelectForm,
     }
     return render(request,'inner/SalesCompetitorsComparse.html',context)
 

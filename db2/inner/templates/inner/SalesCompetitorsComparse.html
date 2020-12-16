@@ -17,6 +17,13 @@ table {
 
 td, th {
     position: relative;
+    border: 1px solid black;
+}
+table.table-bordered > thead > tr > th{
+  border:1px solid black;
+}
+table.table-bordered > tbody > tr > td{
+  border:1px solid grey;
 }
 td:hover::after,
 th:hover::after {
@@ -61,7 +68,6 @@ th:hover::after {
     <form method="get" class="form-inline" action={% url 'inner:SalesCompetitorsComparse' %} >
         {{ YearSelectForm }}
         <button type="submit" class="btn btn-info">Изменить</button>
-    </form>
 {% endblock DatePeriod %}
 
 {% block content %}
@@ -73,25 +79,39 @@ th:hover::after {
             <li class="breadcrumb-item active" aria-current="page">Сравнительный анализ конкурентов</li>
         </ol>
    </nav> 
+   <div class="col-md-2"></div>
+   <div class="form-check form-check-inline">
+            {{ firmTypeSelectForm.f_horeca }} <label   for="f_horeca">Horeca</label>
+            <div class="col-sm-1"></div>
+            {{ firmTypeSelectForm.f_eat }} <label  for="f_eat">Продукты питания</label>
+            <div class="col-sm-1"></div>
+            {{ firmTypeSelectForm.f_pack }} <label  for="f_pack">Упаковка</label>
+            <div class="col-sm-1"></div>
+            {{ firmTypeSelectForm.f_other }} <label  for="f_other">Другое</label>
+            <div class="col-sm-1"></div>
+        <button type="submit" class="btn btn-info">Применить</button>
+    </div>
+    </form>
 </div>
 
 
-<table class="table table-stiped table-hover" id="table" data-show-columns="true">
+<table class="table table-stiped table-hover table-bordered" id="table" data-show-columns="true">
     <thead class="thead table-active sticky-header">
         <tr>
-			<th colspan="3"><center>Покупатели</center></th><th colspan="13"><center>Период анализа / Суммы в {{ currency }} с НДС</center></th>
+			<th colspan="4"><center>Покупатели</center></th><th colspan="13"><center>Период анализа / Суммы в {{ currency }} с НДС</center></th>
 	    </tr>
         <tr>
             <th>#</th>
             <th>ЕДРПОУ</th>
             <th>ИМЯ</th>
+            <th>Импортер</th>
             {% for m in mnth_list %}
                 <th> {{m}} </th>
             {% endfor %}
-            <th>{{ year }}, {{ currency }} </th>
+            <th rowspan=2><center>{{ year }}, {{ currency }} </center></th>
         </tr>
         <tr>
-            <th colspan=3>
+            <th colspan=4>
                 <center>Всего</center>
             </th>
             {% for t in totals %}
@@ -103,7 +123,7 @@ th:hover::after {
     <tbody>
 
             {% for f in organisations %}
-            <tr>
+            <tr {% if f.seller__edrpou in competitors %}  style="background-color: #CDFECD;" {% endif %}>
                 <td scope="row">{{ forloop.counter0|add:organisations.start_index }}</td>
                 <td><a class="btn btn-primary font-weight-bold" href="{% url 'inner:SalesIndividualFirmShow' f.seller__edrpou|cut:' ' %}?selected_year={{year}}">{{ f.seller__edrpou|cut:' ' }}</a></td>
                 <td>
@@ -112,11 +132,11 @@ th:hover::after {
                 {% else %}
                     {% autoescape off %}{{ f.seller__name|bold_in_quotes }}{% endautoescape %}
                 {% endif %}
-                
                 </td>
+                <td> {% if f.is_importer %} <center><b>✓</b></center> {% endif %} </td>
                 {% for s in f.pms %}
                     {% if s %}
-                        <td> <a class="btn btn-light border-secondary" style="min-width: 60px;" href="{% url 'inner:SalesIndividualFirmShow' f.seller__edrpou|cut:' ' %}?month={{ forloop.counter }}&selected_year={{ year }}">{{ s | floatformat:'0' }} </a></td>
+                        <td> <a class="btn btn-light btn-sm border-secondary" style="min-width: 40px;" href="{% url 'inner:SalesIndividualFirmShow' f.seller__edrpou|cut:' ' %}?month={{ forloop.counter }}&selected_year={{ year }}">{{ s | floatformat:'0' }} </a></td>
                     {% else%}
                         <td> <span class="text-muted">-</td>
                     {% endif %}

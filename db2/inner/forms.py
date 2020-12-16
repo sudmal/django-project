@@ -3,6 +3,7 @@ from .models import NlReestr
 from django.db.models import Max
 import datetime 
 from django.db.models.functions import ExtractYear
+from django.forms.fields import BooleanField
 
 
 reestr_years = NlReestr.objects.extra(select={'year':"extract(year from ordering_date)"}).distinct().values('year').order_by()
@@ -23,3 +24,14 @@ class DatesStartEndForm(forms.Form):
 class NlYearSelectForm(forms.Form):
     CHOICES = [('2017','2017'), ('2018','2018'), ('2019','2019'), ('2020','2020')]
     selected_year = forms.ChoiceField(label='', choices=CHOICES,initial=year, widget=forms.Select(attrs={'class':'form-control'}))
+
+class FirmTypeSelectForm(forms.Form):
+    f_horeca = BooleanField(required=False,widget=forms.CheckboxInput(attrs={'class':'form-control-input','id':'f_horeca', 'checked' : ''}))
+    f_eat = BooleanField(required=False,widget=forms.CheckboxInput(attrs={'class':'form-control-input','id':'f_eat', 'checked' : ''}))
+    f_pack = BooleanField(required=False,widget=forms.CheckboxInput(attrs={'class':'form-control-input','id':'f_pack', 'checked' : ''}))
+    f_other = BooleanField(required=False,widget=forms.CheckboxInput(attrs={'class':'form-control-input','id':'f_other'}))
+    def __init__(self, *args, **kwargs):
+        super(FirmTypeSelectForm, self).__init__(*args, **kwargs)
+        self.fields['f_horeca'].initial = True
+        self.fields['f_eat'].initial = True
+        self.fields['f_pack'].initial = True

@@ -10,7 +10,16 @@ class Competitors(models.Model):
         managed = False
         db_table = 'competitors'
 
+class Organisation(models.Model):
+    id = models.BigAutoField(primary_key=True)
+    name = models.CharField(max_length=2000)
+    firm_alias = models.CharField(max_length=2000)
+    is_competitor = models.BooleanField()
+    edrpou = models.BigIntegerField(unique=True)
 
+    class Meta:
+        managed = False
+        db_table = 'organisation'
 
 class CreditStaging(models.Model):
     doc_id = models.TextField(blank=True, null=True)
