@@ -335,18 +335,20 @@ def SalesCompetitorsComparse(request):
     f_pack=Competitors.objects.filter(competitor_code__in=NlFilter.objects.filter(type="pack").values_list('edrpou', flat=True)).values_list('competitor_code', flat=True)
     f_other=Competitors.objects.filter(competitor_code__in=NlFilter.objects.filter(type="other").values_list('edrpou', flat=True)).values_list('competitor_code', flat=True)
     f_horeca=Competitors.objects.exclude(Q(competitor_code__in=f_eat) | Q(competitor_code__in=f_pack) | Q(competitor_code__in=f_other)).values_list('competitor_code', flat=True)
-    print(f_horeca.query)
-    q_objects = Q(id__in=[])
 
-    # loop trough the list and create an OR condition for each item
-    #for item in list:
-       #q_objects.add(Q(pk=item), Q.OR)
 
-    organisations = NlReestr.objects.filter(seller__edrpou__in=competitors,ordering_date__year=year)
-
-    
+    q_objects = Q(ordering_date__year=year)
+    if filter_dict['f_horeca']:
+        q_objects.add(Q(seller__edrpou__in=f_horeca), Q.OR)
+    if filter_dict['f_eat']:
+        q_objects.add(Q(seller__edrpou__in=f_eat), Q.OR)
+    if filter_dict['f_pack']:
+        q_objects.add(Q(seller__edrpou__in=f_pack), Q.OR)
+    if filter_dict['f_other']:
+        q_objects.add(Q(seller__edrpou__in=f_other), Q.OR)
+    organisations = NlReestr.objects.filter(q_objects)
     organisations = organisations.values('seller_id','seller__name','seller__edrpou').distinct()
-    
+    print(organisations.query)
     if currency == 'UAH':
             organisations=organisations.annotate(sum=Round(Sum(F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2))).order_by('-sum')
     elif currency == 'EUR':
@@ -359,7 +361,7 @@ def SalesCompetitorsComparse(request):
     totals=[]
     # Total sums
     for m in range(1,13):
-        t_sum=NlReestr.objects.filter(seller__edrpou__in=competitors,ordering_date__year=year,ordering_date__month=m)
+        t_sum=NlReestr.objects.filter(q_objects).filter(ordering_date__month=m)
         if currency == 'UAH':
             t_sum=t_sum.aggregate(sum=Sum(F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2))
         elif currency == 'EUR':
@@ -384,7 +386,7 @@ def SalesCompetitorsComparse(request):
         cur_firm.update({'seller__edrpou':o['seller__edrpou']})
         cur_firm.update({'sum':o['sum']})
         #print (cur_firm['seller__edrpou'])
-        o_pms=NlReestr.objects.filter(seller__edrpou__in=competitors,seller_id=cur_firm['seller_id'],ordering_date__year=year).annotate(month=TruncMonth('ordering_date')).values('month') 
+        o_pms=NlReestr.objects.filter(seller_id=cur_firm['seller_id']).filter(q_objects).annotate(month=TruncMonth('ordering_date')).values('month') 
         if currency == 'UAH':
             o_pms=o_pms.annotate(sum=Round(Sum(F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2))).order_by()
         elif currency == 'EUR':
@@ -403,7 +405,7 @@ def SalesCompetitorsComparse(request):
         organisations_list.append(cur_firm)
 
 
-    paginator = Paginator(organisations_list, 50)
+    paginator = Paginator(organisations_list, 100)
     page_number = request.GET.get('page')
     try:
         organisations_list = paginator.page(page_number)
