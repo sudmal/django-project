@@ -26,9 +26,9 @@ class NlYearSelectForm(forms.Form):
     selected_year = forms.ChoiceField(label='', choices=CHOICES,initial=year, widget=forms.Select(attrs={'class':'form-control'}))
 
 class FirmTypeSelectForm(forms.Form):
-    f_horeca = BooleanField(required=False,widget=forms.CheckboxInput(attrs={'class':'form-control-input','id':'f_horeca', 'checked' : ''}))
-    f_eat = BooleanField(required=False,widget=forms.CheckboxInput(attrs={'class':'form-control-input','id':'f_eat', 'checked' : ''}))
-    f_pack = BooleanField(required=False,widget=forms.CheckboxInput(attrs={'class':'form-control-input','id':'f_pack', 'checked' : ''}))
+    f_horeca = BooleanField(required=False,widget=forms.CheckboxInput(attrs={'class':'form-control-input','id':'f_horeca'}))
+    f_eat = BooleanField(required=False,widget=forms.CheckboxInput(attrs={'class':'form-control-input','id':'f_eat'}))
+    f_pack = BooleanField(required=False,widget=forms.CheckboxInput(attrs={'class':'form-control-input','id':'f_pack'}))
     f_other = BooleanField(required=False,widget=forms.CheckboxInput(attrs={'class':'form-control-input','id':'f_other'}))
     def __init__(self, *args, **kwargs):
         super(FirmTypeSelectForm, self).__init__(*args, **kwargs)

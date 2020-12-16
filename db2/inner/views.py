@@ -308,6 +308,8 @@ def SalesCompetitorsComparse(request):
     currency = User.objects.get(username=request.user).profile.currency
     YearSelectForm=NlYearSelectForm()
     firmTypeSelectForm = FirmTypeSelectForm()
+    if (request.GET.get('f_horeca') or request.GET.get('f_eat') or request.GET.get('f_pack') or request.GET.get('f_other')) and request.GET.get('firm_filter_set'):
+        firmTypeSelectForm = FirmTypeSelectForm(request.GET)
     if request.GET.get('selected_year'):
         YearSelectForm=NlYearSelectForm(request.GET)
         year=request.GET.get('selected_year')
