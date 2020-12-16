@@ -164,6 +164,16 @@ class ReestrStaging(models.Model):
         db_table = 'reestr_staging'
 
 
+class NlFilter(models.Model):
+    edrpou = models.BigIntegerField(primary_key=True)
+    type = models.TextField()
+
+    class Meta:
+        managed = False
+        db_table = 'nl_filter'
+    def __str__(self):
+        return str(self.edrpou)+" ("+str(self.type)+')'
+
 
 class Youscore(models.Model):
     request = models.TextField(unique=True, blank=True, null=True)
