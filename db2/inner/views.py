@@ -312,7 +312,6 @@ def SalesCompetitorsComparse(request):
     for c in competitors:   
         print(c)
     organisations = NlReestr.objects.filter(seller__edrpou__in=competitors,ordering_date__year=year).values('seller__name','seller__edrpou').distinct()
-    
     if currency == 'UAH':
             organisations=organisations.annotate(sum=Round(Sum(F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2))).order_by('-sum')
     elif currency == 'EUR':
