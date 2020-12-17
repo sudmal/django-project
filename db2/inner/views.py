@@ -329,24 +329,25 @@ def SalesCompetitorsComparse(request):
         YearSelectForm=NlYearSelectForm(request.GET)
         year=request.GET.get('selected_year')
     competitors= Competitors.objects.all().values_list('competitor_code', flat=True)
-    f_eat=Competitors.objects.filter(competitor_code__in=NlFilter.objects.filter(type="eat").values_list('edrpou', flat=True)).values_list('competitor_code', flat=True)
-    f_pack=Competitors.objects.filter(competitor_code__in=NlFilter.objects.filter(type="pack").values_list('edrpou', flat=True)).values_list('competitor_code', flat=True)
-    f_other=Competitors.objects.filter(competitor_code__in=NlFilter.objects.filter(type="other").values_list('edrpou', flat=True)).values_list('competitor_code', flat=True)
+    f_eat=NlFilter.objects.filter(type="eat").values_list('edrpou', flat=True)
+    f_pack=NlFilter.objects.filter(type="pack").values_list('edrpou', flat=True)
+    f_other=NlFilter.objects.filter(type="other").values_list('edrpou', flat=True)
     f_horeca=Competitors.objects.exclude(Q(competitor_code__in=f_eat) | Q(competitor_code__in=f_pack) | Q(competitor_code__in=f_other)).values_list('competitor_code', flat=True)
 
+    organisations = NlReestr.objects.filter(ordering_date__year=year)
+    
+    if not filter_dict['f_horeca']:
+        f_horeca = ['111111']
+    if not filter_dict['f_eat']:
+        f_eat = ['111111']
+    if not filter_dict['f_pack']:
+        f_pack = ['111111']
+    if not filter_dict['f_other']:
+        f_other = ['111111']
+    organisations=organisations.filter(Q(seller__edrpou__in=f_horeca) | Q(seller__edrpou__in=f_eat) | Q(seller__edrpou__in=f_pack) |Q(seller__edrpou__in=f_other) )
 
-    q_objects = Q(ordering_date__year=year)
-    if filter_dict['f_horeca']:
-        q_objects.add(Q(seller__edrpou__in=f_horeca), Q.OR)
-    if filter_dict['f_eat']:
-        q_objects.add(Q(seller__edrpou__in=f_eat), Q.OR)
-    if filter_dict['f_pack']:
-        q_objects.add(Q(seller__edrpou__in=f_pack), Q.OR)
-    if filter_dict['f_other']:
-        q_objects.add(Q(seller__edrpou__in=f_other), Q.OR)
-    organisations = NlReestr.objects.filter(q_objects)
     organisations = organisations.values('seller_id','seller__name','seller__edrpou').distinct()
-
+    print (organisations.query)
     if currency == 'UAH':
             organisations=organisations.annotate(sum=Round(Sum(F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2))).order_by('-sum')
     elif currency == 'EUR':
@@ -359,7 +360,7 @@ def SalesCompetitorsComparse(request):
     totals=[]
     # Total sums
     for m in range(1,13):
-        t_sum=NlReestr.objects.filter(q_objects).filter(ordering_date__month=m)
+        t_sum=NlReestr.objects.filter(Q(seller__edrpou__in=f_horeca) | Q(seller__edrpou__in=f_eat) | Q(seller__edrpou__in=f_pack) |Q(seller__edrpou__in=f_other) ).filter(ordering_date__year=year,ordering_date__month=m)
         if currency == 'UAH':
             t_sum=t_sum.aggregate(sum=Sum(F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2))
         elif currency == 'EUR':
@@ -384,7 +385,7 @@ def SalesCompetitorsComparse(request):
         cur_firm.update({'seller__edrpou':o['seller__edrpou']})
         cur_firm.update({'sum':o['sum']})
         #print (cur_firm['seller__edrpou'])
-        o_pms=NlReestr.objects.filter(seller_id=cur_firm['seller_id']).filter(q_objects).annotate(month=TruncMonth('ordering_date')).values('month') 
+        o_pms=NlReestr.objects.filter(ordering_date__year=year).filter(seller_id=cur_firm['seller_id']).filter(Q(seller__edrpou__in=f_horeca) | Q(seller__edrpou__in=f_eat) | Q(seller__edrpou__in=f_pack) |Q(seller__edrpou__in=f_other) ).annotate(month=TruncMonth('ordering_date')).values('month') 
         if currency == 'UAH':
             o_pms=o_pms.annotate(sum=Round(Sum(F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2))).order_by()
         elif currency == 'EUR':
@@ -513,8 +514,6 @@ def ClientsCompetitorsIndividualShow(request,edrpou_num):
             bb['month'] = int(str(bb['month'])[5:7])
             pms[bb['month']-1]=bb['sum']
         cur_firm.update({'pms':pms})
-        #print(cur_firm)
-
         sellers_list.append(cur_firm)
 
 
@@ -604,31 +603,30 @@ def ClientsCompetitorsComparse(request):
         filter_dict.update({'f_pack':True})
     if firmTypeSelectForm['f_other'].value():
         filter_dict.update({'f_other':True})
-    if firmTypeSelectForm['min_sum'].value():
-        min_sum=firmTypeSelectForm['min_sum'].value()
         
     if request.GET.get('selected_year'):
         YearSelectForm=NlYearSelectForm(request.GET)
         year=request.GET.get('selected_year')
     competitors= Competitors.objects.all().values_list('competitor_code', flat=True)
-    f_eat=Competitors.objects.filter(competitor_code__in=NlFilter.objects.filter(type="eat").values_list('edrpou', flat=True)).values_list('competitor_code', flat=True)
-    f_pack=Competitors.objects.filter(competitor_code__in=NlFilter.objects.filter(type="pack").values_list('edrpou', flat=True)).values_list('competitor_code', flat=True)
-    f_other=Competitors.objects.filter(competitor_code__in=NlFilter.objects.filter(type="other").values_list('edrpou', flat=True)).values_list('competitor_code', flat=True)
+    f_eat=NlFilter.objects.filter(type="eat").values_list('edrpou', flat=True)
+    f_pack=NlFilter.objects.filter(type="pack").values_list('edrpou', flat=True)
+    f_other=NlFilter.objects.filter(type="other").values_list('edrpou', flat=True)
     f_horeca=Competitors.objects.exclude(Q(competitor_code__in=f_eat) | Q(competitor_code__in=f_pack) | Q(competitor_code__in=f_other)).values_list('competitor_code', flat=True)
 
+    organisations = NlReestr.objects.filter(ordering_date__year=year)
+    
+    if not filter_dict['f_horeca']:
+        f_horeca = ['111111']
+    if not filter_dict['f_eat']:
+        f_eat = ['111111']
+    if not filter_dict['f_pack']:
+        f_pack = ['111111']
+    if not filter_dict['f_other']:
+        f_other = ['111111']
+    organisations=organisations.filter(Q(buyer__edrpou__in=f_horeca) | Q(buyer__edrpou__in=f_eat) | Q(buyer__edrpou__in=f_pack) |Q(buyer__edrpou__in=f_other) )
 
-    q_objects = Q(ordering_date__year=year)
-    if filter_dict['f_horeca']:
-        q_objects.add(Q(buyer__edrpou__in=f_horeca), Q.OR)
-    if filter_dict['f_eat']:
-        q_objects.add(Q(buyer__edrpou__in=f_eat), Q.OR)
-    if filter_dict['f_pack']:
-        q_objects.add(Q(buyer__edrpou__in=f_pack), Q.OR)
-    if filter_dict['f_other']:
-        q_objects.add(Q(buyer__edrpou__in=f_other), Q.OR)
-    organisations = NlReestr.objects.filter(q_objects)
     organisations = organisations.values('buyer_id','buyer__name','buyer__edrpou').distinct()
-
+    print (organisations.query)
     if currency == 'UAH':
             organisations=organisations.annotate(sum=Round(Sum(F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2))).order_by('-sum')
     elif currency == 'EUR':
@@ -641,7 +639,7 @@ def ClientsCompetitorsComparse(request):
     totals=[]
     # Total sums
     for m in range(1,13):
-        t_sum=NlReestr.objects.filter(q_objects).filter(ordering_date__month=m)
+        t_sum=NlReestr.objects.filter(Q(buyer__edrpou__in=f_horeca) | Q(buyer__edrpou__in=f_eat) | Q(buyer__edrpou__in=f_pack) |Q(buyer__edrpou__in=f_other) ).filter(ordering_date__year=year,ordering_date__month=m)
         if currency == 'UAH':
             t_sum=t_sum.aggregate(sum=Sum(F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2))
         elif currency == 'EUR':
@@ -666,7 +664,7 @@ def ClientsCompetitorsComparse(request):
         cur_firm.update({'buyer__edrpou':o['buyer__edrpou']})
         cur_firm.update({'sum':o['sum']})
         #print (cur_firm['buyer__edrpou'])
-        o_pms=NlReestr.objects.filter(buyer_id=cur_firm['buyer_id']).filter(q_objects).annotate(month=TruncMonth('ordering_date')).values('month') 
+        o_pms=NlReestr.objects.filter(ordering_date__year=year).filter(buyer_id=cur_firm['buyer_id']).filter(Q(buyer__edrpou__in=f_horeca) | Q(buyer__edrpou__in=f_eat) | Q(buyer__edrpou__in=f_pack) |Q(buyer__edrpou__in=f_other) ).annotate(month=TruncMonth('ordering_date')).values('month') 
         if currency == 'UAH':
             o_pms=o_pms.annotate(sum=Round(Sum(F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2))).order_by()
         elif currency == 'EUR':
@@ -685,7 +683,7 @@ def ClientsCompetitorsComparse(request):
         organisations_list.append(cur_firm)
 
 
-    paginator = Paginator(organisations_list, 25)
+    paginator = Paginator(organisations_list, 100)
     page_number = request.GET.get('page')
     try:
         organisations_list = paginator.page(page_number)
