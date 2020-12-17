@@ -3,7 +3,7 @@ from .models import NlReestr
 from django.db.models import Max
 import datetime 
 from django.db.models.functions import ExtractYear
-from django.forms.fields import BooleanField
+from django.forms.fields import BooleanField,IntegerField
 
 
 reestr_years = NlReestr.objects.extra(select={'year':"extract(year from ordering_date)"}).distinct().values('year').order_by()
@@ -30,6 +30,7 @@ class FirmTypeSelectForm(forms.Form):
     f_eat = BooleanField(required=False,widget=forms.CheckboxInput(attrs={'class':'form-control-input','id':'f_eat'}))
     f_pack = BooleanField(required=False,widget=forms.CheckboxInput(attrs={'class':'form-control-input','id':'f_pack'}))
     f_other = BooleanField(required=False,widget=forms.CheckboxInput(attrs={'class':'form-control-input','id':'f_other'}))
+    min_sum = IntegerField(required=False,max_value=999999999999,min_value=0,widget=forms.NumberInput(attrs={'class':'form-control-input','id':'max_summ'}))
     def __init__(self, *args, **kwargs):
         super(FirmTypeSelectForm, self).__init__(*args, **kwargs)
         self.fields['f_horeca'].initial = True
