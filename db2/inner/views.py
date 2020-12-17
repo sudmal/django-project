@@ -332,7 +332,7 @@ def SalesCompetitorsComparse(request):
     f_eat=NlFilter.objects.filter(type="eat").values_list('edrpou', flat=True)
     f_pack=NlFilter.objects.filter(type="pack").values_list('edrpou', flat=True)
     f_other=NlFilter.objects.filter(type="other").values_list('edrpou', flat=True)
-    f_horeca=Competitors.objects.exclude(Q(competitor_code__in=f_eat) & Q(competitor_code__in=f_pack) & Q(competitor_code__in=f_other)).values_list('competitor_code', flat=True)
+    f_horeca=Competitors.objects.exclude(Q(competitor_code__in=f_eat) | Q(competitor_code__in=f_pack) | Q(competitor_code__in=f_other)).values_list('competitor_code', flat=True)
 
     organisations = NlReestr.objects.filter(ordering_date__year=year)
     
@@ -581,14 +581,16 @@ def ClientsCompetitorsComparse(request):
     year=getCurrentYear()
     currency = User.objects.get(username=request.user).profile.currency
     YearSelectForm=NlYearSelectForm()
-    min_sum=16000000
+    min_sum=1600000
     if currency == 'EUR':
-        min_sum=500000
+        min_sum=50000
     if currency == 'USD':
-        min_sum=600000
+        min_sum=60000
     firmTypeSelectForm = FirmTypeSelectForm(initial={'min_sum':min_sum})
+        
     if request.GET.get('firm_filter_set'):
         firmTypeSelectForm = FirmTypeSelectForm(request.GET)
+        min_sum=request.GET.get('min_sum')
     filter_dict={
         'f_horeca':False,
         'f_eat':False,
@@ -611,10 +613,10 @@ def ClientsCompetitorsComparse(request):
     f_eat=NlFilter.objects.filter(type="eat").values_list('edrpou', flat=True)
     f_pack=NlFilter.objects.filter(type="pack").values_list('edrpou', flat=True)
     f_other=NlFilter.objects.filter(type="other").values_list('edrpou', flat=True)
-    f_horeca=Competitors.objects.exclude(Q(competitor_code__in=f_eat) & Q(competitor_code__in=f_pack) & Q(competitor_code__in=f_other)).values_list('competitor_code', flat=True)
-
-    organisations = NlReestr.objects.filter(ordering_date__year=year)
+    f_horeca=Competitors.objects.exclude(Q(competitor_code__in=f_eat) | Q(competitor_code__in=f_pack) | Q(competitor_code__in=f_other)).values_list('competitor_code', flat=True)
     
+    organisations = NlReestr.objects.filter(ordering_date__year=year)
+    #print (organisations.query)
     if not filter_dict['f_horeca']:
         f_horeca = ['111111']
     if not filter_dict['f_eat']:
@@ -624,9 +626,9 @@ def ClientsCompetitorsComparse(request):
     if not filter_dict['f_other']:
         f_other = ['111111']
     organisations=organisations.filter(Q(buyer__edrpou__in=f_horeca) | Q(buyer__edrpou__in=f_eat) | Q(buyer__edrpou__in=f_pack) |Q(buyer__edrpou__in=f_other) )
-
+    #print(organisations.query)
     organisations = organisations.values('buyer_id','buyer__name','buyer__edrpou').distinct()
-    print (organisations.query)
+    
     if currency == 'UAH':
             organisations=organisations.annotate(sum=Round(Sum(F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2))).order_by('-sum')
     elif currency == 'EUR':
@@ -634,7 +636,7 @@ def ClientsCompetitorsComparse(request):
     elif currency == 'USD':
             organisations=organisations.annotate(sum=Round(Sum((F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2)/F('exchange__usd_com')))).order_by('-sum')
     organisations=organisations.filter(Q(sum__gte=min_sum))
-
+    #print (organisations.query)
     organisations_list=[]
     totals=[]
     # Total sums
@@ -649,6 +651,7 @@ def ClientsCompetitorsComparse(request):
         totals.append(t_sum['sum'])
     importers=[]
     for o in organisations:
+        #print(o['buyer__edrpou'])
         try:
             imp=Organisation.objects.get(edrpou=o['buyer__edrpou'])
         except Organisation.DoesNotExist:
