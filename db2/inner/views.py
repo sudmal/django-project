@@ -582,7 +582,11 @@ def ClientsCompetitorsComparse(request):
     year=getCurrentYear()
     currency = User.objects.get(username=request.user).profile.currency
     YearSelectForm=NlYearSelectForm()
-    min_sum=1000000
+    min_sum=16000000
+    if currency == 'EUR':
+        min_sum=500000
+    if currency == 'USD':
+        min_sum=600000
     firmTypeSelectForm = FirmTypeSelectForm(initial={'min_sum':min_sum})
     if request.GET.get('firm_filter_set'):
         firmTypeSelectForm = FirmTypeSelectForm(request.GET)

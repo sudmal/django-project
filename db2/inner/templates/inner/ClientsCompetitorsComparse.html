@@ -89,7 +89,9 @@ th:hover::after {
             <div class="col-sm-1"></div>
             {{ firmTypeSelectForm.f_other }}&nbsp;&nbsp;<label  for="f_other">Другое</label>
             <div class="col-sm-1"></div>
-            {{ firmTypeSelectForm.min_sum }}&nbsp;&nbsp;<label  for="min_sum">Min_sum</label>
+
+            {{ firmTypeSelectForm.min_sum }}&nbsp;&nbsp;<label  for="min_sum">Показать организации с суммарными закупками на сумму более ({{ currency }}):</label>
+            <div class="col-sm-1"></div>
             <input type=hidden name="firm_filter_set" value="1" />
         <button type="submit" class="btn btn-light border-secondary">Применить</button>
     </div>
