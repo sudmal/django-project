@@ -332,7 +332,7 @@ def SalesCompetitorsComparse(request):
     f_eat=NlFilter.objects.filter(type="eat").values_list('edrpou', flat=True)
     f_pack=NlFilter.objects.filter(type="pack").values_list('edrpou', flat=True)
     f_other=NlFilter.objects.filter(type="other").values_list('edrpou', flat=True)
-    f_horeca=Competitors.objects.exclude(Q(competitor_code__in=f_eat) | Q(competitor_code__in=f_pack) | Q(competitor_code__in=f_other)).values_list('competitor_code', flat=True)
+    f_horeca=Competitors.objects.exclude(Q(competitor_code__in=f_eat) & Q(competitor_code__in=f_pack) & Q(competitor_code__in=f_other)).values_list('competitor_code', flat=True)
 
     organisations = NlReestr.objects.filter(ordering_date__year=year)
     
@@ -611,7 +611,7 @@ def ClientsCompetitorsComparse(request):
     f_eat=NlFilter.objects.filter(type="eat").values_list('edrpou', flat=True)
     f_pack=NlFilter.objects.filter(type="pack").values_list('edrpou', flat=True)
     f_other=NlFilter.objects.filter(type="other").values_list('edrpou', flat=True)
-    f_horeca=Competitors.objects.exclude(Q(competitor_code__in=f_eat) | Q(competitor_code__in=f_pack) | Q(competitor_code__in=f_other)).values_list('competitor_code', flat=True)
+    f_horeca=Competitors.objects.exclude(Q(competitor_code__in=f_eat) & Q(competitor_code__in=f_pack) & Q(competitor_code__in=f_other)).values_list('competitor_code', flat=True)
 
     organisations = NlReestr.objects.filter(ordering_date__year=year)
     
