@@ -25,17 +25,7 @@ table.table-bordered > thead > tr > th{
 table.table-bordered > tbody > tr > td{
   border:1px solid grey;
 }
-td:hover::after,
-th:hover::after {
-    content: "";
-    position: absolute;
-    background-color: rgba(0,0,0,0.075);
-    left: 0;
-    top: -5000px;
-    height: 10000px;
-    width: 100%;
-    z-index: -1;
-}
+
 .ui-autocomplete-loading {
     background: white url("{% static 'ui-anim_basic_16x16.gif' %}") right center no-repeat;
   }
@@ -61,7 +51,6 @@ th:hover::after {
 {% endblock js-before %}
 
 {% block period_button %}
-
 {% endblock period_button %}
 
 {% block DatePeriod %}
@@ -102,7 +91,7 @@ th:hover::after {
 </div>
 
 
-<table class="table table-stiped table-hover table-bordered" id="table" data-show-columns="true">
+<table class="table table-bordered" id="table" data-show-columns="true">
     <thead class="thead table-active sticky-header">
         <tr>
 			<th colspan="4"><center>Покупатели</center></th><th colspan="13"><center>Период анализа / Суммы в {{ currency }} с НДС</center></th>
