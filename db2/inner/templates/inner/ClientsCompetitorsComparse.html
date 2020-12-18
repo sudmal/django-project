@@ -30,6 +30,62 @@ table.table-bordered > tbody > tr > td{
     background: white url("{% static 'ui-anim_basic_16x16.gif' %}") right center no-repeat;
   }
 
+
+sidebar{
+  position: fixed;
+  top: 50px;
+  bottom: 0;
+  left: 0;
+  width: 200px;
+  background: #999;
+}
+
+main{
+  position: absolute;
+  top: 50px;
+  left: 200px;
+  right: 0;
+  bottom: 0;
+  background: #CCC;
+  padding: 1rem;
+}
+
+#content{
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* This is what we are focused on */
+.table-wrapper{
+  overflow-y: scroll;
+  flex-grow: 1;
+}
+
+.table-wrapper th{
+    position: sticky;
+    top: 0;
+}
+
+/* A bit more styling to make it look better */
+.table-wrapper{
+  background: CadetBlue;
+}
+
+table{
+  border-collapse: collapse;
+  width: 100%;
+}
+
+th{
+    background: #DDD;
+}
+
+td,th{
+  padding: 10px;
+  text-align: center;
+}
+
 </style>
 {% endblock js-before %}
 
@@ -82,6 +138,7 @@ table.table-bordered > tbody > tr > td{
     </form>
 </div>
 <div class="row mx-2">
+<div class="table-wrapper">
 <table class="table table-bordered" id="table" data-show-columns="true">
     <thead class="thead table-active sticky-header">
         <tr>
@@ -136,7 +193,7 @@ table.table-bordered > tbody > tr > td{
         
     </tbody>
 </table>
-
+</div>
 <nav aria-label="Page navigation">
     <ul class="pagination justify-content-center">
         {% if organisations.has_previous %}
