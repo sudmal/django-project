@@ -26,10 +26,10 @@ class NlYearSelectForm(forms.Form):
     selected_year = forms.ChoiceField(label='', choices=CHOICES,initial=year, widget=forms.Select(attrs={'class':'form-control'}))
 
 class FirmTypeSelectForm(forms.Form):
-    f_horeca = BooleanField(required=False,widget=forms.CheckboxInput(attrs={'class':'form-control-input','id':'f_horeca'}))
-    f_eat = BooleanField(required=False,widget=forms.CheckboxInput(attrs={'class':'form-control-input','id':'f_eat'}))
-    f_pack = BooleanField(required=False,widget=forms.CheckboxInput(attrs={'class':'form-control-input','id':'f_pack'}))
-    f_other = BooleanField(required=False,widget=forms.CheckboxInput(attrs={'class':'form-control-input','id':'f_other'}))
+    f_horeca = BooleanField(required=False,widget=forms.CheckboxInput(attrs={'class':'form-check-input','id':'f_horeca'}))
+    f_eat = BooleanField(required=False,widget=forms.CheckboxInput(attrs={'class':'form-check-input ','id':'f_eat'}))
+    f_pack = BooleanField(required=False,widget=forms.CheckboxInput(attrs={'class':'form-check-input ','id':'f_pack'}))
+    f_other = BooleanField(required=False,widget=forms.CheckboxInput(attrs={'class':'form-check-input ','id':'f_other'}))
     min_sum = IntegerField(required=False,max_value=999999999999,min_value=0,widget=forms.NumberInput(attrs={'class':'form-control-input','id':'max_summ'}))
     def __init__(self, *args, **kwargs):
         super(FirmTypeSelectForm, self).__init__(*args, **kwargs)
