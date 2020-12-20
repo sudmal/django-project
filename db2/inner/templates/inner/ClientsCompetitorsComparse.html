@@ -11,14 +11,7 @@
 {% block js-before %}
 <style>
 /*Column Highlighting*/
-table {
-    overflow: hidden;
-}
 
-td, th {
-    position: relative;
-    border: 1px solid black;
-}
 table.table-bordered > thead > tr > th{
   border:1px solid black;
 }
@@ -31,52 +24,11 @@ table.table-bordered > tbody > tr > td{
   }
 
 
-sidebar{
-  position: fixed;
-  top: 50px;
-  bottom: 0;
-  left: 0;
-  width: 200px;
-  background: #999;
-}
-
-main{
-  position: absolute;
-  top: 50px;
-  left: 200px;
-  right: 0;
-  bottom: 0;
-  background: #CCC;
-  padding: 1rem;
-}
-
-#content{
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-}
-
-/* This is what we are focused on */
-.table-wrapper{
-  overflow-y: scroll;
-  flex-grow: 1;
-}
-
-.table-wrapper th{
-    position: sticky;
-    top: 0;
-}
-
-/* A bit more styling to make it look better */
-.table-wrapper{
-  background: CadetBlue;
-}
 
 table{
   border-collapse: collapse;
   width: 100%;
 }
-
 th{
     background: #DDD;
 }
@@ -86,6 +38,12 @@ td,th{
   text-align: center;
 }
 
+.header{
+    position:sticky;
+    top: 70px;
+    border: 1px solid black;
+    z-index: 9999;
+}
 </style>
 {% endblock js-before %}
 
@@ -137,22 +95,22 @@ td,th{
 
     </form>
 </div>
+
 <div class="row mx-2">
-<div class="table-wrapper">
 <table class="table table-bordered" id="table" data-show-columns="true">
-    <thead class="thead table-active sticky-header">
+    <thead class="thead table-active">
         <tr>
 			<th colspan="4"><center>Покупатели</center></th><th colspan="13"><center>Период анализа / Суммы в {{ currency }} с НДС</center></th>
 	    </tr>
         <tr>
-            <th>#</th>
-            <th>ЕДРПОУ</th>
-            <th>ИМЯ</th>
-            <th>Импортер</th>
+            <th class="header" >#</th>
+            <th class="header" >ЕДРПОУ</th>
+            <th class="header" >ИМЯ</th>
+            <th class="header" >Импортер</th>
             {% for m in mnth_list %}
-                <th> {{m}} </th>
+                <th class="header"> {{m}} </th>
             {% endfor %}
-            <th rowspan=2><center>{{ year }}, {{ currency }} </center></th>
+            <th class="header"><center>{{ year }}, {{ currency }} </center></th>
         </tr>
         <tr>
             <th colspan=4>
@@ -162,8 +120,10 @@ td,th{
                 <th> {{t|floatformat:'0'}} </th>
             {% endfor %}
             </th>
+            <th></th>
         </tr>
     </thead>
+
     <tbody>
 
             {% for f in organisations %}
@@ -194,6 +154,7 @@ td,th{
     </tbody>
 </table>
 </div>
+
 <nav aria-label="Page navigation">
     <ul class="pagination justify-content-center">
         {% if organisations.has_previous %}
@@ -219,7 +180,7 @@ td,th{
         {% endif %}
     </ul>
  </nav>  
-</div>
+
 
 {% endblock content %}
 
