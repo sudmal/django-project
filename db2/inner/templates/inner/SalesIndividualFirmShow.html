@@ -22,23 +22,30 @@ td, th {
 .ui-autocomplete-loading {
     background: white url("{% static 'ui-anim_basic_16x16.gif' %}") right center no-repeat;
   }
-
-.fix-sticky {
-  position: fixed !important;
-  overflow: hidden;
-  z-index: 100;
+table{
+  border-collapse: collapse;
+  width: 100%;
+}
+th{
+    background: #DDD;
+    box-shadow: inset 1px -1px 1px -1px black
+    border:0;
 }
 
-.fix-sticky table thead {
-  background: #fff;
+td,th{
+  padding: 10px;
+  text-align: center;
 }
 
-.fix-sticky table thead.thead-light {
-  background: #e9ecef;
-}
 
-.fix-sticky table thead.thead-dark {
-  background: #212529;
+.header{
+    position:sticky;
+    position: -webkit-sticky;
+    top: 70px;
+    /*z-index: 9999;*/
+    /*border-collapse: separate;*/
+    box-shadow: inset 1px 0px 1px black
+
 }
 </style>
 {% endblock js-before %}
@@ -72,13 +79,13 @@ td, th {
 			<th colspan="3"><center>Покупатели</center></th><th colspan="13"><center>Период анализа / Суммы в {{ currency }} с НДС</center></th>
 	    </tr>
         <tr>
-            <th>#</th>
-            <th>ЕДРПОУ</th>
-            <th>ИМЯ</th>
+            <th class="header">#</th>
+            <th class="header">ЕДРПОУ</th>
+            <th class="header">ИМЯ</th>
             {% for m in mnth_list %}
-                <th> {{m}} </th>
+                <th class="header"> {{m}} </th>
             {% endfor %}
-            <th>{{ year }}, {{ currency }} </th>
+            <th class="header">{{ year }}, {{ currency }} </th>
         </tr>
         <tr>
             <th colspan=3>

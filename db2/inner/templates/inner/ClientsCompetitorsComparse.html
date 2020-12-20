@@ -26,11 +26,13 @@ table.table-bordered > tbody > tr > td{
 
 
 table{
-  border-collapse: separate;
+  border-collapse: collapse;
   width: 100%;
 }
 th{
     background: #DDD;
+    box-shadow: inset 1px -1px 1px -1px black
+    border:0;
 }
 
 td,th{
@@ -38,11 +40,14 @@ td,th{
   text-align: center;
 }
 
+
 .header{
     position:sticky;
+    position: -webkit-sticky;
     top: 70px;
-    z-index: 9999;
-    border: 1px solid black;
+    /*z-index: 9999;*/
+    /*border-collapse: separate;*/
+    box-shadow: inset 1px 0px 1px black
 
 }
 </style>

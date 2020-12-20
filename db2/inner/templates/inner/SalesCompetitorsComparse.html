@@ -30,22 +30,33 @@ table.table-bordered > tbody > tr > td{
     background: white url("{% static 'ui-anim_basic_16x16.gif' %}") right center no-repeat;
   }
 
-.fix-sticky {
-  position: fixed !important;
-  overflow: hidden;
-  z-index: 100;
+
+
+
+table{
+  border-collapse: collapse;
+  width: 100%;
+}
+th{
+    background: #DDD;
+    box-shadow: inset 1px -1px 1px -1px black
+    border:0;
 }
 
-.fix-sticky table thead {
-  background: #fff;
+td,th{
+  padding: 10px;
+  text-align: center;
 }
 
-.fix-sticky table thead.thead-light {
-  background: #e9ecef;
-}
 
-.fix-sticky table thead.thead-dark {
-  background: #212529;
+.header{
+    position:sticky;
+    position: -webkit-sticky;
+    top: 70px;
+    /*z-index: 9999;*/
+    /*border-collapse: separate;*/
+    box-shadow: inset 1px 0px 1px black
+
 }
 </style>
 {% endblock js-before %}
@@ -96,14 +107,14 @@ table.table-bordered > tbody > tr > td{
 			<th colspan="4"><center>Покупатели</center></th><th colspan="13"><center>Период анализа / Суммы в {{ currency }} с НДС</center></th>
 	    </tr>
         <tr>
-            <th>#</th>
-            <th>ЕДРПОУ</th>
-            <th>ИМЯ</th>
-            <th>Импортер</th>
+            <th class="header">#</th>
+            <th class="header">ЕДРПОУ</th>
+            <th class="header">ИМЯ</th>
+            <th class="header">Импортер</th>
             {% for m in mnth_list %}
-                <th> {{m}} </th>
+                <th class="header"> {{m}} </th>
             {% endfor %}
-            <th rowspan=2><center>{{ year }}, {{ currency }} </center></th>
+            <th class="header" rowspan=2><center>{{ year }}, {{ currency }} </center></th>
         </tr>
         <tr>
             <th colspan=4>
