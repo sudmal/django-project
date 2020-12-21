@@ -9,56 +9,7 @@
 {% endblock title %}
 
 {% block js-before %}
-<style>
-/*Column Highlighting*/
-table {
-    overflow: hidden;
-}
-
-td, th {
-    position: relative;
-    border: 1px solid black;
-}
-table.table-bordered > thead > tr > th{
-  border:1px solid black;
-}
-table.table-bordered > tbody > tr > td{
-  border:1px solid grey;
-}
-
-.ui-autocomplete-loading {
-    background: white url("{% static 'ui-anim_basic_16x16.gif' %}") right center no-repeat;
-  }
-
-
-
-
-table{
-  border-collapse: collapse;
-  width: 100%;
-}
-th{
-    background: #DDD;
-    box-shadow: inset 1px -1px 1px -1px black
-    border:0;
-}
-
-td,th{
-  padding: 10px;
-  text-align: center;
-}
-
-
-.header{
-    position:sticky;
-    position: -webkit-sticky;
-    top: 70px;
-    z-index: 98;
-    /*border-collapse: separate;*/
-    box-shadow: inset 1px -1px 1px black
-
-}
-</style>
+<link rel="stylesheet" href="{% static 'css/stycky-table.css' %}">
 {% endblock js-before %}
 
 {% block period_button %}

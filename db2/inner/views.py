@@ -243,7 +243,7 @@ def SalesIndividualFirmShow(request,edrpou_num):
         buyers_list.append(cur_firm)
 
 
-    paginator = Paginator(buyers_list, 10)
+    paginator = Paginator(buyers_list, 15)
     page_number = request.GET.get('page')
     try:
         buyers_list = paginator.page(page_number)
@@ -517,7 +517,7 @@ def ClientsCompetitorsIndividualShow(request,edrpou_num):
         sellers_list.append(cur_firm)
 
 
-    paginator = Paginator(sellers_list, 10)
+    paginator = Paginator(sellers_list, 15)
     page_number = request.GET.get('page')
     try:
         sellers_list = paginator.page(page_number)
@@ -800,7 +800,7 @@ def PurchasesIndividualFirmShow(request,edrpou_num):
         sellers_list.append(cur_firm)
 
 
-    paginator = Paginator(sellers_list, 10)
+    paginator = Paginator(sellers_list, 15)
     page_number = request.GET.get('page')
     try:
         sellers_list = paginator.page(page_number)
