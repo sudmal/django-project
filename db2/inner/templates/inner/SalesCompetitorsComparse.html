@@ -56,6 +56,7 @@
     <thead class="thead table-active sticky-header">
         <tr>
 			<th colspan="4"><center>Покупатели</center></th><th colspan="13"><center>Период анализа / Суммы в {{ currency }} с НДС</center></th>
+            
 	    </tr>
         <tr>
             <th class="header">#</th>
@@ -65,7 +66,7 @@
             {% for m in mnth_list %}
                 <th class="header"> {{m}} </th>
             {% endfor %}
-            <th class="header" rowspan=2><center>{{ year }}, {{ currency }} </center></th>
+            <th class="header"><center>{{ year }}, {{ currency }} </center></th>
         </tr>
         <tr>
             <th colspan=4>
@@ -75,6 +76,7 @@
                 <th> {{t|floatformat:'0'}} </th>
             {% endfor %}
             </th>
+            <th>&nbsp;</th>
         </tr>
     </thead>
     <tbody>
