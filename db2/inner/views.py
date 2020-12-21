@@ -758,7 +758,7 @@ def PurchasesIndividualFirmShow(request,edrpou_num):
     totals=[]
     # Total sums
     for m in range(1,13):
-        t_sum=NlReestr.objects.filter(buyer__edrpou=edrpou_num,ordering_date__year=year,ordering_date__month=m)
+        t_sum=NlCredit.objects.filter(buyer__edrpou=edrpou_num,ordering_date__year=year,ordering_date__month=m)
         if currency == 'UAH':
             t_sum=t_sum.aggregate(sum=Sum(F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2))
         elif currency == 'EUR':
@@ -766,14 +766,7 @@ def PurchasesIndividualFirmShow(request,edrpou_num):
         elif currency == 'USD':
             t_sum=t_sum.aggregate(sum=Sum((F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2)/F('exchange__usd_com')))
         totals.append(t_sum['sum'])
-    t_sum=NlReestr.objects.filter(buyer__edrpou=edrpou_num,ordering_date__year=year)
-    if currency == 'UAH':
-        t_sum=t_sum.aggregate(sum=Round(Sum(F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2)))
-    elif currency == 'EUR':
-        t_sum=t_sum.aggregate(sum=Round(Sum((F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2)/F('exchange__eur_mb_sale'))))
-    elif currency == 'USD':
-        t_sum=t_sum.aggregate(sum=Round(Sum((F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2)/F('exchange__usd_com'))))
-    totals.append(t_sum['sum'])
+
     for b in sellers:
         cur_firm={}
         cur_firm.update({'seller_id':b['seller_id']})
@@ -781,13 +774,14 @@ def PurchasesIndividualFirmShow(request,edrpou_num):
         cur_firm.update({'seller__edrpou':b['seller__edrpou']})
         cur_firm.update({'sum':b['sum']})
         #print (cur_firm['seller__edrpou'])
-        b_pms=NlReestr.objects.filter(buyer__edrpou=edrpou_num,seller_id=cur_firm['seller_id'],ordering_date__year=year).annotate(month=TruncMonth('ordering_date')).values('month') 
+        b_pms=NlCredit.objects.filter(buyer__edrpou=edrpou_num,seller_id=cur_firm['seller_id'],ordering_date__year=year).annotate(month=TruncMonth('ordering_date')).values('month') 
         if currency == 'UAH':
             b_pms=b_pms.annotate(sum=Round(Sum(F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2))).order_by()
         elif currency == 'EUR':
             b_pms=b_pms.annotate(sum=Round(Sum((F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2)/F('exchange__eur_mb_sale')))).order_by()
         elif currency == 'USD':
             b_pms=b_pms.annotate(sum=Round(Sum((F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2)/F('exchange__usd_com')))).order_by()
+
         pms=[] # per_monnth_summs
         for m in range(1,13):
             pms.append(float(0.0))
