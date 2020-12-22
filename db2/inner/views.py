@@ -915,52 +915,5 @@ def CompetitorsCatalog(request):
         }
     return render(request,'inner/CompetitorsCatalog.html',context)
 
-@login_required(login_url='login')
-def CompetitorsCatalogPeriodDetail(request,edrpou_num):
-    year=getCurrentYear()
-    start_date=year+'-01-01'
-    end_date=year+'-12-31'
-    search_form=SearchForm()
-    dates=getRecDates()
-    if request.GET.get('start_date'):
-        search_form = SearchForm(request.GET)
-        start_date=request.GET.get('start_date')
-    if request.GET.get('end_date'):
-        search_form = SearchForm(request.GET)
-        end_date=request.GET.get('end_date')
-    firm=Organisation.objects.get(edrpou = edrpou_num)
-    period_summ = str(RecordsStaging.objects.filter(recipient_code=edrpou_num,date__range=[start_date, end_date]).aggregate(Sum('cost_fact'))['cost_fact__sum'])
-    print(period_summ)
-    CompetitorsDetailRaw = RecordsStaging.objects.filter(Q(recipient_code=edrpou_num) & Q(date__range=[start_date, end_date])).values('date','gtd','country', 'sender_name', 'recipient_name','recipient_code','product_code','trademark','description','cost_fact','cost_customs').order_by('date')
-    
-    """ \
-        .extra(select={
-            'Дата': 'date',
-            'ГТД': 'gtd',
-            'Страна': 'country',
-            'Отправитель': 'sender_name',
-            'Товарный код': 'product_code',
-            'Торговая марка': 'trademark',
-            'Описание': 'description',
-            })\
-            .values('Дата','ГТД','Страна','Отправитель','Товарный код','Торговая марка','Описание') """
-    table = CompetitorsComparsePeriodDetailTable(CompetitorsDetailRaw)
-    RequestConfig(request, paginate={"per_page": 50}).configure(table)
-    export_format = request.GET.get("_export", None)
-    if TableExport.is_valid_format(export_format):
-        exporter = TableExport(export_format, table, dataset_kwargs={"title": firm.name})
-        return exporter.response(filename="VEDImport_{0}_{1}_{2}.{3}".format(edrpou_num,start_date,end_date,export_format))
-    context={
-        'search_form': search_form,
-        'edrpou_num':edrpou_num,
-        'start_date':start_date,
-        'end_date':end_date,
-        'year':year,  
-        'dates':dates,
-        'table':table,
-        'period_summ':period_summ,
-        'firm': firm,
-        'edrpou_num':edrpou_num,
-        }
-    return  render(request, 'inner/CompetitorsCatalogPeriodDetail.html', context)
+
 
