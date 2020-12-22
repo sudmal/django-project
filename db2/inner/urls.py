@@ -21,4 +21,6 @@ urlpatterns = [
     path('PurchasesIndividual/<int:edrpou_num>/<int:seller_code>/', views.PurchasesIndividualFirmRaw, name = 'PurchasesIndividualFirmRaw'),
     path('SalesCompetitorsComparse/', views.SalesCompetitorsComparse, name = 'SalesCompetitorsComparse'),
     path('ClientsCompetitorsComparse/', views.ClientsCompetitorsComparse, name = 'ClientsCompetitorsComparse'),
+    path('CompetitorsCatalog/', views.CompetitorsCatalog, name = 'CompetitorsCatalog'),
+    path('CompetitorsCatalog/<int:edrpou_num>', views.CompetitorsCatalogPeriodDetail, name = 'CompetitorsCatalogPeriodDetail'),
 ]

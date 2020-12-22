@@ -1,0 +1,73 @@
+{% extends 'main/base.html' %}
+{% load bold_in_quotes %}
+{% load cache %}
+
+{% block title %}
+Внутренний рынок :: Справочники :: Конкуренты
+{% endblock title %}
+
+{% block js-before %}
+<script>
+$(document).ready(function(){
+  $("#myInput").on("keyup", function() {
+    var value = $(this).val().toLowerCase();
+    $("#myTable tr").filter(function() {
+      $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+    });
+  });
+});
+</script>
+{% endblock js-before %}
+{% block period_button %}
+<a class="btn btn-light" target=_blank href="https://customs-invecta.com.ua/ukt-ved/"><u>Коды УКТВЭД Украины 2020: поиск и расшифровка кода УКТЗЕД</u></a>
+{% endblock period_button %}
+{% block content %}
+{% cache 1 InnerCompetitorsCatalog competitors.query %}
+
+<div class="row mt-3 ml-3 mr-3" >
+	<div class="col">
+		<ul class="nav nav-tabs">
+		<li class="nav-item">
+			<a class="nav-link bg-secondary text-light active" data-toggle="tab" href="#tab_1">Конкуренты</a>
+		</li>
+		<li class="nav nav-item">
+			<input id="myInput" type="text" placeholder="Поиск..">
+		</li>
+		</ul>
+
+		<div class="tab-content">
+		<div class="tab-pane fade show active" id="tab_1">
+			<div class="table-responsive-lg">
+				<table class="table table-hover table-secondary table-bordered table-striped">
+				<thead>
+					<tr class="table-secondary">
+					<th width="3%">№</th>
+					<th width="5%">ЕДРПОУ</th>
+					<th width="8%">Наименование</th>
+					{% comment %}<th width="6%%">Журнал записей</th> {% endcomment %}
+					</tr>
+				</thead>
+				<tbody id="myTable">
+						{% for firm in competitors %}
+						<tr>
+							<th width="5%"  scope="row">{{ forloop.counter }}</th>
+							<td width="10%" ><a class="btn btn-secondary font-weight-bold" href="{% url 'inner:SalesIndividualFirmShow' firm.seller__edrpou %}?year={{ year }}">{{ firm.seller__edrpou | cut:' ' }}</a></td>
+							<td width="80%" >{% autoescape off %} {{ firm.seller__name|bold_in_quotes }} {% endautoescape %}</td>
+							{% comment %}
+							<td width="20%" ><a name="" id="" class="btn btn-secondary" href="{% url 'inner:CompetitorsCatalogPeriodDetail' firm.seller__edrpou  %}" role="button">Перейти</a></td>{% endcomment %}
+						</tr>
+						{% endfor %}
+				</tbody>
+				</table>
+			</div>
+		</div>
+			
+		</div>
+	</div>
+
+</div>
+
+
+{% endcache %}
+{% endblock content %}
+

@@ -115,6 +115,50 @@ def generateOrder(request,default_sort_order,default_sort_field):
     order={'sort_order_symbol':sort_order_symbol,'sort_order':sort_order,'sort_field':sort_field}
     return order
 
+def Youscore_get(competitors_top):
+    year=2019
+    api_key='1f0900000ebe229bcca6e39128b59d5be1fa2bb7'
+    fin_data={}
+    ved_data={}
+    for c_top in competitors_top:
+        edrpou=c_top['seller__edrpou']
+        ysr="https://api.youscore.com.ua/v1/financialIndicators/"+str(edrpou)+"/years/"+str(int(year)-1)+"?apiKey="+api_key
+        headers = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.67 Safari/537.36'}
+        ret_fin=''
+        ret_ved=''
+        if Youscore.objects.filter(request=ysr):
+            db_reply=Youscore.objects.filter(request=ysr).values('jsonreply')
+            ret_fin=str(db_reply[0]['jsonreply'])
+
+        else:
+            result = requests.get(ysr, headers=headers)
+            save_result=Youscore.objects.create(request=ysr,jsonreply=result.text)
+            ret_fin=str(result.text)
+
+        #https://api.youscore.com.ua/v1/externalEconomies/38797324?apiKey=1f0900000ebe229bcca6e39128b59d5be1fa2bb7
+        #https://api.youscore.com.ua/v1/externalEconomies/38797324?year=2020&apiKey=1f0900000ebe229bcca6e39128b59d5be1fa2bb7
+                
+        ysr="https://api.youscore.com.ua/v1/externalEconomies/"+str(edrpou)+"?year="+str(int(year)-1)+"&apiKey="+api_key
+        headers = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.67 Safari/537.36'}
+        
+        if Youscore.objects.filter(request=ysr):
+            db_reply=Youscore.objects.filter(request=ysr).values('jsonreply')
+            ret_ved=str(db_reply[0]['jsonreply'])
+        else:
+
+            result = requests.get(ysr, headers=headers)
+            if result:
+                save_result=Youscore.objects.create(request=ysr,jsonreply=result.text)
+                ret_ved=str(result.text)
+
+        fin_data.update({edrpou:json.loads(ret_fin)})
+        ved_data.update({edrpou:json.loads(ret_ved)})
+    ret_dict={
+        'fin':fin_data,
+        'ved':ved_data,
+    }
+    return ret_dict
+
 
 @login_required(login_url='login')
 def index(request):
@@ -736,6 +780,7 @@ def PurchasesIndividualSearch(request):
     }
     return render(request,'inner/PurchasesIndividualSearch.html',context)
 
+@login_required(login_url='login')
 def PurchasesIndividualFirmShow(request,edrpou_num):
     year=getCurrentYear()
     YearSelectForm=NlYearSelectForm()
@@ -819,6 +864,7 @@ def PurchasesIndividualFirmShow(request,edrpou_num):
     }
     return render(request,'inner/PurchasesIndividualFirmShow.html',context)
 
+@login_required(login_url='login')
 def PurchasesIndividualFirmRaw(request,edrpou_num,seller_code):
     year=getCurrentYear()
     currency = User.objects.get(username=request.user).profile.currency
@@ -851,3 +897,70 @@ def PurchasesIndividualFirmRaw(request,edrpou_num,seller_code):
         'year':year,
     }
     return render(request,'inner/PurchasesIndividualFirmRaw.html',context)
+
+@login_required(login_url='login')
+def CompetitorsCatalog(request):
+    year=getCurrentYear()
+    start_date=year+'-01-01'
+    end_date=year+'-12-31'
+    competitors=NlReestr.objects.filter(Q(seller__edrpou__in=Competitors.objects.all().values('competitor_code')))\
+        .values('seller__edrpou','seller__name')\
+            .annotate(total_cost=Sum(F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2),\
+                total_count=Count('one_product_cost')).order_by('-total_cost')
+    
+    edrpou_list=[]
+    context={
+        'competitors':competitors,
+        'year':year,
+        }
+    return render(request,'inner/CompetitorsCatalog.html',context)
+
+@login_required(login_url='login')
+def CompetitorsCatalogPeriodDetail(request,edrpou_num):
+    year=getCurrentYear()
+    start_date=year+'-01-01'
+    end_date=year+'-12-31'
+    search_form=SearchForm()
+    dates=getRecDates()
+    if request.GET.get('start_date'):
+        search_form = SearchForm(request.GET)
+        start_date=request.GET.get('start_date')
+    if request.GET.get('end_date'):
+        search_form = SearchForm(request.GET)
+        end_date=request.GET.get('end_date')
+    firm=Organisation.objects.get(edrpou = edrpou_num)
+    period_summ = str(RecordsStaging.objects.filter(recipient_code=edrpou_num,date__range=[start_date, end_date]).aggregate(Sum('cost_fact'))['cost_fact__sum'])
+    print(period_summ)
+    CompetitorsDetailRaw = RecordsStaging.objects.filter(Q(recipient_code=edrpou_num) & Q(date__range=[start_date, end_date])).values('date','gtd','country', 'sender_name', 'recipient_name','recipient_code','product_code','trademark','description','cost_fact','cost_customs').order_by('date')
+    
+    """ \
+        .extra(select={
+            'Дата': 'date',
+            'ГТД': 'gtd',
+            'Страна': 'country',
+            'Отправитель': 'sender_name',
+            'Товарный код': 'product_code',
+            'Торговая марка': 'trademark',
+            'Описание': 'description',
+            })\
+            .values('Дата','ГТД','Страна','Отправитель','Товарный код','Торговая марка','Описание') """
+    table = CompetitorsComparsePeriodDetailTable(CompetitorsDetailRaw)
+    RequestConfig(request, paginate={"per_page": 50}).configure(table)
+    export_format = request.GET.get("_export", None)
+    if TableExport.is_valid_format(export_format):
+        exporter = TableExport(export_format, table, dataset_kwargs={"title": firm.name})
+        return exporter.response(filename="VEDImport_{0}_{1}_{2}.{3}".format(edrpou_num,start_date,end_date,export_format))
+    context={
+        'search_form': search_form,
+        'edrpou_num':edrpou_num,
+        'start_date':start_date,
+        'end_date':end_date,
+        'year':year,  
+        'dates':dates,
+        'table':table,
+        'period_summ':period_summ,
+        'firm': firm,
+        'edrpou_num':edrpou_num,
+        }
+    return  render(request, 'inner/CompetitorsCatalogPeriodDetail.html', context)
+
