@@ -934,10 +934,12 @@ def RecordsSearch(request):
         print(results.query)
     table = RecordsSearchTable(results)
     RequestConfig(request, paginate={"per_page": 50}).configure(table)
-    export_format = request.GET.get("_export", None)
-    if TableExport.is_valid_format(export_format):
-        exporter = TableExport(export_format, table, dataset_kwargs={"title": 'Db_search'})
-        return exporter.response(filename="NalogSales_search_results.{0}".format(export_format))
+    if request.GET.get('_export'):
+        name=request.GET.get('search_string')
+        export_format = request.GET.get("_export", None)
+        if TableExport.is_valid_format(export_format):
+            exporter = TableExport(export_format, table, dataset_kwargs={"title": 'Db_search'})
+            return exporter.response(filename="NalogSalesSearch.{0}".format(export_format))
     context={
         'recSearchForm':recSearchForm,
         'table':table,
