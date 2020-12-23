@@ -607,18 +607,6 @@ def CompetitorsCatalogPeriodDetail(request,edrpou_num):
     period_summ = str(RecordsStaging.objects.filter(recipient_code=edrpou_num,date__range=[start_date, end_date]).aggregate(Sum('cost_fact'))['cost_fact__sum'])
     print(period_summ)
     CompetitorsDetailRaw = RecordsStaging.objects.filter(Q(recipient_code=edrpou_num) & Q(date__range=[start_date, end_date])).values('date','gtd','country', 'sender_name', 'recipient_name','recipient_code','product_code','trademark','description','cost_fact','cost_customs').order_by('date')
-    
-    """ \
-        .extra(select={
-            'Дата': 'date',
-            'ГТД': 'gtd',
-            'Страна': 'country',
-            'Отправитель': 'sender_name',
-            'Товарный код': 'product_code',
-            'Торговая марка': 'trademark',
-            'Описание': 'description',
-            })\
-            .values('Дата','ГТД','Страна','Отправитель','Товарный код','Торговая марка','Описание') """
     table = CompetitorsComparsePeriodDetailTable(CompetitorsDetailRaw)
     RequestConfig(request, paginate={"per_page": 50}).configure(table)
     export_format = request.GET.get("_export", None)

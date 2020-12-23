@@ -17,6 +17,9 @@ db_max_date=str(NlReestr.objects.filter(ordering_date__range=[str(year)+'-01-01'
 
 class SearchFormOrg(forms.Form):
     search_string = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control','autofocus':'yes','placeholder': 'Введите наименование или ЕДРПОУ','id':'org_search'}), max_length=255)
+
+class RecSearchForm(forms.Form):
+    search_string = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control','autofocus':'yes','placeholder': 'Введите запрос','id':'db_search'}), max_length=255)
 class DatesStartEndForm(forms.Form):
     start_date = forms.DateField(input_formats='%Y,%m,%d',widget=DateInput(attrs={'class': 'form-control date-inline-select','value':year+'-01-01'}))
     end_date = forms.DateField(input_formats='%Y,%m,%d',widget=DateInput(attrs={'class': 'form-control date-inline-select','value':db_max_date}))

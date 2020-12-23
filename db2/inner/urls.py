@@ -9,7 +9,6 @@ urlpatterns = [
     path('sales_autocomplete_org/', views.sales_autocomplete_org, name='sales_autocomplete_org'),
     path('clients_autocomplete_org/', views.clients_autocomplete_org, name='clients_autocomplete_org'),
     path('purchases_autocomplete_org/', views.purchases_autocomplete_org, name='purchases_autocomplete_org'),
-    path('dbsearch_autocomplete_org/', views.dbsearch_autocomplete_org, name='dbsearch_autocomplete_org'),
     path('test/', views.test, name = 'test'),
     path('SalesIndividual/', views.SalesIndividual, name = 'SalesIndividual'),
     path('SalesIndividual/<int:edrpou_num>/', views.SalesIndividualFirmShow, name = 'SalesIndividualFirmShow'),
@@ -23,5 +22,6 @@ urlpatterns = [
     path('SalesCompetitorsComparse/', views.SalesCompetitorsComparse, name = 'SalesCompetitorsComparse'),
     path('ClientsCompetitorsComparse/', views.ClientsCompetitorsComparse, name = 'ClientsCompetitorsComparse'),
     path('CompetitorsCatalog/', views.CompetitorsCatalog, name = 'CompetitorsCatalog'),
+    path('RecordsSearch/', views.RecordsSearch, name = 'RecordsSearch'),
 
 ]

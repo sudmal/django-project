@@ -1,8 +1,10 @@
 {% extends 'main/base.html' %}
 
 {% load bold_in_quotes %}
+{% load render_table from django_tables2 %}
 {% load static %}
 {% load cache %}
+{% load querystring from django_tables2 %}
 
 {% block title %}
     Продажи :: Индивидуальный анализ (поиск)
@@ -10,18 +12,6 @@
 
 {% block js-before %}
 <style>
-
-
-table.table-bordered > thead > tr > th{
-  border:1px solid black;
-}
-table.table-bordered > tbody > tr > td{
-  border:1px solid grey;
-}
-  .ui-autocomplete-loading {
-    background: white url("{% static 'ui-anim_basic_16x16.gif' %}") right center no-repeat;
-  }
-
 </style>
 {% endblock js-before %}
 
@@ -39,8 +29,7 @@ table.table-bordered > tbody > tr > td{
             <form method="GET" action="{% url 'inner:RecordsSearch' %}">
                 {% csrf_token %}
                 <div class="input-group mb-3 ml-5">
-                {{ searchFormOrg.search_string }} 
-                <input type=hidden name="selected_year" value="{{ request.GET.selected_year }}">
+                {{ recSearchForm.search_string }} 
                     <div class="input-group-append">
                         <button type="submit" class="btn btn-outline-secondary">Поиск</button>
                     </div>
@@ -59,44 +48,10 @@ table.table-bordered > tbody > tr > td{
 </div>
 
 
-{% if organisations %}
-<div class"container">
-       <div class="row bg-secondary mx-3 py-2 text-light">
-            <div class="col-md-1">
-                <b>#</b>
-            </div>
-            <div class="col-md-1">
-                <b>ЕДРПОУ</b>
-            </div>
-            <div class="col">
-               <b> Наименование </b>
-            </div>
-            <div class="col">
-               <b> Сумма (за период), {{ currency }}</b>
-            </div>
-        </div>
-    {% for org in organisations %}
-        <div class="row  mx-3 py-2 border-bottom">
-            <div class="col-md-1 d-flex justify-content-center align-items-center">
-                <b>{{ forloop.counter }}</b>
-            </div>
-            <div class="col-md-1 d-flex justify-content-center align-items-center">
-                <a class="btn btn-primary font-weight-bold" href="{% url 'inner:SalesIndividualFirmShow' org.seller__edrpou %}?selected_year={{ year }}">{{ org.seller__edrpou | cut:' ' }}</a>
-            </div>
-            <div class="col align-items-center">
-                {% autoescape off %}
-                {{ org.seller__name| bold_in_quotes }}
-                {% endautoescape %}
-            </div>
-            <div class="col" style="text-align: right;">
-                {{ org.sum | floatformat:2 }}
-
-            </div>
-            <div class="col-md-4" style="text-align: right;">
-            </div>
-        </div>
-        {% endfor %}
-</div>
+{% if results %}
+    <div class"container">
+        {% render_table table %}
+    </div>
 {% else %}
     {% if request.GET.search_string|length > 0 %}
         По заданному запросу за выбранный период записей не обнаружено
@@ -108,12 +63,5 @@ table.table-bordered > tbody > tr > td{
 
 
 {% block js %}
-<script>
-    $(function () {
-        $("#db_search").autocomplete({
-            source: '{% url 'inner:dbsearch_autocomplete_org' %}',
-            minLength: 1
-        });
-    });
-</script>
+
 {% endblock js %}

@@ -12,7 +12,8 @@ from django_tables2.export.export import TableExport
 from django_tables2.export.views import ExportMixin
 from .models import Exchange,Youscore,ReestrStaging,CreditStaging,NlCredit,NlOrg,NlProduct,NlReestr,NlFilter,Competitors,Organisation
 from django.db.models import Count, Sum, Q, Avg, Subquery, OuterRef, F, FloatField, Max
-from .forms import SearchFormOrg,DatesStartEndForm,NlYearSelectForm,FirmTypeSelectForm
+from .forms import SearchFormOrg,DatesStartEndForm,NlYearSelectForm,FirmTypeSelectForm,RecSearchForm
+from .tables import RecordsSearchTable
 import pandas as pd
 import datetime
 import requests
@@ -73,16 +74,7 @@ def purchases_autocomplete_org(request):
         titles.append("Ничего не найдено")
     return JsonResponse(titles, safe=False)
 
-def dbsearch_autocomplete_org(request):
-    titles = list()
-    if 'term' in request.GET:
-        found_org = NlReestr.objects.filter(Q(seller__name__icontains=request.GET.get('term')) |Q(seller__edrpou__startswith=request.GET.get('term')) )\
-            .values('seller__name').annotate(sum=Sum(F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2)).distinct().order_by('-sum')
-        for tm in found_org:
-            titles.append(tm['seller__name'])
-    if len(titles)==0:
-        titles.append("Ничего не найдено")
-    return JsonResponse(titles, safe=False)
+
 
 def getFirmName(str1):
     st=''
@@ -928,8 +920,27 @@ def CompetitorsCatalog(request):
 
 @login_required(login_url='login')
 def RecordsSearch(request):
-        context={
-        'year':year,
+    recSearchForm = RecSearchForm()
+    currency = User.objects.get(username=request.user).profile.currency
+    results=[]
+    if request.GET.get('search_string'):
+        recSearchForm = RecSearchForm(request.GET)
+        results= NlReestr.objects.filter(Q(seller__name__icontains=request.GET.get('search_string')) |Q(seller__edrpou__startswith=request.GET.get('search_string')) | \
+            Q(buyer__name__icontains=request.GET.get('search_string')) |Q(buyer__edrpou__startswith=request.GET.get('search_string')) | \
+                Q(product__name__icontains=request.GET.get('search_string')) |Q(product__product_code__startswith=request.GET.get('search_string')) )\
+            .values('seller__name','buyer__name','seller__edrpou','buyer__edrpou','ordering_date','product__product_code','product__name','one_product_cost','count').annotate(sum=Sum(F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2)).distinct().order_by('-sum')
+    for r in results:
+        print(r.keys())
+    table = RecordsSearchTable(results)
+    RequestConfig(request, paginate={"per_page": 50}).configure(table)
+    export_format = request.GET.get("_export", None)
+    if TableExport.is_valid_format(export_format):
+        exporter = TableExport(export_format, table, dataset_kwargs={"title": 'Db_search'})
+        return exporter.response(filename="NalogSales_search_results.{0}".format(export_format))
+    context={
+        'recSearchForm':recSearchForm,
+        'table':table,
+        'results':results,
         }
     return render(request,'inner/RecordsSearch.html',context)
 
