@@ -931,7 +931,7 @@ def RecordsSearch(request):
             Q(buyer_name__icontains=request.GET.get('search_string')) |Q(buyer_edrpou__startswith=request.GET.get('search_string')) | \
                 Q(product_name__icontains=request.GET.get('search_string')) |Q(product_code__startswith=request.GET.get('search_string')) )\
             .values('ordering_date','seller_name','buyer_name','seller_edrpou','buyer_edrpou','product_code','product_name','one_product_cost','count').order_by('ordering_date')
-        print(results.query)
+
     table = RecordsSearchTable(results)
     RequestConfig(request, paginate={"per_page": 50}).configure(table)
     if request.GET.get('_export'):
@@ -939,7 +939,7 @@ def RecordsSearch(request):
         export_format = request.GET.get("_export", None)
         if TableExport.is_valid_format(export_format):
             exporter = TableExport(export_format, table, dataset_kwargs={"title": 'Db_search'})
-            return exporter.response(filename='NalogSalesSearch.{0}'.format(export_format))
+            return exporter.response() #filename='NalogSalesSearch.xlsx'.format(export_format)
     context={
         'recSearchForm':recSearchForm,
         'table':table,
