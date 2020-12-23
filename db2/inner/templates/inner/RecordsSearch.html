@@ -11,9 +11,12 @@
 {% endblock title %}
 
 {% block js-before %}
-<style>
-</style>
+<link rel="stylesheet" href="{% static 'django_tables2/themes/paleblue/css/screen.css' %}" />
 {% endblock js-before %}
+
+{% block export_button %}
+    <a href="{% querystring '_export'='xlsx' %}"><button type="button" class="btn btn-outline-success">Export to EXCEL</button></a>
+{% endblock export_button %}
 
 {% block DatePeriod %}
 
@@ -41,7 +44,7 @@
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="{% url 'home' %}">Внутренний рынок</a></li>
-                    <li class="breadcrumb-item"><a href="{% url 'home' %}">Поиск</a></li>
+                    <li class="breadcrumb-item"><a href="{% url 'home' %}">Поиск (стоимости указаны без НДС)</a></li>
                 </ol>
             </nav> 
         </div>

@@ -12,6 +12,8 @@ from django_tables2.export.export import TableExport
 from django_tables2.export.views import ExportMixin
 from .models import Exchange,Youscore,ReestrStaging,CreditStaging,NlCredit,NlOrg,NlProduct,NlReestr,NlFilter,Competitors,Organisation
 from django.db.models import Count, Sum, Q, Avg, Subquery, OuterRef, F, FloatField, Max
+from django.db.models import FloatField
+from django.db.models.functions import Cast
 from .forms import SearchFormOrg,DatesStartEndForm,NlYearSelectForm,FirmTypeSelectForm,RecSearchForm
 from .tables import RecordsSearchTable
 import pandas as pd
@@ -925,12 +927,11 @@ def RecordsSearch(request):
     results=[]
     if request.GET.get('search_string'):
         recSearchForm = RecSearchForm(request.GET)
-        results= NlReestr.objects.filter(Q(seller__name__icontains=request.GET.get('search_string')) |Q(seller__edrpou__startswith=request.GET.get('search_string')) | \
-            Q(buyer__name__icontains=request.GET.get('search_string')) |Q(buyer__edrpou__startswith=request.GET.get('search_string')) | \
-                Q(product__name__icontains=request.GET.get('search_string')) |Q(product__product_code__startswith=request.GET.get('search_string')) )\
-            .values('seller__name','buyer__name','seller__edrpou','buyer__edrpou','ordering_date','product__product_code','product__name','one_product_cost','count').annotate(sum=Sum(F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2)).distinct().order_by('-sum')
-    for r in results:
-        print(r.keys())
+        results= ReestrStaging.objects.filter(Q(seller_name__icontains=request.GET.get('search_string')) |Q(seller_edrpou__startswith=request.GET.get('search_string')) | \
+            Q(buyer_name__icontains=request.GET.get('search_string')) |Q(buyer_edrpou__startswith=request.GET.get('search_string')) | \
+                Q(product_name__icontains=request.GET.get('search_string')) |Q(product_code__startswith=request.GET.get('search_string')) )\
+            .values('ordering_date','seller_name','buyer_name','seller_edrpou','buyer_edrpou','product_code','product_name','one_product_cost','count').order_by('ordering_date')
+    print(results.query)
     table = RecordsSearchTable(results)
     RequestConfig(request, paginate={"per_page": 50}).configure(table)
     export_format = request.GET.get("_export", None)
