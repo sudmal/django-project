@@ -939,7 +939,7 @@ def RecordsSearch(request):
         export_format = request.GET.get("_export", None)
         if TableExport.is_valid_format(export_format):
             exporter = TableExport(export_format, table, dataset_kwargs={"title": 'Db_search'})
-            return exporter.response() #filename='NalogSalesSearch.xlsx'.format(export_format)
+            return exporter.response(filename='NalogSalesSearch.{0}}'.format(export_format)) #
     context={
         'recSearchForm':recSearchForm,
         'table':table,
