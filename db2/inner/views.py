@@ -73,6 +73,17 @@ def purchases_autocomplete_org(request):
         titles.append("Ничего не найдено")
     return JsonResponse(titles, safe=False)
 
+def dbsearch_autocomplete_org(request):
+    titles = list()
+    if 'term' in request.GET:
+        found_org = NlReestr.objects.filter(Q(seller__name__icontains=request.GET.get('term')) |Q(seller__edrpou__startswith=request.GET.get('term')) )\
+            .values('seller__name').annotate(sum=Sum(F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2)).distinct().order_by('-sum')
+        for tm in found_org:
+            titles.append(tm['seller__name'])
+    if len(titles)==0:
+        titles.append("Ничего не найдено")
+    return JsonResponse(titles, safe=False)
+
 def getFirmName(str1):
     st=''
     result=''
@@ -915,5 +926,10 @@ def CompetitorsCatalog(request):
         }
     return render(request,'inner/CompetitorsCatalog.html',context)
 
-
+@login_required(login_url='login')
+def RecordsSearch(request):
+        context={
+        'year':year,
+        }
+    return render(request,'inner/RecordsSearch.html',context)
 
