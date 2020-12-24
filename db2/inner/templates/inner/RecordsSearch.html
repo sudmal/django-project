@@ -12,10 +12,28 @@
 
 {% block js-before %}
 <link rel="stylesheet" href="{% static 'django_tables2/themes/paleblue/css/screen.css' %}" />
+<style> 
+.container { 
+padding-left: 16px; 
+padding-right: 16px;
+marging-left: 16px; 
+marging-right: 16px; 
+overflow: hidden;
+} 
+.container-fluid { 
+padding-left: 16px; 
+padding-right: 16px;
+marging-left: 16px; 
+marging-right: 16px; 
+overflow: hidden;
+} 
+</style> 
 {% endblock js-before %}
 
 {% block export_button %}
+{% if results %}
     <a href="{% querystring '_export'='xlsx' %}"><button type="button" class="btn btn-outline-success">Export to EXCEL</button></a>
+{% endif %}
 {% endblock export_button %}
 
 {% block DatePeriod %}
@@ -26,8 +44,8 @@
 {% endblock period_button %}
 
 {% block content %}
-
-<div class="row">
+<div class="container-fluid p-0">
+  <div class="row">
         <div class="col">
             <form method="GET" action="{% url 'inner:RecordsSearch' %}">
                 {% csrf_token %}
@@ -39,7 +57,7 @@
                 </div>
             </form>
         </div>
-        <div class="col-md-3"></div>
+        <div class="col"></div>
         <div class="col">
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
@@ -48,20 +66,27 @@
                 </ol>
             </nav> 
         </div>
+    </div>
+</div>
+<div class="container-fluid p-5">
+    <div class="row">
+    <div class"col">
+    {% if results %}
+        {% render_table table %}
+    
+    {% else %}
+        {% if request.GET.search_string|length > 0 %}
+            По заданному запросу за выбранный период записей не обнаружено
+        {% else %}
+            Пожалуйста выполните запрос
+        {% endif %}
+    {% endif %}
+    </div>
+    </div>
 </div>
 
 
-{% if results %}
-    <div class"container">
-        {% render_table table %}
-    </div>
-{% else %}
-    {% if request.GET.search_string|length > 0 %}
-        По заданному запросу за выбранный период записей не обнаружено
-    {% else %}
-        Пожалуйста выполните запрос
-    {% endif %}
-{% endif %}
+
 {% endblock content %}
 
 
