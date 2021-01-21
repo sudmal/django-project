@@ -19,7 +19,10 @@
       <tr>
         <td scope="row">Имя пользователя:</td><td>
           <input type="text" class="form-control" name="bio" id="" aria-describedby="helpId" value="{{ user.profile.bio }}" placeholder="Фамилия Имя"></td>
-      </tr>
+        </tr>
+        <td scope="row">E-Mail</td><td>
+          <input type="email" class="form-control" name="email" id="" aria-describedby="helpId" value="{{ user.email }}" placeholder="name@example.com"></td>
+        </tr>
         <td>Основная валюта:</td><td>
           <select class="form-control" name="currency" id="exampleFormControlSelect1">
             <option value="USD" {% if user.profile.currency == "USD"  %} selected = "selected" {% endif %} >USD</option>

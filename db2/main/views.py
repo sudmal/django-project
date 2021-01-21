@@ -66,13 +66,17 @@ def FirmInfo(request,edrpou_num):
     }
     return render(request, 'main/FirmInfo.html', context)
 
+@login_required(login_url='login')
 def ProfileUpdate(request):
     context= dict({'ref':request.META.get('HTTP_REFERER')})
     if request.method == 'POST':
+        user = User.objects.get(username=request.user.username)
+        user.email = request.POST.get('email')
+        user.save()
         userProfile=Profile.objects.get(user__username=request.user.username)
         userProfile.bio = request.POST.get('bio')
         userProfile.currency = request.POST.get('currency')
         userProfile.save()
-        print(request.POST.get('ref'))
         return HttpResponseRedirect(request.POST.get('ref'))
+
     return render(request,'main/profile.html',context)
