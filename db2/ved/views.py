@@ -180,6 +180,7 @@ def CompetitorsComparse(request):
     start_date=year+'-01-01'
     end_date=year+'-12-31'
     end_date_q=str(Records.objects.filter(date__range=[start_date, end_date]).aggregate(Max('date'))['date__max'])
+    print(end_date_q)
     if end_date_q:
         end_date=end_date_q
     dates=getRecDates()
@@ -191,7 +192,7 @@ def CompetitorsComparse(request):
         end_date=request.GET.get('end_date')
     prev_start_date=str(int(year)-1)+start_date[4:10]
     prev_end_date=str(int(year)-1)+end_date[4:10]
-
+    
 
     comparse = GtdRecords.objects.filter(Q(record__recipient__edrpou__in=Competitors.objects.values_list('competitor_code',flat=True)) & \
         Q(record__date__range=[start_date, end_date] ))\
