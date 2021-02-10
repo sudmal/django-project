@@ -32,7 +32,7 @@
 {% endblock DatePeriod %}
 
 {% block content %}
-{% cache 1 CompetitorsCatalogPeriodDetail querystring %}
+{% cache 36000 CompetitorsCatalogPeriodDetail SearchString %}
 {% autoescape off %}
 <div class="row">
     <div class="col">
@@ -44,7 +44,7 @@
     <div class="col-md-5">
         <form class="form-inline" method="get" action={% url 'ved:CompetitorsCatalogPeriodDetail' edrpou_num %}>
             <div class="input-group mb-3">
-                <input type="text" class="form-control" id="SearchString" autofocus="yes" required minlength="2" maxlength="160" name="SearchString" value="{{ SearchString }}" placeholder="Поиск по таблице...">
+                <input type="text" class="form-control" id="SearchString" autofocus="yes" required minlength="2" maxlength="160" name="SearchString"  {% if SearchString  %}  value="{{ SearchString }}"  {% endif %}   placeholder="Поиск по таблице...">
                 <div class="input-group-append">
                     <button type="submit" class="btn btn-outline-secondary">Поиск</button>
                 </div>
