@@ -605,9 +605,13 @@ def CompetitorsCatalogPeriodDetail(request,edrpou_num):
         search_form = SearchForm(request.GET)
         end_date=request.GET.get('end_date')
     firm=Organisation.objects.get(edrpou = edrpou_num)
+ 
     period_summ = str(RecordsStaging.objects.filter(recipient_code=edrpou_num,date__range=[start_date, end_date]).aggregate(Sum('cost_fact'))['cost_fact__sum'])
     print(period_summ)
     CompetitorsDetailRaw = RecordsStaging.objects.filter(Q(recipient_code=edrpou_num) & Q(date__range=[start_date, end_date])).values('date','gtd','country', 'sender_name', 'recipient_name','recipient_code','product_code','trademark','description','cost_fact','cost_customs').order_by('date')
+    if request.GET.get('SearchString'):
+        print("additional filtering by string "+request.GET.get('SearchString'))
+        CompetitorsDetailRaw = CompetitorsDetailRaw.filter(Q(description__icontains=request.GET.get('SearchString')) | Q(trademark__icontains=request.GET.get('SearchString')) )
     table = CompetitorsComparsePeriodDetailTable(CompetitorsDetailRaw)
     RequestConfig(request, paginate={"per_page": 50}).configure(table)
     export_format = request.GET.get("_export", None)
@@ -616,6 +620,7 @@ def CompetitorsCatalogPeriodDetail(request,edrpou_num):
         return exporter.response(filename="VEDImport_{0}_{1}_{2}.{3}".format(edrpou_num,start_date,end_date,export_format))
     context={
         'search_form': search_form,
+        'SearchString': request.GET.get('SearchString'),
         'edrpou_num':edrpou_num,
         'start_date':start_date,
         'end_date':end_date,

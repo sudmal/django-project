@@ -32,7 +32,7 @@
 {% endblock DatePeriod %}
 
 {% block content %}
-{% cache 36000 CompetitorsCatalogPeriodDetail querystring %}
+{% cache 1 CompetitorsCatalogPeriodDetail querystring %}
 {% autoescape off %}
 <div class="row">
     <div class="col">
@@ -41,7 +41,16 @@
     <div class="col">
         <b>{{ firm.name }}</b>
     </div>
-    <div class="col-md-3"></div>
+    <div class="col-md-5">
+        <form class="form-inline" method="get" action={% url 'ved:CompetitorsCatalogPeriodDetail' edrpou_num %}>
+            <div class="input-group mb-3">
+                <input type="text" class="form-control" id="SearchString" autofocus="yes" required minlength="2" maxlength="160" name="SearchString" value="{{ SearchString }}" placeholder="Поиск по таблице...">
+                <div class="input-group-append">
+                    <button type="submit" class="btn btn-outline-secondary">Поиск</button>
+                </div>
+            </div>
+        </form>
+    </div>
     <div class="col">
         Сумма за период: <b>{{ period_summ|floatformat:"0" }}$</b>
     </div>
