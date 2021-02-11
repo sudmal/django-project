@@ -1,4 +1,6 @@
 from django.db import models
+from django.db.models.signals import post_save, pre_delete
+from .utils import *
 
 # Create your models here.
 from django.db import models
@@ -6,6 +8,7 @@ from django.contrib.auth.models import User
 from django.db.models.signals import post_save
 from django.dispatch import receiver
 from django.db.models.fields import BooleanField
+
 
 class ArticlePages(models.Model):
     Title=models.CharField(max_length=50, blank=False, null=False)
