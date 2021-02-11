@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'main',
     'ved',
     'inner',
+    'help',
     'debug_toolbar',
     'django_tables2',
 ]
