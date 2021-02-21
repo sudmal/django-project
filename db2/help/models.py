@@ -17,4 +17,4 @@ class ArticlePage(models.Model):
     #Text=HTMLField()
     Text=tinymce.models.HTMLField(max_length=65534, blank=False, null=False)
     def __str__(self):
-        return self.Title
+        return str(self.id)+" - "+str(self.Title)
