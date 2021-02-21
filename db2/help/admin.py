@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import ArticlePages
+from .models import ArticlePage
 
 
-admin.site.register(ArticlePages)
+admin.site.register(ArticlePage)

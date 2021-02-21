@@ -33,6 +33,8 @@ INTERNAL_IPS = ('127.0.0.1',)
 ## pip install django-tables2
 ## pip install tablib[all]    ## needs for export tables to excel
 INSTALLED_APPS = [
+    'grappelli',
+    'filebrowser',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -44,14 +46,14 @@ INSTALLED_APPS = [
     'ved',
     'inner',
     'help',
-    'debug_toolbar',
+#    'debug_toolbar',
     'django_tables2',
 ]
 
 
 
 MIDDLEWARE = [
-    'debug_toolbar.middleware.DebugToolbarMiddleware',
+#    'debug_toolbar.middleware.DebugToolbarMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -164,6 +166,7 @@ NUMBER_GROUPING = 3
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
 STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR,'main')
 STATIC_DIRS = [
     BASE_DIR / "static",
 ]
@@ -171,7 +174,7 @@ DATE_FORMAT='Y-m-d'
 
 
 
-TINYMCE_JS_URL = os.path.join(STATIC_URL, "static/js/tinymce.min.js")
+TINYMCE_JS_URL = os.path.join(STATIC_URL, "django_tinymce/tinymce.min.js")
 TINYMCE_DEFAULT_CONFIG = {
     "height": "320px",
     "width": "960px",
@@ -186,11 +189,12 @@ TINYMCE_DEFAULT_CONFIG = {
     "custom_undo_redo_levels": 10,
     "language": "ru_RU",  # To force a specific language instead of the Django current language.
 }
-TINYMCE_SPELLCHECKER = True
-TINYMCE_COMPRESSOR = True
+TINYMCE_SPELLCHECKER = False
+TINYMCE_COMPRESSOR = False
 TINYMCE_EXTRA_MEDIA = {
     'css': {
         'all': [],
     },
     'js': [],
 }
+

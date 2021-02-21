@@ -1,0 +1,85 @@
+
+body 
+{ 
+  background: #F5F4EB !important; 
+  padding-top: 80px;
+}
+@media (min-width: 640px) {
+  body {
+    padding-top: 150px;
+ }
+}
+@media (min-width: 900px) {
+  body {
+    padding-top: 120px;
+ }
+}
+@media (min-width: 1280px) {
+  body {
+    padding-top: 90px;
+ }
+}
+.date-inline-select {
+    width: auto;
+    display: inline-block;
+}
+
+$breadcrumb-divider: url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI4IiBoZWlnaHQ9IjgiPjxwYXRoIGQ9Ik0yLjUgMEwxIDEuNSAzLjUgNCAxIDYuNSAyLjUgOGw0LTQtNC00eiIgZmlsbD0iY3VycmVudENvbG9yIi8+PC9zdmc+);
+
+
+.date-inline-select {
+    width: auto;
+    display: inline-block;
+}
+.navbar-container {
+    background-color: darkgray;
+}
+
+textarea:focus,
+input[type="text"]:focus,
+input[type="password"]:focus,
+input[type="datetime"]:focus,
+input[type="datetime-local"]:focus,
+input[type="date"]:focus,
+input[type="month"]:focus,
+input[type="time"]:focus,
+input[type="week"]:focus,
+input[type="number"]:focus,
+input[type="email"]:focus,
+input[type="url"]:focus,
+input[type="search"]:focus,
+input[type="tel"]:focus,
+input[type="color"]:focus,
+.uneditable-input:focus {   
+  border-color: rgba(45, 56, 50, 0.8);
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset, 0 0 8px rgba(45, 56, 50, 0.6);
+  outline: 0 none;
+}
+
+
+.dropdown-submenu {
+  position: relative;
+}
+
+.dropdown-submenu a::after {
+  transform: rotate(-90deg);
+  position: absolute;
+  right: 6px;
+  top: .8em;
+}
+
+.dropdown-submenu .dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-left: .1rem;
+  margin-right: .1rem;
+}
+
+.header{
+  position:sticky;
+  position: -webkit-sticky;
+  top: 70px;
+  z-index: 98;
+  /*border-collapse: separate;*/
+  box-shadow: inset 1px -1px 1px black
+}
