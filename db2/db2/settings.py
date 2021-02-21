@@ -166,15 +166,15 @@ NUMBER_GROUPING = 3
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
 STATIC_URL = '/static/'
-MEDIA_URL = '/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR,'media')
 STATIC_ROOT = os.path.join(BASE_DIR,'main')
 STATIC_DIRS = [
     BASE_DIR / "static",
 ]
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR,'media')
 DATE_FORMAT='Y-m-d'
-FILEBROWSER_DIRECTORY = ''
-DIRECTORY = ''
+#FILEBROWSER_DIRECTORY = ''
+#DIRECTORY = ''
 
 
 TINYMCE_JS_URL = os.path.join(STATIC_URL, "django_tinymce/tinymce.min.js")

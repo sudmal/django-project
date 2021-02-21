@@ -4,7 +4,10 @@ from django.urls import path, include
 from django.conf import settings
 from django.conf.urls import url
 from filebrowser.sites import site
+from django.conf.urls.static import static
 
+
+print("### "+site.storage.location )
 
 urlpatterns = [
     path('admin/filebrowser/', site.urls),
@@ -16,6 +19,7 @@ urlpatterns = [
     path('ved/',include('ved.urls',namespace='ved'), name = 'ved'),
     path('inner/',include('inner.urls',namespace='inner'), name = 'inner'),
 ]
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 #if settings.DEBUG:
 #    import debug_toolbar
 #    urlpatterns += [
