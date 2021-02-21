@@ -31,6 +31,9 @@
 
 <nav class="navbar  fixed-top navbar-expand-lg navbar-light bg-light" style="z-index:99; box-shadow: 0 0 10px rgba(0,0,0,0.5);">
   <a class="navbar-brand" href="{% url 'home' %}"><img src="{% static 'favicon-32x32.png' %}"></a>
+  {% block help_link %}
+
+  {% endblock help_link %} 
   <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavDropdown" aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
   </button>

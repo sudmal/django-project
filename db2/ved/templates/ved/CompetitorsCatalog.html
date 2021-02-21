@@ -1,6 +1,8 @@
 {% extends 'main/base.html' %}
 {% load bold_in_quotes %}
 {% load cache %}
+{% load static %}
+
 
 {% block title %}
 ВЭД :: Конкуренты :: Справочник коонкурентов
@@ -18,6 +20,11 @@ $(document).ready(function(){
 });
 </script>
 {% endblock js-before %}
+{% block help_link %}
+	{% if help_page_id %}
+	    <a class="navbar-brand" target=_blank href="{% url 'help:AtrticlePageView' help_page_id %}"><img src="{% static 'info_help.png' %}"></a>
+	{% endif %}
+{% endblock help_link %}
 {% block period_button %}
 <a class="btn btn-light" target=_blank href="https://customs-invecta.com.ua/ukt-ved/"><u>Коды УКТВЭД Украины 2020: поиск и расшифровка кода УКТЗЕД</u></a>
 {% endblock period_button %}

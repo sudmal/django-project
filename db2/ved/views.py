@@ -521,6 +521,7 @@ def HRKReport(request):
     return render(request,'ved/HRKReport.html',context)
 
 def CompetitorsCatalog(request):
+    help_page_id=4
     start_date=year+'-01-01'
     end_date=year+'-12-31'
     max_year_date=Records.objects.filter(Q(date__range=[start_date, end_date])).latest('date').date
@@ -571,6 +572,7 @@ def CompetitorsCatalog(request):
         c['y_ved_utk'] = utk_top
         competitors_list.append(c)
     context={
+        'help_page_id':help_page_id,
         'yresults': yresults_dict,
         'competitors':competitors_list,
         'start_date':start_date,
