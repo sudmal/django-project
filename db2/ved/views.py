@@ -286,7 +286,7 @@ def IndividualReport(request):
 
         context = {
             "search_string": request.GET.get('search_string'),
-            "help_page_id":help_page_id,
+            'help_page_id':help_page_id,
             "grecords": grecords,
             "start_date": request.GET.get('start_date'),
             "end_date": request.GET.get('end_date'),
@@ -324,8 +324,8 @@ def IndividualReportFirmShow(request,edrpou_num):
         except EmptyPage:
             queryset = paginator.page(paginator.num_pages)
         context = {
-            "firm" : firm,
-            "help_page_id":help_page_id,
+            'firm' : firm,
+            'help_page_id':help_page_id,
             "edrpou_detail": edrpou_num,
             "dates": dates,
             'report': queryset,
@@ -364,6 +364,7 @@ def IndividualReportRaw(request,edrpou_num,gtd_num):
 
 @login_required(login_url='login')
 def TrademarkReportSearch(request):
+    help_page_id=9
     context=dict()
     start_date=year+'-01-01'
     end_date=year+'-12-31'
@@ -388,10 +389,12 @@ def TrademarkReportSearch(request):
         }
     context.update({"search_form": search_form})
     context.update({'dates': dates})
+    context.update({'help_page_id':help_page_id,})
     return render(request,'ved/TMReportSearch.html',context)
 
 @login_required(login_url='login')
 def TrademarkReportShow(request,trademark_name):
+    help_page_id=9
     context=dict()
     start_date=year+'-01-01'
     end_date=year+'-12-31'
@@ -416,6 +419,7 @@ def TrademarkReportShow(request,trademark_name):
     competitors=list(Competitors.objects.values_list('competitor_code',flat=True))
     context.update({'competitors':competitors})
     context.update({'request':request})
+    context.update({'help_page_id':help_page_id})
     return render(request,'ved/TMReportShow.html',context)
 
 @login_required(login_url='login')
@@ -451,6 +455,8 @@ def TrademarkReportRaw(request,trademark_name,edrpou_num):
                 'edrpou_num':edrpou_num,
                 'tm_firm_summ':tm_firm_summ,
             }
+    help_page_id=9
+    context.update({'help_page_id':help_page_id})
     return render(request,'ved/TMReportRaw.html',context)
 
 @login_required(login_url='login')
@@ -526,6 +532,8 @@ def HRKReport(request):
         'num_to_show':num_to_show,
         'competitors':competitors,
         }
+    help_page_id=10
+    context.update({'help_page_id':help_page_id})
     return render(request,'ved/HRKReport.html',context)
 
 def CompetitorsCatalog(request):
@@ -643,5 +651,7 @@ def CompetitorsCatalogPeriodDetail(request,edrpou_num):
         'firm': firm,
         'edrpou_num':edrpou_num,
         }
+    help_page_id=4
+    context.update({'help_page_id':help_page_id})
     return  render(request, 'ved/CompetitorsCatalogPeriodDetail.html', context)
 
