@@ -20,11 +20,10 @@ $(document).ready(function(){
 });
 </script>
 {% endblock js-before %}
-{% block help_link %}
-	{% if help_page_id %}
-	    <a class="navbar-brand" target=_blank href="{% url 'help:AtrticlePageView' help_page_id %}"><img src="{% static 'info_help.png' %}"></a>
-	{% endif %}
+{% comment "" %}{% block help_link %}
+
 {% endblock help_link %}
+{% endcomment %}
 {% block period_button %}
 <a class="btn btn-light" target=_blank href="https://customs-invecta.com.ua/ukt-ved/"><u>Коды УКТВЭД Украины 2020: поиск и расшифровка кода УКТЗЕД</u></a>
 {% endblock period_button %}

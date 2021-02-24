@@ -176,6 +176,7 @@ def Youscore_get(competitors_top):
 
 @login_required(login_url='login')
 def CompetitorsComparse(request):
+    help_page_id = 8
     search_form = SearchForm()
     start_date=year+'-01-01'
     end_date=year+'-12-31'
@@ -239,6 +240,7 @@ def CompetitorsComparse(request):
     labels.append('Другие')
     data.append(round(100-sum(data),1))
     context = {
+        'help_page_id':help_page_id,
         'dates': dates,
         'labels': labels,
         'data': data,
@@ -252,6 +254,7 @@ def CompetitorsComparse(request):
 @login_required(login_url='login')
 @user_passes_test(lambda u: u.profile.ved_part, login_url='/')
 def IndividualReport(request):
+    help_page_id = 7
     logUserData(request)
     context=dict()
     start_date=year+'-01-01'
@@ -283,6 +286,7 @@ def IndividualReport(request):
 
         context = {
             "search_string": request.GET.get('search_string'),
+            "help_page_id":help_page_id,
             "grecords": grecords,
             "start_date": request.GET.get('start_date'),
             "end_date": request.GET.get('end_date'),
@@ -295,6 +299,7 @@ def IndividualReport(request):
 
 @login_required(login_url='login')
 def IndividualReportFirmShow(request,edrpou_num):
+    help_page_id = 7
     context=dict()
     start_date=year+'-01-01'
     end_date=year+'-12-31'
@@ -320,6 +325,7 @@ def IndividualReportFirmShow(request,edrpou_num):
             queryset = paginator.page(paginator.num_pages)
         context = {
             "firm" : firm,
+            "help_page_id":help_page_id,
             "edrpou_detail": edrpou_num,
             "dates": dates,
             'report': queryset,
@@ -332,6 +338,7 @@ def IndividualReportFirmShow(request,edrpou_num):
 
 @login_required(login_url='login')
 def IndividualReportRaw(request,edrpou_num,gtd_num):
+    help_page_id=7
     logUserData(request)
     context=dict()
     dates=getRecDates()
@@ -345,6 +352,7 @@ def IndividualReportRaw(request,edrpou_num,gtd_num):
     records = paginator.get_page(page_number)
     context = {
                 "firm" : firm,
+                "help_page_id":help_page_id,
                 'start_date': request.GET['start_date'], 
                 'end_date':request.GET['end_date'],
                 'dates' : dates,
@@ -582,9 +590,11 @@ def CompetitorsCatalog(request):
     return render(request,'ved/CompetitorsCatalog.html',context)
 
 def ProductCodesCatalog(request):
+    help_page_id=5
     ProductCodes=filter_codes.objects.all()
     context={
         'ProductCodes':ProductCodes,
+        'help_page_id':help_page_id,
         }
     return render(request,'ved/ProductCodesCatalog.html',context)
 
