@@ -136,14 +136,19 @@ def Youscore_get(competitors_top):
     ved_data={}
     for c_top in competitors_top:
         edrpou=c_top['record__recipient__edrpou']
-        ysr="https://api.youscore.com.ua/v1/financialIndicators/"+str(edrpou)+"/years/"+str(int(year)-1)+"?apiKey="+api_key
+        # Must be only 2019 year in test period
+        # ysr="https://api.youscore.com.ua/v1/financialIndicators/"+str(edrpou)+"/years/"+str(int(year)-1)+"?apiKey="+api_key
+        ysr="https://api.youscore.com.ua/v1/financialIndicators/"+str(edrpou)+"/years/"+str(2019)+"?apiKey="+api_key
+        #print(ysr)
         headers = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.67 Safari/537.36'}
         ret_fin=''
         ret_ved=''
         if Youscore.objects.filter(request=ysr):
+            #print("Get youscore data from cache")
             db_reply=Youscore.objects.filter(request=ysr).values('jsonreply')
-            ret_fin=str(db_reply[0]['jsonreply'])
 
+            ret_fin=str(db_reply[0]['jsonreply'])
+            #print(ret_fin)
         else:
             result = requests.get(ysr, headers=headers)
             save_result=Youscore.objects.create(request=ysr,jsonreply=result.text)
@@ -158,15 +163,18 @@ def Youscore_get(competitors_top):
         if Youscore.objects.filter(request=ysr):
             db_reply=Youscore.objects.filter(request=ysr).values('jsonreply')
             ret_ved=str(db_reply[0]['jsonreply'])
-        else:
-
-            result = requests.get(ysr, headers=headers)
-            if result:
-                save_result=Youscore.objects.create(request=ysr,jsonreply=result.text)
-                ret_ved=str(result.text)
-
-        fin_data.update({edrpou:json.loads(ret_fin)})
-        ved_data.update({edrpou:json.loads(ret_ved)})
+ # Uncomment if we get full youscore account
+ #       else:
+ #           print("Get youscore data from API")
+ #           result = requests.get(ysr, headers=headers)
+ #           if result:
+ #               print("Save youscore data from API to cache")
+ #               save_result=Youscore.objects.create(request=ysr,jsonreply=result.text)
+ #               ret_ved=str(result.text)
+        if len(fin_data) > 0:
+            fin_data.update({edrpou:json.loads(ret_fin)})
+        if len(ret_ved) > 0:
+            ved_data.update({edrpou:json.loads(ret_ved)})
     ret_dict={
         'fin':fin_data,
         'ved':ved_data,
@@ -259,6 +267,7 @@ def IndividualReport(request):
     context=dict()
     start_date=year+'-01-01'
     end_date=year+'-12-31'
+    print(end_date)
     search_form_org = SearchFormOrg()
     dates=getRecDates()
     if request.GET.get('start_date'):
