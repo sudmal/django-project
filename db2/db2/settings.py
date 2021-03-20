@@ -100,7 +100,7 @@ DATABASES = {
         'NAME': 'anamnez_copy',
         'USER': 'operator',
         'PASSWORD': 'Mimoza2019',
-        'HOST': '192.168.55.55',
+        'HOST': '192.168.58.55',
         'PORT': '5432',
     }
 }
