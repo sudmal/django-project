@@ -13,6 +13,7 @@ class DateInput(forms.DateInput):
     input_type='date'
 
 year = str((datetime.date.today() - datetime.timedelta(days=59)).year)
+print(year)
 db_max_date=str(NlReestr.objects.filter(ordering_date__range=[str(year)+'-01-01', str(year)+'-12-31']).aggregate(Max('ordering_date'))['ordering_date__max'])
 
 class SearchFormOrg(forms.Form):
@@ -25,7 +26,7 @@ class DatesStartEndForm(forms.Form):
     end_date = forms.DateField(input_formats='%Y,%m,%d',widget=DateInput(attrs={'class': 'form-control date-inline-select','value':db_max_date}))
 
 class NlYearSelectForm(forms.Form):
-    CHOICES = [('2017','2017'), ('2018','2018'), ('2019','2019'), ('2020','2020')]
+    CHOICES = [('2017','2017'), ('2018','2018'), ('2019','2019'), ('2020','2020'),('2021','2021')]
     selected_year = forms.ChoiceField(label='', choices=CHOICES,initial=year, widget=forms.Select(attrs={'class':'form-control'}))
 
 class FirmTypeSelectForm(forms.Form):

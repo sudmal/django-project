@@ -30,7 +30,6 @@ from django.db.models.functions import TruncMonth
 # if now is not jan or feb, year is current year, other way - previus
 def getCurrentYear():
     return str((datetime.date.today() - datetime.timedelta(days=59)).year)
-
 class Month(Func):
     function = 'EXTRACT'
     template = '%(function)s(MONTH from %(expressions)s)'
@@ -206,6 +205,7 @@ def SalesIndividual(request):
     if request.GET.get('selected_year'):
         YearSelectForm=NlYearSelectForm(request.GET)
         year=request.GET.get('selected_year')
+    print(year)
     searchFormOrg=SearchFormOrg()
     organisations=[]
     if request.GET.get('search_string'):
