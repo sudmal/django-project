@@ -26,7 +26,7 @@ SECRET_KEY = 'yzy_%pf*52*(ubx3q1s6$dmu7swq(lilc1&$1pt9u!_z3-534b'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1','192.168.55.55','db3.maresto.ua','cld.vesy.com.ua','mdb.maresto.ua']
+ALLOWED_HOSTS = ['127.0.0.1','192.168.55.55','192.168.55.55','db3.maresto.ua','cld.vesy.com.ua','mdb.maresto.ua']
 INTERNAL_IPS = ('127.0.0.1',)
 
 # Application definition
