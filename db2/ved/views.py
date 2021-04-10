@@ -144,21 +144,21 @@ def Youscore_get(competitors_top):
         # Must be only 2019 year in test period
         # ysr="https://api.youscore.com.ua/v1/financialIndicators/"+str(edrpou)+"/years/"+str(int(year)-1)+"?apiKey="+api_key
         ysr="https://api.youscore.com.ua/v1/financialIndicators/"+str(edrpou)+"/years/"+str(year)+"?apiKey="+api_key
-        print(ysr)
+        #print(ysr)
         headers = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.67 Safari/537.36'}
         ret_fin=''
         ret_ved=''
         if Youscore.objects.filter(request=ysr):
-            #print("Get youscore data from cache")
+            print("Get finanace youscore data from cache")
             db_reply=Youscore.objects.filter(request=ysr).values('jsonreply')
 
             ret_fin=str(db_reply[0]['jsonreply'])
             #print(ret_fin)
         else:
+            print("Get finance youscore data from Youscore API")
             result = requests.get(ysr, headers=headers)
             save_result=Youscore.objects.create(request=ysr,jsonreply=result.text)
             ret_fin=str(result.text)
-
         #https://api.youscore.com.ua/v1/externalEconomies/38797324?apiKey=1f0900000ebe229bcca6e39128b59d5be1fa2bb7
         #https://api.youscore.com.ua/v1/externalEconomies/38797324?year=2020&apiKey=1f0900000ebe229bcca6e39128b59d5be1fa2bb7
                 
@@ -167,6 +167,7 @@ def Youscore_get(competitors_top):
         
         if Youscore.objects.filter(request=ysr):
             db_reply=Youscore.objects.filter(request=ysr).values('jsonreply')
+            #print(db_reply)
             ret_ved=str(db_reply[0]['jsonreply'])
  # Uncomment if we get full youscore account
  #       else:
@@ -176,7 +177,7 @@ def Youscore_get(competitors_top):
  #               print("Save youscore data from API to cache")
  #               save_result=Youscore.objects.create(request=ysr,jsonreply=result.text)
  #               ret_ved=str(result.text)
-        if len(fin_data) > 0:
+        if len(ret_fin) > 0:
             fin_data.update({edrpou:json.loads(ret_fin)})
         if len(ret_ved) > 0:
             ved_data.update({edrpou:json.loads(ret_ved)})
@@ -184,6 +185,7 @@ def Youscore_get(competitors_top):
         'fin':fin_data,
         'ved':ved_data,
     }
+    #print(ret_dict['fin']) 
     return ret_dict
 
 
@@ -194,7 +196,7 @@ def CompetitorsComparse(request):
     start_date=year+'-01-01'
     end_date=year+'-12-31'
     end_date_q=str(Records.objects.filter(date__range=[start_date, end_date]).aggregate(Max('date'))['date__max'])
-    print(end_date_q)
+    #print(end_date_q)
     if end_date_q:
         end_date=end_date_q
     dates=getRecDates()
@@ -561,12 +563,13 @@ def CompetitorsCatalog(request):
         .values('record__recipient__edrpou','record__recipient__name','record__recipient__firm_alias')\
             .annotate(total_cost=Sum('cost_fact'),total_cost_eur=Sum((F('record__exchange__usd_nbu')/F('record__exchange__eur_nbu'))*F('cost_fact')),\
                 total_count=Count('cost_fact')).order_by('-total_cost')
-    competitors_top=competitors[:42]
+    competitors_top=competitors[:1]
     yresults_dict={}
     yresult=Youscore_get(competitors_top)
-    
+    #print(yresult['ved'])
     competitors_list=[]
     for e in  yresult['fin']:
+        #print (e)
         money_in=''
         utkved=[]
         for f in yresult['fin'][e]['indicators']:
