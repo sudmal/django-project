@@ -138,13 +138,13 @@ def Youscore_get(competitors_top):
     ###########
     year=2019 #
     ###########
-    
+
     for c_top in competitors_top:
         edrpou=c_top['record__recipient__edrpou']
         # Must be only 2019 year in test period
         # ysr="https://api.youscore.com.ua/v1/financialIndicators/"+str(edrpou)+"/years/"+str(int(year)-1)+"?apiKey="+api_key
-        ysr="https://api.youscore.com.ua/v1/financialIndicators/"+str(edrpou)+"/years/"+str(2019)+"?apiKey="+api_key
-        #print(ysr)
+        ysr="https://api.youscore.com.ua/v1/financialIndicators/"+str(edrpou)+"/years/"+str(year)+"?apiKey="+api_key
+        print(ysr)
         headers = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.67 Safari/537.36'}
         ret_fin=''
         ret_ved=''
@@ -162,7 +162,7 @@ def Youscore_get(competitors_top):
         #https://api.youscore.com.ua/v1/externalEconomies/38797324?apiKey=1f0900000ebe229bcca6e39128b59d5be1fa2bb7
         #https://api.youscore.com.ua/v1/externalEconomies/38797324?year=2020&apiKey=1f0900000ebe229bcca6e39128b59d5be1fa2bb7
                 
-        ysr="https://api.youscore.com.ua/v1/externalEconomies/"+str(edrpou)+"?year="+str(int(year)-1)+"&apiKey="+api_key
+        ysr="https://api.youscore.com.ua/v1/externalEconomies/"+str(edrpou)+"?year="+str(int(year))+"&apiKey="+api_key
         headers = {'User-Agent': 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/70.0.3538.67 Safari/537.36'}
         
         if Youscore.objects.filter(request=ysr):
