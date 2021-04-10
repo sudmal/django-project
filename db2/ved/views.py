@@ -563,7 +563,7 @@ def CompetitorsCatalog(request):
         .values('record__recipient__edrpou','record__recipient__name','record__recipient__firm_alias')\
             .annotate(total_cost=Sum('cost_fact'),total_cost_eur=Sum((F('record__exchange__usd_nbu')/F('record__exchange__eur_nbu'))*F('cost_fact')),\
                 total_count=Count('cost_fact')).order_by('-total_cost')
-    competitors_top=competitors[:1]
+    competitors_top=competitors[:42]
     yresults_dict={}
     yresult=Youscore_get(competitors_top)
     #print(yresult['ved'])
