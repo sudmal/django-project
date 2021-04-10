@@ -205,7 +205,7 @@ def SalesIndividual(request):
     if request.GET.get('selected_year'):
         YearSelectForm=NlYearSelectForm(request.GET)
         year=request.GET.get('selected_year')
-    print(year)
+    #print(year)
     searchFormOrg=SearchFormOrg()
     organisations=[]
     if request.GET.get('search_string'):
@@ -396,7 +396,7 @@ def SalesCompetitorsComparse(request):
     organisations=organisations.filter(Q(seller__edrpou__in=f_horeca) | Q(seller__edrpou__in=f_eat) | Q(seller__edrpou__in=f_pack) |Q(seller__edrpou__in=f_other) )
 
     organisations = organisations.values('seller_id','seller__name','seller__edrpou').distinct()
-    print (organisations.query)
+    #print (organisations.query)
     if currency == 'UAH':
             organisations=organisations.annotate(sum=Round(Sum(F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2))).order_by('-sum')
     elif currency == 'EUR':
