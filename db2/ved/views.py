@@ -134,6 +134,11 @@ def Youscore_get(competitors_top):
     api_key='1f0900000ebe229bcca6e39128b59d5be1fa2bb7'
     fin_data={}
     ved_data={}
+
+    ###########
+    year=2019 #
+    ###########
+    
     for c_top in competitors_top:
         edrpou=c_top['record__recipient__edrpou']
         # Must be only 2019 year in test period
