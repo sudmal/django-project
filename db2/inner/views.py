@@ -225,6 +225,7 @@ def SalesIndividual(request):
         'YearSelectForm':YearSelectForm,
         'year':year
     }
+    context.update({'help_page_id':11})
     return render(request,'inner/SalesIndividual.html',context)
 
 @login_required(login_url='login')
@@ -315,6 +316,7 @@ def SalesIndividualFirmShow(request,edrpou_num):
         'year':year,
         'YearSelectForm':YearSelectForm,
     }
+    context.update({'help_page_id':11})
     return render(request,'inner/SalesIndividualFirmShow.html',context)
 
 @login_required(login_url='login')
@@ -349,6 +351,7 @@ def SalesIndividualFirmRaw(request,edrpou_num,buyer_code):
         'raw_records':raw_records,
         'year':year,
     }
+    context.update({'help_page_id':11})
     return render(request,'inner/SalesIndividualFirmRaw.html',context)
 
 @login_required(login_url='login')
@@ -472,6 +475,7 @@ def SalesCompetitorsComparse(request):
         'YearSelectForm':YearSelectForm,
         'firmTypeSelectForm':firmTypeSelectForm,
     }
+    context.update({'help_page_id':12})
     return render(request,'inner/SalesCompetitorsComparse.html',context)
 
 @login_required(login_url='login')
@@ -501,6 +505,7 @@ def ClientsCompetitorsIndividualSearch(request):
         'YearSelectForm':YearSelectForm,
         'year':year
     }
+    context.update({'help_page_id':14})
     return render(request,'inner/ClientsCompetitorsIndividualSearch.html',context)
 
 @login_required(login_url='login')
@@ -589,6 +594,7 @@ def ClientsCompetitorsIndividualShow(request,edrpou_num):
         'year':year,
         'YearSelectForm':YearSelectForm,
     }
+    context.update({'help_page_id':14})
     return render(request,'inner/ClientsCompetitorsIndividualShow.html',context)
 
 @login_required(login_url='login')
@@ -623,6 +629,7 @@ def ClientsCompetitorsIndividualRaw(request,edrpou_num,seller_code):
         'raw_records':raw_records,
         'year':year,
     }
+    context.update({'help_page_id':14})
     return render(request,'inner/ClientsCompetitorsIndividualRaw.html',context)
 
 @login_required(login_url='login')
@@ -754,6 +761,7 @@ def ClientsCompetitorsComparse(request):
         'YearSelectForm':YearSelectForm,
         'firmTypeSelectForm':firmTypeSelectForm,
     }
+    context.update({'help_page_id':15})
     return render(request,'inner/ClientsCompetitorsComparse.html',context)
 
 @login_required(login_url='login')
@@ -783,6 +791,7 @@ def PurchasesIndividualSearch(request):
         'YearSelectForm':YearSelectForm,
         'year':year
     }
+    context.update({'help_page_id':16})
     return render(request,'inner/PurchasesIndividualSearch.html',context)
 
 @login_required(login_url='login')
@@ -867,6 +876,7 @@ def PurchasesIndividualFirmShow(request,edrpou_num):
         'year':year,
         'YearSelectForm':YearSelectForm,
     }
+    context.update({'help_page_id':16})
     return render(request,'inner/PurchasesIndividualFirmShow.html',context)
 
 @login_required(login_url='login')
@@ -901,6 +911,7 @@ def PurchasesIndividualFirmRaw(request,edrpou_num,seller_code):
         'raw_records':raw_records,
         'year':year,
     }
+    context.update({'help_page_id':16})
     return render(request,'inner/PurchasesIndividualFirmRaw.html',context)
 
 @login_required(login_url='login')
@@ -918,6 +929,7 @@ def CompetitorsCatalog(request):
         'competitors':competitors,
         'year':year,
         }
+    context.update({'help_page_id':17})
     return render(request,'inner/CompetitorsCatalog.html',context)
 
 @login_required(login_url='login')
@@ -945,5 +957,6 @@ def RecordsSearch(request):
         'table':table,
         'results':results,
         }
+    context.update({'help_page_id':13})
     return render(request,'inner/RecordsSearch.html',context)
 
