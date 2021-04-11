@@ -22,7 +22,7 @@ $(document).ready(function(){
 <a class="btn btn-light" target=_blank href="https://customs-invecta.com.ua/ukt-ved/"><u>Коды УКТВЭД Украины 2020: поиск и расшифровка кода УКТЗЕД</u></a>
 {% endblock period_button %}
 {% block content %}
-{% cache 1 InnerCompetitorsCatalog competitors.query %}
+{% cache 3600 InnerCompetitorsCatalog competitors.query %}
 
 <div class="row mt-3 ml-3 mr-3" >
 	<div class="col">
