@@ -22,7 +22,7 @@ from django_tables2 import RequestConfig
 
 
 # if now is not jan or feb, year is current year, other way - previus
-year = str((datetime.date.today() - datetime.timedelta(days=59)).year)
+year = str((datetime.date.today() - datetime.timedelta(days=120)).year)
 
 def logUserData(request):
     print(request.META['REMOTE_ADDR'])
@@ -149,13 +149,13 @@ def Youscore_get(competitors_top):
         ret_fin=''
         ret_ved=''
         if Youscore.objects.filter(request=ysr):
-            print("Get finanace youscore data from cache")
+            #print("Get finanace youscore data from cache")
             db_reply=Youscore.objects.filter(request=ysr).values('jsonreply')
 
             ret_fin=str(db_reply[0]['jsonreply'])
             #print(ret_fin)
         else:
-            print("Get finance youscore data from Youscore API")
+            #print("Get finance youscore data from Youscore API")
             result = requests.get(ysr, headers=headers)
             save_result=Youscore.objects.create(request=ysr,jsonreply=result.text)
             ret_fin=str(result.text)
@@ -302,15 +302,16 @@ def IndividualReport(request):
 
         context = {
             "search_string": request.GET.get('search_string'),
-            'help_page_id':help_page_id,
             "grecords": grecords,
             "start_date": request.GET.get('start_date'),
             "end_date": request.GET.get('end_date'),
         }
     ## ADD CONTEXT VARIABLES HERE 
+    context.update({'help_page_id':help_page_id})
     context.update({"search_form_org": search_form_org})
     context.update({'dates': dates})
     context.update({'request':request})
+
     return render(request,'ved/IndividualReport.html',context)
 
 @login_required(login_url='login')
