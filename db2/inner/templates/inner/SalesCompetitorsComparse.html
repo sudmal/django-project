@@ -23,6 +23,7 @@
 {% endblock DatePeriod %}
 
 {% block content %}
+{% cache 3600 SalesCompetitorsComparse organisations.query %}
 <div class="row mx-2">
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
@@ -135,7 +136,7 @@
     </ul>
  </nav>  
 
-
+{% endcache %}
 {% endblock content %}
 
 
