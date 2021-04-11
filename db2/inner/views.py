@@ -29,7 +29,7 @@ from django.db.models.functions import TruncMonth
 
 # if now is not jan or feb, year is current year, other way - previus
 def getCurrentYear():
-    return str((datetime.date.today() - datetime.timedelta(days=59)).year)
+    return str((datetime.date.today() - datetime.timedelta(days=120)).year)
 class Month(Func):
     function = 'EXTRACT'
     template = '%(function)s(MONTH from %(expressions)s)'
