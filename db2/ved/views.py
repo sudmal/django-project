@@ -628,6 +628,7 @@ def TnvedGroupCatalog(request):
     TnvedGroupData=TnvedGroup.objects.values('gname').distinct().annotate(codes=ArrayAgg('gcodes')).order_by('gname')
     context={
         'TnvedGroup':TnvedGroupData,
+        'help_page_id':6,
         }
     return  render(request, 'ved/TnvedGroupCatalog.html', context)
 
