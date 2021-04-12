@@ -19,7 +19,9 @@ from .forms import LoginForm
 # Create your views here.
 @login_required(login_url='login')
 def index(request):
-    return render(request, 'main/index.html')
+    context=dict()
+    context.update({'help_page_id':18})
+    return render(request, 'main/index.html',context)
 
 def login_user(request):
     context=dict()
