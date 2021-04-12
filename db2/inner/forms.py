@@ -12,7 +12,7 @@ reestr_years = NlReestr.objects.extra(select={'year':"extract(year from ordering
 class DateInput(forms.DateInput):
     input_type='date'
 
-year = str((datetime.date.today() - datetime.timedelta(days=59)).year)
+year = str((datetime.date.today() - datetime.timedelta(days=120)).year)
 print(year)
 db_max_date=str(NlReestr.objects.filter(ordering_date__range=[str(year)+'-01-01', str(year)+'-12-31']).aggregate(Max('ordering_date'))['ordering_date__max'])
 

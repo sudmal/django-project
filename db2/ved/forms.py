@@ -3,7 +3,7 @@ from .models import Records
 from django.db.models import Max
 import datetime 
 
-year = str((datetime.date.today() - datetime.timedelta(days=59)).year)
+year = str((datetime.date.today() - datetime.timedelta(days=120)).year)
 db_max_date=str(Records.objects.filter(date__range=[str(year)+'-01-01', str(year)+'-12-31']).aggregate(Max('date'))['date__max'])
 class DateInput(forms.DateInput):
     input_type='date'
