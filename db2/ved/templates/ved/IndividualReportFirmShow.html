@@ -22,7 +22,7 @@
         {% autoescape off %}
         {{ firm.name|bold_in_quotes }}
         {% endautoescape %}
-        <table class="table table-striped border border-secondary">
+        <table class="table table-sm table-striped border border-secondary">
         <thead>
             <tr>
                 <th>№</th>
@@ -48,7 +48,9 @@
                 </td>
                 <td>
                     {% for tm in row.tms %}
-                        <div class="border border-secondary rounded p-1 bg-light font-weight-bold"><a href="{% url 'ved:TrademarkReportRaw' tm|urlencode:"" firm.edrpou|cut:" " %}?start_date={{ start_date }}&end_date={{ end_date }}">{% autoescape off %}{{ tm }}{% endautoescape %}</a></div>
+                        {% comment %} <div class="d-inline border border-secondary rounded p-1 bg-light font-weight-bold"><a href="{% url 'ved:TrademarkReportRaw' tm|urlencode:"" firm.edrpou|cut:" " %}?start_date={{ start_date }}&end_date={{ end_date }}">{% autoescape off %}{{ tm }}{% endautoescape %}</a></div>
+                        {% endcomment %}
+                        <span class="badge badge-light badge-pill border border-secondary" style="font-size: 15px;"><a href="{% url 'ved:TrademarkReportRaw' tm|urlencode:"" firm.edrpou|cut:" " %}?start_date={{ start_date }}&end_date={{ end_date }}">{% autoescape off %}{{ tm }}{% endautoescape %}</a></span>
                     {% endfor %}
                 </td>
                 <td>
