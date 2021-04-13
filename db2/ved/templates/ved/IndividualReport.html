@@ -13,9 +13,7 @@
   .ui-autocomplete-loading {
     background: white url("{% static 'ui-anim_basic_16x16.gif' %}") right center no-repeat;
   }
-  table tbody tr {
-      height: 30 px;
-  }
+
 </style>
 {% endblock js-before %}
 
@@ -60,7 +58,7 @@
 {% if grecords.object_list %}
     <div class="table-responsive p-3">
 
-        <table class="table table-striped border border-secondary">
+        <table class="table table-sm table-striped border border-secondary">
             <thead>
                 <tr>
                     <th>№</th>
