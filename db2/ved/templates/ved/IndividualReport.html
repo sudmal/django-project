@@ -13,6 +13,9 @@
   .ui-autocomplete-loading {
     background: white url("{% static 'ui-anim_basic_16x16.gif' %}") right center no-repeat;
   }
+  table tbody tr {
+      height: 30 px;
+  }
 </style>
 {% endblock js-before %}
 
@@ -82,17 +85,31 @@
                             </td>
                             <td ><span class="h6">{% autoescape off %} {{ gr.record__recipient__name | bold_in_quotes }} {% endautoescape %}</span> </td>
                             <td>
-                            
-                            {% for tm in gr.tms %}
-                                {% if forloop.counter <= 5  %}
-                                    <div class="border border-secondary rounded p-1 bg-light font-weight-bold">
-                                        <a href="{% url 'ved:TrademarkReportShow' tm|urlencode:"" %}?start_date={{ start_date }}&end_date={{ end_date }}">{% autoescape off %}{{ tm }}{% endautoescape %}</a>
-                                    </div>
-                                {% endif %}
-                            {% endfor %}
-                            {% if  gr.tms_count > 5 %}
-                            ... ({{gr.tms_count}})
-                            {% endif %}
+                            {% with countern=forloop.counter0|add:grecords.start_index %}
+                                {% for tm in gr.tms %}
+                                    {% if forloop.counter <= 5  %}
+                                        {% if forloop.counter == 1 %}
+                                            <div class="d-inline border border-secondary rounded p-1 bg-light font-weight-bold">
+                                                <a href="{% url 'ved:TrademarkReportShow' tm|urlencode:"" %}?start_date={{ start_date }}&end_date={{ end_date }}">{% autoescape off %}{{ tm }}{% endautoescape %}</a>
+                                            </div>
+                                            {% if  gr.tms_count > 1 %}
+                                                <button class="btn btn-light border rounded" style="height: 35px;" type="button" data-toggle="collapse" data-target="#tm-list-{{ countern }}" aria-expanded="false" aria-controls="tm-list-{{ countern }}">
+                                                ({{gr.tms_count}}) 
+                                            </button>
+                                            {% endif %}
+                                            <div class="collapse" id="tm-list-{{ countern }}">
+                                        {% endif %}
+                                        {% if forloop.counter > 1 %}
+        
+                                            <div class=" border border-secondary rounded p-1 bg-light font-weight-bold">
+                                                <a href="{% url 'ved:TrademarkReportShow' tm|urlencode:"" %}?start_date={{ start_date }}&end_date={{ end_date }}">{% autoescape off %}{{ tm }}{% endautoescape %}</a>
+                                            </div>
+                                        {% endif %}
+                                    {% endif %}
+                                {% endfor %}
+                            {% endwith %}
+                            </div>
+
                             
                             </td>
                             <td>
