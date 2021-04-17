@@ -16,6 +16,7 @@ from django.db.models import Count, Sum, Q, Avg, Subquery, OuterRef, F, FloatFie
 import datetime
 import requests
 import json 
+import hashlib
 
 from django.contrib.postgres.aggregates import ArrayAgg
 from django_tables2 import RequestConfig
@@ -215,6 +216,11 @@ def CompetitorsComparse(request):
         .extra(where=["LEFT(product_code::text,8) IN (SELECT LEFT(gcodes,8) from tnved_group)"])\
             .values('record__recipient__edrpou','record__recipient__name')\
                 .annotate(total_cost_eur=Sum((F('record__exchange__usd_nbu')/F('record__exchange__eur_nbu'))*F('cost_fact')),count=Count('cost_fact',distinct=True),total_cost=Sum('cost_fact')).order_by('-total_cost')
+    #print(str(comparse.query))
+
+    m = hashlib.md5()
+    m.update(str(comparse.query).encode('utf-8'))
+    queryhache=m.hexdigest()
     comparse_prev = GtdRecords.objects.filter(Q(record__recipient__edrpou__in=Competitors.objects.values_list('competitor_code',flat=True)) & \
         Q(record__date__range=[prev_start_date, prev_end_date] ))\
         .extra(where=["LEFT(product_code::text,8) IN (SELECT LEFT(gcodes,8) from tnved_group)"])\
@@ -259,6 +265,7 @@ def CompetitorsComparse(request):
         'dates': dates,
         'labels': labels,
         'data': data,
+        'queryhache':queryhache,
         'comparse': comparse_list,
         'start_date':start_date,
         'end_date':end_date,
