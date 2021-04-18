@@ -88,23 +88,27 @@ def getRecDates():
     return dates_dict
 
 def generateOrder(request,default_sort_order,default_sort_field):
+    # setting up defaults
     sort_order=default_sort_order
     sort_field=default_sort_field
-    #symbol for query
     sort_order_symbol=''
     if default_sort_order=='desc':
         sort_order_symbol='-'
-
+    
+    # Если в request.GET присутствует параметр sort_order (была нажата кнопка) - 
+    # меняем порядок сортировки на противоположный
     # change sort order for link and generate symbol for current query
-
     if request.GET.get('sort_order'):
         if request.GET.get('sort_order')=='asc':
             sort_order='desc'  # next link status 
-            sort_order_symbol='-' # current query  
+            sort_order_symbol='-' # current query
         if request.GET.get('sort_order')=='desc':
             sort_order='asc'  # next link status
+            sort_order_symbol='' # current query
             
     print (sort_order)
+    # Если в request.GET присутствует параметр sort_field (была нажата кнопка) - 
+    # устанавливаем текущее поле для сортировки
     if request.GET.get('sort_field'):
         sort_field=request.GET.get('sort_field')
     order={'sort_order_symbol':sort_order_symbol,'sort_order':sort_order,'sort_field':sort_field}
@@ -194,7 +198,6 @@ def Youscore_get(competitors_top):
     #print(ret_dict['fin']) 
     return ret_dict
 
-
 @login_required(login_url='login')
 def CompetitorsComparse(request):
     help_page_id = 8
@@ -283,13 +286,10 @@ def CompetitorsComparse(request):
 def IndividualReport(request):
     order=generateOrder(request,'desc','total_cost')
     print(order)
-    print(order['sort_order_symbol']+order['sort_field'])
     help_page_id = 7
-    logUserData(request)
     context=dict()
     start_date=year+'-01-01'
     end_date=year+'-12-31'
-    print(end_date)
     search_form_org = SearchFormOrg()
     dates=getRecDates()
     if request.GET.get('start_date'):
@@ -305,7 +305,7 @@ def IndividualReport(request):
                 .values('record__recipient__edrpou','record__recipient__name','record__recipient__is_competitor')\
                  .annotate(count=Count("cost_fact"),total_cost=Sum('cost_fact'),total_cost_eur=Sum((F('record__exchange__usd_nbu')/F('record__exchange__eur_nbu'))*F('cost_fact')), tms_count=Count('trademark__name',distinct=True),\
                      tms=ArrayAgg('trademark__name', distinct=True)).order_by(order['sort_order_symbol']+order['sort_field'])
-        print(grecords_all.query)
+        #print(grecords_all.query)
         paginator = Paginator(grecords_all, 10)
         page_number = request.GET.get('page')
         try:
@@ -326,6 +326,7 @@ def IndividualReport(request):
     context.update({"search_form_org": search_form_org})
     context.update({'dates': dates})
     context.update({'request':request})
+    context.update({'order':order})
 
     return render(request,'ved/IndividualReport.html',context)
 

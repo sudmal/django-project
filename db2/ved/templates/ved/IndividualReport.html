@@ -62,8 +62,32 @@
             <thead>
                 <tr>
                     <th>№</th>
-                    <th>ЕДРПОУ</th>
-                    <th>Наименование организации</th>
+                    <th>                    
+                    <a class="btn btn-light w-100 h-100" href={% url 'ved:IndividualReport' %}?start_date={{ start_date }}&end_date={{ end_date }}&sort_field=record__recipient__edrpou&sort_order={{ order.sort_order }}&search_string={{ request.GET.search_string }}>
+                    {% if order.sort_field  ==  "record__recipient__edrpou" %}
+                        {% if order.sort_order == 'asc' %}
+                            &#8673;
+                        {% elif order.sort_order == 'desc' %}
+                            &#8675;
+                        {% endif %}
+                     {% else %}
+                        &#8645;
+                    {% endif %}
+                    ЕДРПОУ </a>
+                    </th>
+                    <th>                    
+                    <a class="btn btn-light w-100 h-100" href={% url 'ved:IndividualReport' %}?start_date={{ start_date }}&end_date={{ end_date }}&sort_order={{ order.sort_order }}&sort_field=competitor_code>
+                    {% if order.sort_field  ==  "record__recipient__name" %}
+                        {% if order.sort_order == 'asc' %}
+                            &#8673;
+                        {% elif order.sort_order == 'desc' %}
+                            &#8675;
+                        {% endif %}
+                     {% else %}
+                        &#8645;
+                    {% endif %}
+                    Наименование организации</a>
+                    </th>
                     <th>Торговые марки</th>
                     <th>Записей</th>
                     <th>На сумму, $</th>
