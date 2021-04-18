@@ -76,7 +76,7 @@
                     ЕДРПОУ </a>
                     </th>
                     <th>                    
-                    <a class="btn btn-light w-100 h-100" href={% url 'ved:IndividualReport' %}?start_date={{ start_date }}&end_date={{ end_date }}&sort_order={{ order.sort_order }}&sort_field=competitor_code>
+                    <a class="btn btn-light w-100 h-100" href={% url 'ved:IndividualReport' %}?start_date={{ start_date }}&end_date={{ end_date }}&sort_field=record__recipient__name&sort_order={{ order.sort_order }}&search_string={{ request.GET.search_string }}>
                     {% if order.sort_field  ==  "record__recipient__name" %}
                         {% if order.sort_order == 'asc' %}
                             &#8673;
@@ -88,11 +88,64 @@
                     {% endif %}
                     Наименование организации</a>
                     </th>
-                    <th>Торговые марки</th>
-                    <th>Записей</th>
-                    <th>На сумму, $</th>
-                    <th>На сумму, €</th>
-                    <th>Конкурент</th>
+                    <th>
+                    <a class="btn btn-light w-100 h-100" href={% url 'ved:IndividualReport' %}?start_date={{ start_date }}&end_date={{ end_date }}&sort_field=tms&sort_order={{ order.sort_order }}&search_string={{ request.GET.search_string }}>
+                    {% if order.sort_field  ==  "tms" %}
+                        {% if order.sort_order == 'asc' %}
+                            &#8673;
+                        {% elif order.sort_order == 'desc' %}
+                            &#8675;
+                        {% endif %}
+                     {% else %}
+                        &#8645;
+                    {% endif %}
+                    Торговые марки</a>
+                    </th>
+                    <th>
+                    <a class="btn btn-light w-100 h-100" href={% url 'ved:IndividualReport' %}?start_date={{ start_date }}&end_date={{ end_date }}&sort_field=count&sort_order={{ order.sort_order }}&search_string={{ request.GET.search_string }}>
+                    {% if order.sort_field  ==  "count" %}
+                        {% if order.sort_order == 'asc' %}
+                            &#8673;
+                        {% elif order.sort_order == 'desc' %}
+                            &#8675;
+                        {% endif %}
+                     {% else %}
+                        &#8645;
+                    {% endif %}
+                    Записей</a></th>
+                    <th>
+                    <a class="btn btn-light w-100 h-100" href={% url 'ved:IndividualReport' %}?start_date={{ start_date }}&end_date={{ end_date }}&sort_field=total_cost&sort_order={{ order.sort_order }}&search_string={{ request.GET.search_string }}>
+                    {% if order.sort_field  ==  "total_cost" %}
+                        {% if order.sort_order == 'asc' %}
+                            &#8673;
+                        {% elif order.sort_order == 'desc' %}
+                            &#8675;
+                        {% endif %}
+                     {% else %}
+                        &#8645;
+                    {% endif %} На сумму, $</a></th>
+                    <th>
+                    <a class="btn btn-light w-100 h-100" href={% url 'ved:IndividualReport' %}?start_date={{ start_date }}&end_date={{ end_date }}&sort_field=total_cost_eur&sort_order={{ order.sort_order }}&search_string={{ request.GET.search_string }}>
+                    {% if order.sort_field  ==  "total_cost_eur" %}
+                        {% if order.sort_order == 'asc' %}
+                            &#8673;
+                        {% elif order.sort_order == 'desc' %}
+                            &#8675;
+                        {% endif %}
+                     {% else %}
+                        &#8645;
+                    {% endif %} На сумму, €</a></th>
+                    <th>
+                    <a class="btn btn-light w-100 h-100" href={% url 'ved:IndividualReport' %}?start_date={{ start_date }}&end_date={{ end_date }}&sort_field=record__recipient__is_competitor&sort_order={{ order.sort_order }}&search_string={{ request.GET.search_string }}>
+                    {% if order.sort_field  ==  "record__recipient__is_competitor" %}
+                        {% if order.sort_order == 'asc' %}
+                            &#8673;
+                        {% elif order.sort_order == 'desc' %}
+                            &#8675;
+                        {% endif %}
+                     {% else %}
+                        &#8645;
+                    {% endif %} Конкурент</a></th>
                 </tr>
             </thead>
             <tbody>
@@ -134,17 +187,17 @@
 
                             
                             </td>
-                            <td>
+                            <td  style="text-align: right;">
                                 {{ gr.count }}
                             </td>
-                            <td>
+                            <td style="text-align: right;">
                                 {{ gr.total_cost|floatformat:2 }}
                             </td>
-                            <td>
+                            <td style="text-align: right;">
                                 {{ gr.total_cost_eur |floatformat:2 }}
                             </td>
 
-                            <td>
+                            <td  style="text-align: center;">
                             {% if gr.record__recipient__is_competitor %} 
                                 <img src="{% static 'yes.png' %}" alt="yes"> 
                             {% else %}
