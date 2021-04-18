@@ -88,18 +88,23 @@ def getRecDates():
     return dates_dict
 
 def generateOrder(request,default_sort_order,default_sort_field):
-    #symbol for query
-    sort_order_symbol=''
-
     sort_order=default_sort_order
     sort_field=default_sort_field
+    #symbol for query
+    sort_order_symbol=''
+    if default_sort_order=='desc':
+        sort_order_symbol='-'
+
     # change sort order for link and generate symbol for current query
+
     if request.GET.get('sort_order'):
         if request.GET.get('sort_order')=='asc':
-            sort_order='desc'  # next link status   
+            sort_order='desc'  # next link status 
+            sort_order_symbol='-' # current query  
         if request.GET.get('sort_order')=='desc':
             sort_order='asc'  # next link status
-            sort_order_symbol='-' # current query
+            
+    print (sort_order)
     if request.GET.get('sort_field'):
         sort_field=request.GET.get('sort_field')
     order={'sort_order_symbol':sort_order_symbol,'sort_order':sort_order,'sort_field':sort_field}
@@ -276,6 +281,9 @@ def CompetitorsComparse(request):
 @login_required(login_url='login')
 @user_passes_test(lambda u: u.profile.ved_part, login_url='/')
 def IndividualReport(request):
+    order=generateOrder(request,'desc','total_cost')
+    print(order)
+    print(order['sort_order_symbol']+order['sort_field'])
     help_page_id = 7
     logUserData(request)
     context=dict()
@@ -296,8 +304,8 @@ def IndividualReport(request):
              Q(record__recipient__name__icontains=request.GET.get('search_string'))) & Q(record__date__range=[start_date, end_date]))\
                 .values('record__recipient__edrpou','record__recipient__name','record__recipient__is_competitor')\
                  .annotate(count=Count("cost_fact"),total_cost=Sum('cost_fact'),total_cost_eur=Sum((F('record__exchange__usd_nbu')/F('record__exchange__eur_nbu'))*F('cost_fact')), tms_count=Count('trademark__name',distinct=True),\
-                     tms=ArrayAgg('trademark__name', distinct=True)).order_by('-total_cost')
-
+                     tms=ArrayAgg('trademark__name', distinct=True)).order_by(order['sort_order_symbol']+order['sort_field'])
+        print(grecords_all.query)
         paginator = Paginator(grecords_all, 10)
         page_number = request.GET.get('page')
         try:
