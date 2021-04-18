@@ -576,27 +576,30 @@ def CompetitorsCatalog(request):
     yresult=Youscore_get(competitors_top)
     #print(yresult['ved'])
     competitors_list=[]
+    #print(yresult['fin'])
     for e in  yresult['fin']:
         #print (e)
         money_in=''
         utkved=[]
-        for f in yresult['fin'][e]['indicators']:
-            if f['field'] == 'Разом доходи' or f['field'] == 'Валовий: прибуток' :
-                money_in=str(f['min'])+"-"+str(f['max'])
-        for f in yresult['ved'][e]['topImportUktZed']:
-            utkved.append(str('<b>'+f['uktZed'])+'</b> - '+str(f['description']))
+        #print (yresult['fin'][e].keys())
+        if 'indicators' in yresult['fin'][e].keys():
+            for f in yresult['fin'][e]['indicators']:
+                if f['field'] == 'Разом доходи' or f['field'] == 'Валовий: прибуток' :
+                    money_in=str(f['min'])+"-"+str(f['max'])
+            for f in yresult['ved'][e]['topImportUktZed']:
+                utkved.append(str('<b>'+f['uktZed'])+'</b> - '+str(f['description']))
 
-        yresults_dict.update({  e:
-                                    {
-                                        'fin':{
-                                            'money_in': money_in,
-                                        },
-                                        'ved':{
-                                            'utkved': utkved,
+            yresults_dict.update({  e:
+                                        {
+                                            'fin':{
+                                                'money_in': money_in,
+                                            },
+                                            'ved':{
+                                                'utkved': utkved,
+                                            }
+
                                         }
-
-                                    }
-                            })
+                                })
 
     edrpou_list=[]
     for e in yresults_dict:

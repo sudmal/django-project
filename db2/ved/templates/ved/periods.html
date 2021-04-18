@@ -14,7 +14,7 @@
          {% for year,value in dates.items %}
             <div class="m-3 row"><button class="d-inline button">{{year}}</button>
             {% for month,status in value.items %}
-                <div class="d-inline p-2 m-1 rounded text-white {{ status |yesno:"bg-success,bg-dark"}}" >{{month}}</div>
+                <div class="d-inline p-2 m-1 rounded text-white {{ status |yesno:"bg-success,bg-secondary"}}" >{{month}}</div>
             {% endfor %}
             </div>
         {% endfor %}
