@@ -26,12 +26,78 @@
         <thead>
             <tr>
                 <th>№</th>
-                <th>Дата</th>
-                <th>Номер ГТД</th>
-                <th>Торговые марки</th>
-                <th>Записей</th>
-                <th>На сумму, $</th>
-                <th>На сумму, €</th>
+                <th>
+                    <a class="btn btn-light w-100 h-100" style="display: inline-block; white-space: nowrap;" href={% url 'ved:IndividualReportFirmShow' firm.edrpou %}?start_date={{ start_date }}&end_date={{ end_date }}&sort_field=record__date&sort_order={{ order.sort_order }}>
+                    {% if order.sort_field  ==  "record__date" %}
+                        {% if order.sort_order == 'asc' %}
+                            &#8673;
+                        {% elif order.sort_order == 'desc' %}
+                            &#8675;
+                        {% endif %}
+                     {% else %}
+                        &#8645;
+                    {% endif %}
+                Дата</a></th>
+                <th>
+                    <a class="btn btn-light w-100 h-100" style="display: inline-block; white-space: nowrap;" href={% url 'ved:IndividualReportFirmShow' firm.edrpou %}?start_date={{ start_date }}&end_date={{ end_date }}&sort_field=record__gtd_name&sort_order={{ order.sort_order }}>
+                    {% if order.sort_field  ==  "record__gtd_name" %}
+                        {% if order.sort_order == 'asc' %}
+                            &#8673;
+                        {% elif order.sort_order == 'desc' %}
+                            &#8675;
+                        {% endif %}
+                     {% else %}
+                        &#8645;
+                    {% endif %}
+                    Номер ГТД</a></th>
+                <th>
+                    <a class="btn btn-light w-100 h-100" style="display: inline-block; white-space: nowrap;" href={% url 'ved:IndividualReportFirmShow' firm.edrpou %}?start_date={{ start_date }}&end_date={{ end_date }}&sort_field=tms&sort_order={{ order.sort_order }}>
+                    {% if order.sort_field  ==  "tms" %}
+                        {% if order.sort_order == 'asc' %}
+                            &#8673;
+                        {% elif order.sort_order == 'desc' %}
+                            &#8675;
+                        {% endif %}
+                     {% else %}
+                        &#8645;
+                    {% endif %}
+                    Торговые марки</a></th>
+                <th>
+                    <a class="btn btn-light w-100 h-100" style="display: inline-block; white-space: nowrap;" href={% url 'ved:IndividualReportFirmShow' firm.edrpou %}?start_date={{ start_date }}&end_date={{ end_date }}&sort_field=count&sort_order={{ order.sort_order }}>
+                    {% if order.sort_field  ==  "count" %}
+                        {% if order.sort_order == 'asc' %}
+                            &#8673;
+                        {% elif order.sort_order == 'desc' %}
+                            &#8675;
+                        {% endif %}
+                     {% else %}
+                        &#8645;
+                    {% endif %}
+                    Записей</a></th>
+                <th>
+                
+                    <a class="btn btn-light w-100 h-100" style="display: inline-block; white-space: nowrap;" href={% url 'ved:IndividualReportFirmShow' firm.edrpou %}?start_date={{ start_date }}&end_date={{ end_date }}&sort_field=total_cost&sort_order={{ order.sort_order }}>
+                    {% if order.sort_field  ==  "total_cost" %}
+                        {% if order.sort_order == 'asc' %}
+                            &#8673;
+                        {% elif order.sort_order == 'desc' %}
+                            &#8675;
+                        {% endif %}
+                     {% else %}
+                        &#8645;
+                    {% endif %}На сумму, $</a></th>
+                <th>
+                    <a class="btn btn-light w-100 h-100" style="display: inline-block; white-space: nowrap;" href={% url 'ved:IndividualReportFirmShow' firm.edrpou %}?start_date={{ start_date }}&end_date={{ end_date }}&sort_field=total_cost_eur&sort_order={{ order.sort_order }}>
+                    {% if order.sort_field  ==  "total_cost_eur" %}
+                        {% if order.sort_order == 'asc' %}
+                            &#8673;
+                        {% elif order.sort_order == 'desc' %}
+                            &#8675;
+                        {% endif %}
+                     {% else %}
+                        &#8645;
+                    {% endif %}
+                    На сумму, €</a></th>
             </tr>
         </thead>
         <tbody>

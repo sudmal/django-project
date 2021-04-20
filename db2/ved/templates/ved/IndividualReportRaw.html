@@ -34,14 +34,110 @@ TODO:
         <!-- 'record__sender__name','record__sender__country__name','record__date','product_code','trademark__name','description','cost_fact' -->
             <tr>
                 <th>№</th>
-                <th>Дата</th>
-                <th>Экспортер</th>
-                <th>Страна</th>
-                <th>Торговая марка</th>
-                <th>Код товара</th>
-                <th>Описание</th>
-                <th>Стоимость, $</th>
-                <th>Стоимость, €</th>
+                <th>
+                    <a class="btn btn-light w-100 h-100" style="display: inline-block; white-space: nowrap;" href={% url 'ved:IndividualReportRaw' firm.edrpou gtd|urlencode:"" %}?start_date={{ start_date }}&end_date={{ end_date }}&sort_field=record__date&sort_order={{ order.sort_order }}>
+                    {% if order.sort_field  ==  "record__date" %}
+                        {% if order.sort_order == 'asc' %}
+                            &#8673;
+                        {% elif order.sort_order == 'desc' %}
+                            &#8675;
+                        {% endif %}
+                     {% else %}
+                        &#8645;
+                    {% endif %}
+                    Дата</a>
+                </th>
+                <th>
+                    <a class="btn btn-light w-100 h-100" style="display: inline-block; white-space: nowrap;" href={% url 'ved:IndividualReportRaw' firm.edrpou gtd|urlencode:"" %}?start_date={{ start_date }}&end_date={{ end_date }}&sort_field=record__sender__name&sort_order={{ order.sort_order }}>
+                    {% if order.sort_field  ==  "record__sender__name" %}
+                        {% if order.sort_order == 'asc' %}
+                            &#8673;
+                        {% elif order.sort_order == 'desc' %}
+                            &#8675;
+                        {% endif %}
+                     {% else %}
+                        &#8645;
+                    {% endif %}
+                    Экспортер</a>
+                </th>
+                <th>
+                    <a class="btn btn-light w-100 h-100" style="display: inline-block; white-space: nowrap;" href={% url 'ved:IndividualReportRaw' firm.edrpou gtd|urlencode:"" %}?start_date={{ start_date }}&end_date={{ end_date }}&sort_field=record__sender__country__name&sort_order={{ order.sort_order }}>
+                    {% if order.sort_field  ==  "record__sender__country__name" %}
+                        {% if order.sort_order == 'asc' %}
+                            &#8673;
+                        {% elif order.sort_order == 'desc' %}
+                            &#8675;
+                        {% endif %}
+                     {% else %}
+                        &#8645;
+                    {% endif %}
+                    Страна</a>
+                </th>
+                <th>
+                    <a class="btn btn-light w-100 h-100" style="display: inline-block; white-space: nowrap;" href={% url 'ved:IndividualReportRaw' firm.edrpou gtd|urlencode:"" %}?start_date={{ start_date }}&end_date={{ end_date }}&sort_field=trademark__name&sort_order={{ order.sort_order }}>
+                    {% if order.sort_field  ==  "trademark__name" %}
+                        {% if order.sort_order == 'asc' %}
+                            &#8673;
+                        {% elif order.sort_order == 'desc' %}
+                            &#8675;
+                        {% endif %}
+                     {% else %}
+                        &#8645;
+                    {% endif %}
+                    Торговая марка</a>
+                </th>
+                <th>
+                    <a class="btn btn-light w-100 h-100" style="display: inline-block; white-space: nowrap;" href={% url 'ved:IndividualReportRaw' firm.edrpou gtd|urlencode:"" %}?start_date={{ start_date }}&end_date={{ end_date }}&sort_field=product_code&sort_order={{ order.sort_order }}>
+                    {% if order.sort_field  ==  "product_code" %}
+                        {% if order.sort_order == 'asc' %}
+                            &#8673;
+                        {% elif order.sort_order == 'desc' %}
+                            &#8675;
+                        {% endif %}
+                     {% else %}
+                        &#8645;
+                    {% endif %}
+                    Код товара</a>
+                </th>
+                <th>
+                    <a class="btn btn-light w-100 h-100" style="display: inline-block; white-space: nowrap;" href={% url 'ved:IndividualReportRaw' firm.edrpou gtd|urlencode:"" %}?start_date={{ start_date }}&end_date={{ end_date }}&sort_field=description&sort_order={{ order.sort_order }}>
+                    {% if order.sort_field  ==  "description" %}
+                        {% if order.sort_order == 'asc' %}
+                            &#8673;
+                        {% elif order.sort_order == 'desc' %}
+                            &#8675;
+                        {% endif %}
+                     {% else %}
+                        &#8645;
+                    {% endif %}
+                    Описание</a>
+                </th>
+                <th>
+                    <a class="btn btn-light w-100 h-100" style="display: inline-block; white-space: nowrap;" href={% url 'ved:IndividualReportRaw' firm.edrpou gtd|urlencode:"" %}?start_date={{ start_date }}&end_date={{ end_date }}&sort_field=cost_fact&sort_order={{ order.sort_order }}>
+                    {% if order.sort_field  ==  "cost_fact" %}
+                        {% if order.sort_order == 'asc' %}
+                            &#8673;
+                        {% elif order.sort_order == 'desc' %}
+                            &#8675;
+                        {% endif %}
+                     {% else %}
+                        &#8645;
+                    {% endif %}
+                    Стоимость, $</a>
+                </th>
+                <th>
+                    <a class="btn btn-light w-100 h-100" style="display: inline-block; white-space: nowrap;" href={% url 'ved:IndividualReportRaw' firm.edrpou gtd|urlencode:"" %}?start_date={{ start_date }}&end_date={{ end_date }}&sort_field=cost_fact_eur&sort_order={{ order.sort_order }}>
+                    {% if order.sort_field  ==  "cost_fact_eur" %}
+                        {% if order.sort_order == 'asc' %}
+                            &#8673;
+                        {% elif order.sort_order == 'desc' %}
+                            &#8675;
+                        {% endif %}
+                     {% else %}
+                        &#8645;
+                    {% endif %}
+                    Стоимость, €</a>
+                </th>
             </tr>
         </thead>
         <tbody>

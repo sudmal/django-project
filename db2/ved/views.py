@@ -17,9 +17,15 @@ import datetime
 import requests
 import json 
 import hashlib
+from django.core.cache import caches
 
 from django.contrib.postgres.aggregates import ArrayAgg
 from django_tables2 import RequestConfig
+
+
+## https://dizballanze.com/ru/django-project-optimization-part-3/
+cache = caches['default']  # `default` is a key from CACHES dict in settings.py
+cache.clear()
 
 
 # if now is not jan or feb, year is current year, other way - previus
@@ -285,7 +291,6 @@ def CompetitorsComparse(request):
 @user_passes_test(lambda u: u.profile.ved_part, login_url='/')
 def IndividualReport(request):
     order=generateOrder(request,'desc','total_cost')
-    print(order)
     help_page_id = 7
     context=dict()
     start_date=year+'-01-01'
@@ -333,6 +338,7 @@ def IndividualReport(request):
 @login_required(login_url='login')
 def IndividualReportFirmShow(request,edrpou_num):
     help_page_id = 7
+    order=generateOrder(request,'asc','record__date')
     context=dict()
     start_date=year+'-01-01'
     end_date=year+'-12-31'
@@ -347,7 +353,9 @@ def IndividualReportFirmShow(request,edrpou_num):
         firm=Organisation.objects.get(edrpou = edrpou_num)
         queryset_list = GtdRecords.objects.filter((Q(record__recipient__edrpou=edrpou_num) & Q(record__date__range=[start_date, end_date])))\
             .values('record__date','record__gtd_name').order_by('record__date')\
-                .annotate(count=Count("cost_fact"),total_cost=Sum('cost_fact'),total_cost_eur=Sum((F('record__exchange__usd_nbu')/F('record__exchange__eur_nbu'))*F('cost_fact')),tms=ArrayAgg('trademark__name', distinct=True))
+                .annotate(count=Count("cost_fact"),total_cost=Sum('cost_fact'),\
+                    total_cost_eur=Sum((F('record__exchange__usd_nbu')/F('record__exchange__eur_nbu'))*F('cost_fact')),tms=ArrayAgg('trademark__name', distinct=True))\
+                    .order_by(order['sort_order_symbol']+order['sort_field'])
         paginator = Paginator(queryset_list, 50)
         page_number = request.GET.get('page')
         try:
@@ -365,6 +373,7 @@ def IndividualReportFirmShow(request,edrpou_num):
             'start_date': request.GET['start_date'], 
             'end_date':request.GET['end_date']
             }
+        context.update({'order':order})
         return render(request,'ved/IndividualReportFirmShow.html',context)
     else:
         return HttpResponse('EDRPOU {0} IS NOT VALID.<br><a href="/">  - Go back</a>'.format(edrpou_num))
@@ -372,6 +381,7 @@ def IndividualReportFirmShow(request,edrpou_num):
 @login_required(login_url='login')
 def IndividualReportRaw(request,edrpou_num,gtd_num):
     help_page_id=7
+    order=generateOrder(request,'asc','record__date')
     logUserData(request)
     context=dict()
     dates=getRecDates()
@@ -379,7 +389,7 @@ def IndividualReportRaw(request,edrpou_num,gtd_num):
     firm=Organisation.objects.get(edrpou = edrpou_num)
     queryset_list = GtdRecords.objects.filter((Q(record__recipient__edrpou=edrpou_num) & Q(record__gtd_name=gtd)))\
             .values('record__sender__name','record__sender__country__name','record__date','product_code','trademark__name','description','cost_fact')\
-                .annotate(total_cost_eur=Sum((F('record__exchange__usd_nbu')/F('record__exchange__eur_nbu'))*F('cost_fact'))).order_by('record__date')
+                .annotate(total_cost_eur=Sum((F('record__exchange__usd_nbu')/F('record__exchange__eur_nbu'))*F('cost_fact'))).order_by(order['sort_order_symbol']+order['sort_field'])
     paginator = Paginator(queryset_list, 10)
     page_number = request.GET.get('page')
     records = paginator.get_page(page_number)
@@ -392,6 +402,7 @@ def IndividualReportRaw(request,edrpou_num,gtd_num):
                 'records': records,
                 'gtd': gtd,
                 'edrpou_num':edrpou_num,
+                'order':order,
             }
     return render(request,'ved/IndividualReportRaw.html',context)
 
