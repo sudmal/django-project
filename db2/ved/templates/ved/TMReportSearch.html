@@ -59,10 +59,54 @@
         <thead>
             <tr>
                 <th>№</th>
-                <th>Торговая марка</th>
-                <th>Записей</th>
-                <th>На сумму, $</th>
-                <th>На сумму, €</th>
+                <th>                    
+                    <a class="btn btn-light w-100 h-100" style="display: inline-block; white-space: nowrap;" href={% url 'ved:TrademarkReportSearch' %}?start_date={{ start_date }}&end_date={{ end_date }}&sort_field=trademark__name&sort_order={{ order.sort_order }}&search_string={{ request.GET.search_string }}>
+                    {% if order.sort_field  ==  "trademark__name" %}
+                        {% if order.sort_order == 'asc' %}
+                            &#8673;
+                        {% elif order.sort_order == 'desc' %}
+                            &#8675;
+                        {% endif %}
+                     {% else %}
+                        &#8645;
+                    {% endif %}
+                    Торговая марка</a></th>
+                <th>                    
+                    <a class="btn btn-light w-100 h-100" style="display: inline-block; white-space: nowrap;" href={% url 'ved:TrademarkReportSearch' %}?start_date={{ start_date }}&end_date={{ end_date }}&sort_field=count&sort_order={{ order.sort_order }}&search_string={{ request.GET.search_string }}>
+                    {% if order.sort_field  ==  "count" %}
+                        {% if order.sort_order == 'asc' %}
+                            &#8673;
+                        {% elif order.sort_order == 'desc' %}
+                            &#8675;
+                        {% endif %}
+                     {% else %}
+                        &#8645;
+                    {% endif %}
+                    Записей</a></th>
+                <th>                    
+                    <a class="btn btn-light w-100 h-100" style="display: inline-block; white-space: nowrap;" href={% url 'ved:TrademarkReportSearch' %}?start_date={{ start_date }}&end_date={{ end_date }}&sort_field=total_cost&sort_order={{ order.sort_order }}&search_string={{ request.GET.search_string }}>
+                    {% if order.sort_field  ==  "total_cost" %}
+                        {% if order.sort_order == 'asc' %}
+                            &#8673;
+                        {% elif order.sort_order == 'desc' %}
+                            &#8675;
+                        {% endif %}
+                     {% else %}
+                        &#8645;
+                    {% endif %}
+                    На сумму, $</a></th>
+                <th>                    
+                    <a class="btn btn-light w-100 h-100" style="display: inline-block; white-space: nowrap;" href={% url 'ved:TrademarkReportSearch' %}?start_date={{ start_date }}&end_date={{ end_date }}&sort_field=total_cost_eur&sort_order={{ order.sort_order }}&search_string={{ request.GET.search_string }}>
+                    {% if order.sort_field  ==  "total_cost_eur" %}
+                        {% if order.sort_order == 'asc' %}
+                            &#8673;
+                        {% elif order.sort_order == 'desc' %}
+                            &#8675;
+                        {% endif %}
+                     {% else %}
+                        &#8645;
+                    {% endif %}
+                    На сумму, €</a></th>
             </tr>
         </thead>
         <tbody>

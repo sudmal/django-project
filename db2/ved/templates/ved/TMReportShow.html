@@ -25,11 +25,66 @@
         <thead class="thead-light">
             <tr>
                 <th scope="col">№</th>
-                <th scope="col">ЕДРПОУ</th>
-                <th scope="col">Наименование получателя</th>
-                <th scope="col">Количество записей</th>
-                <th scope="col">Сумма, $</th>
-                <th scope="col">Сумма, €</th>
+                <th scope="col">                    
+                    <a class="btn btn-light w-100 h-100" style="display: inline-block; white-space: nowrap;" href={% url 'ved:TrademarkReportShow' trademark_name|urlencode:"" %}?start_date={{ start_date }}&end_date={{ end_date }}&sort_field=record__recipient__edrpou&sort_order={{ order.sort_order }}>
+                    {% if order.sort_field  ==  "record__recipient__edrpou" %}
+                        {% if order.sort_order == 'asc' %}
+                            &#8673;
+                        {% elif order.sort_order == 'desc' %}
+                            &#8675;
+                        {% endif %}
+                     {% else %}
+                        &#8645;
+                    {% endif %}
+                    ЕДРПОУ</a></th>
+                <th scope="col">                    
+                    <a class="btn btn-light w-100 h-100" style="display: inline-block; white-space: nowrap;" href={% url 'ved:TrademarkReportShow' trademark_name|urlencode:"" %}?start_date={{ start_date }}&end_date={{ end_date }}&sort_field=record__recipient__name&sort_order={{ order.sort_order }}>
+                    {% if order.sort_field  ==  "record__recipient__name" %}
+                        {% if order.sort_order == 'asc' %}
+                            &#8673;
+                        {% elif order.sort_order == 'desc' %}
+                            &#8675;
+                        {% endif %}
+                     {% else %}
+                        &#8645;
+                    {% endif %}
+                    Наименование получателя</a></th>
+                <th scope="col">                    
+                    <a class="btn btn-light w-100 h-100" style="display: inline-block; white-space: nowrap;" href={% url 'ved:TrademarkReportShow' trademark_name|urlencode:"" %}?start_date={{ start_date }}&end_date={{ end_date }}&sort_field=count&sort_order={{ order.sort_order }}>
+                    {% if order.sort_field  ==  "count" %}
+                        {% if order.sort_order == 'asc' %}
+                            &#8673;
+                        {% elif order.sort_order == 'desc' %}
+                            &#8675;
+                        {% endif %}
+                     {% else %}
+                        &#8645;
+                    {% endif %}
+                    Количество записей</a></th>
+                <th scope="col">                    
+                    <a class="btn btn-light w-100 h-100" style="display: inline-block; white-space: nowrap;" href={% url 'ved:TrademarkReportShow' trademark_name|urlencode:"" %}?start_date={{ start_date }}&end_date={{ end_date }}&sort_field=total_cost&sort_order={{ order.sort_order }}>
+                    {% if order.sort_field  ==  "total_cost" %}
+                        {% if order.sort_order == 'asc' %}
+                            &#8673;
+                        {% elif order.sort_order == 'desc' %}
+                            &#8675;
+                        {% endif %}
+                     {% else %}
+                        &#8645;
+                    {% endif %}
+                    Сумма, $</a></th>
+                <th scope="col">                    
+                    <a class="btn btn-light w-100 h-100" style="display: inline-block; white-space: nowrap;" href={% url 'ved:TrademarkReportShow' trademark_name|urlencode:"" %}?start_date={{ start_date }}&end_date={{ end_date }}&sort_field=total_cost_eur&sort_order={{ order.sort_order }}>
+                    {% if order.sort_field  ==  "total_cost_eur" %}
+                        {% if order.sort_order == 'asc' %}
+                            &#8673;
+                        {% elif order.sort_order == 'desc' %}
+                            &#8675;
+                        {% endif %}
+                     {% else %}
+                        &#8645;
+                    {% endif %}
+                    Сумма, €</a></th>
                 <th scope="col">Доля, %</th>
             </tr>
         </thead>

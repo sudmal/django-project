@@ -409,6 +409,7 @@ def IndividualReportRaw(request,edrpou_num,gtd_num):
 @login_required(login_url='login')
 def TrademarkReportSearch(request):
     help_page_id=9
+    order=generateOrder(request,'desc','total_cost')
     context=dict()
     start_date=year+'-01-01'
     end_date=year+'-12-31'
@@ -424,7 +425,7 @@ def TrademarkReportSearch(request):
         search_form = SearchForm(request.GET)
         grecords_all = GtdRecords.objects.filter((Q(trademark__name__icontains=request.GET.get('search_string')) & Q(record__date__range=[start_date, end_date])))\
            .values('trademark__name').annotate(count=Count("product_code"),total_cost=Sum('cost_fact'),\
-               total_cost_eur=Sum((F('record__exchange__usd_nbu')/F('record__exchange__eur_nbu'))*F('cost_fact'))).order_by('-total_cost')
+               total_cost_eur=Sum((F('record__exchange__usd_nbu')/F('record__exchange__eur_nbu'))*F('cost_fact'))).order_by(order['sort_order_symbol']+order['sort_field'])
         context = {
                 'grecords_all': grecords_all,
                 'search_form': search_form,
@@ -433,12 +434,14 @@ def TrademarkReportSearch(request):
         }
     context.update({"search_form": search_form})
     context.update({'dates': dates})
-    context.update({'help_page_id':help_page_id,})
+    context.update({'help_page_id':help_page_id})
+    context.update({'order':order})
     return render(request,'ved/TMReportSearch.html',context)
 
 @login_required(login_url='login')
 def TrademarkReportShow(request,trademark_name):
     help_page_id=9
+    order=generateOrder(request,'desc','total_cost')
     context=dict()
     start_date=year+'-01-01'
     end_date=year+'-12-31'
@@ -454,7 +457,7 @@ def TrademarkReportShow(request,trademark_name):
         context.update({'trademark_name':trademark_name})
         queryset_list1 = GtdRecords.objects.filter((Q(trademark__name=trademark_name) & Q(record__date__range=[start_date, end_date])))\
            .values('record__recipient__edrpou','record__recipient__name').annotate(count=Count("cost_fact"),total_cost=Sum('cost_fact'),\
-               total_cost_eur=Sum((F('record__exchange__usd_nbu')/F('record__exchange__eur_nbu'))*F('cost_fact'))).order_by('-total_cost')
+               total_cost_eur=Sum((F('record__exchange__usd_nbu')/F('record__exchange__eur_nbu'))*F('cost_fact'))).order_by(order['sort_order_symbol']+order['sort_field'])
         total_sum=0
         for c in queryset_list1:
             total_sum+=c['total_cost']
@@ -464,10 +467,12 @@ def TrademarkReportShow(request,trademark_name):
     context.update({'competitors':competitors})
     context.update({'request':request})
     context.update({'help_page_id':help_page_id})
+    context.update({'order':order})
     return render(request,'ved/TMReportShow.html',context)
 
 @login_required(login_url='login')
 def TrademarkReportRaw(request,trademark_name,edrpou_num):
+    order=generateOrder(request,'asc','record__date')
     start_date=year+'-01-01'
     end_date=year+'-12-31'
     if request.GET.get('start_date'):
@@ -482,11 +487,11 @@ def TrademarkReportRaw(request,trademark_name,edrpou_num):
     firm=Organisation.objects.get(edrpou = edrpou_num)
     queryset_list = GtdRecords.objects.filter(Q(record__recipient__edrpou=edrpou_num) & Q(trademark__name=trademark_name) & Q(record__date__range=[start_date, end_date]))\
             .values('record__sender__name','record__sender__country__name','record__date','product_code','description','cost_fact')\
-                .annotate(cost_eur=Sum((F('record__exchange__usd_nbu')/F('record__exchange__eur_nbu'))*F('cost_fact')),).order_by('record__date')
+                .annotate(cost_eur=Sum((F('record__exchange__usd_nbu')/F('record__exchange__eur_nbu'))*F('cost_fact'))).order_by(order['sort_order_symbol']+order['sort_field'])
     summ = GtdRecords.objects.filter(Q(record__recipient__edrpou=edrpou_num) & Q(trademark__name=trademark_name) & Q(record__date__range=[start_date, end_date]))\
                 .aggregate(cost_usd=Sum('cost_fact'))
     tm_firm_summ=summ['cost_usd']
-    paginator = Paginator(queryset_list, 10)
+    paginator = Paginator(queryset_list, 25)
     page_number = request.GET.get('page')
     records = paginator.get_page(page_number)
     context = {
@@ -498,6 +503,7 @@ def TrademarkReportRaw(request,trademark_name,edrpou_num):
                 'trademark_name': trademark_name,
                 'edrpou_num':edrpou_num,
                 'tm_firm_summ':tm_firm_summ,
+                'order':order,
             }
     help_page_id=9
     context.update({'help_page_id':help_page_id})
