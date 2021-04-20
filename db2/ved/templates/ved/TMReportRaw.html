@@ -153,7 +153,7 @@ TODO:
                 <td style="width: 40%">
                 {% with countern=forloop.counter0|add:records.start_index %}
                     <button class="btn btn-light border rounded" style="height: 35px;" type="button" data-toggle="collapse" data-target="#data-collapse-{{ countern }}" aria-expanded="false" aria-controls="data-collapse-{{ countern }}">
-                       &#8675;&#8675;&#8675; Нажмите чтобы отобразить/скрыть текст описания &#8675;&#8675;&#8675;
+                       <small>&#8675;&#8675;&#8675; Нажмите чтобы отобразить/скрыть текст описания &#8675;&#8675;&#8675;</small>
                     </button>
                     <div class="collapse" id="data-collapse-{{ countern }}">
                     {% autoescape off %}
