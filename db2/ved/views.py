@@ -308,8 +308,8 @@ def IndividualReport(request):
         grecords_all = GtdRecords.objects.filter((Q(record__recipient__edrpou__startswith=request.GET.get('search_string')) | \
              Q(record__recipient__name__icontains=request.GET.get('search_string'))) & Q(record__date__range=[start_date, end_date]))\
                 .values('record__recipient__edrpou','record__recipient__name','record__recipient__is_competitor')\
-                 .annotate(count=Count("cost_fact"),total_cost=Sum('cost_fact'),total_cost_eur=Sum((F('record__exchange__usd_nbu')/F('record__exchange__eur_nbu'))*F('cost_fact')), tms_count=Count('trademark__name',distinct=True),\
-                     tms=ArrayAgg('trademark__name', distinct=True)).order_by(order['sort_order_symbol']+order['sort_field'])
+                 .annotate(count=Count("cost_fact"),total_cost=Sum('cost_fact'),total_cost_eur=Sum((F('record__exchange__usd_nbu')/F('record__exchange__eur_nbu'))*F('cost_fact')), tms_count=Count('trademark__name',distinct=True))\
+                     .order_by(order['sort_order_symbol']+order['sort_field'])
         #print(grecords_all.query)
         paginator = Paginator(grecords_all, 10)
         page_number = request.GET.get('page')

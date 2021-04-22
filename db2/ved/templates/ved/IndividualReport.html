@@ -89,19 +89,6 @@
                     Наименование организации</a>
                     </th>
                     <th>
-                    <a class="btn btn-light w-100 h-100" style="display: inline-block; white-space: nowrap;" href={% url 'ved:IndividualReport' %}?start_date={{ start_date }}&end_date={{ end_date }}&sort_field=tms&sort_order={{ order.sort_order }}&search_string={{ request.GET.search_string }}>
-                    {% if order.sort_field  ==  "tms" %}
-                        {% if order.sort_order == 'asc' %}
-                            &#8673;
-                        {% elif order.sort_order == 'desc' %}
-                            &#8675;
-                        {% endif %}
-                     {% else %}
-                        &#8645;
-                    {% endif %}
-                    Торговые марки</a>
-                    </th>
-                    <th>
                     <a class="btn btn-light w-100 h-100" style="display: inline-block; white-space: nowrap;" href={% url 'ved:IndividualReport' %}?start_date={{ start_date }}&end_date={{ end_date }}&sort_field=count&sort_order={{ order.sort_order }}&search_string={{ request.GET.search_string }}>
                     {% if order.sort_field  ==  "count" %}
                         {% if order.sort_order == 'asc' %}
@@ -159,34 +146,6 @@
                                 <a class="btn btn-primary font-weight-bold" href="{% url 'ved:IndividualReportFirmShow' gr.record__recipient__edrpou %}?start_date={{ start_date }}&end_date={{ end_date }}">{{ gr.record__recipient__edrpou | cut:' ' }}</a> 
                             </td>
                             <td ><span class="h6">{% autoescape off %} {{ gr.record__recipient__name | bold_in_quotes }} {% endautoescape %}</span> </td>
-                            <td>
-                            {% with countern=forloop.counter0|add:grecords.start_index %}
-                                {% for tm in gr.tms %}
-                                    {% if forloop.counter <= 5  %}
-                                        {% if forloop.counter == 1 %}
-                                            <div class="d-inline border border-secondary rounded p-1 bg-light font-weight-bold">
-                                                <a href="{% url 'ved:TrademarkReportShow' tm|urlencode:"" %}?start_date={{ start_date }}&end_date={{ end_date }}">{% autoescape off %}{{ tm }}{% endautoescape %}</a>
-                                            </div>
-                                            {% if  gr.tms_count > 1 %}
-                                                <button class="btn btn-light border rounded" style="height: 35px;" type="button" data-toggle="collapse" data-target="#tm-list-{{ countern }}" aria-expanded="false" aria-controls="tm-list-{{ countern }}">
-                                                ({{gr.tms_count}}) 
-                                            </button>
-                                            {% endif %}
-                                            <div class="collapse" id="tm-list-{{ countern }}">
-                                        {% endif %}
-                                        {% if forloop.counter > 1 %}
-        
-                                            <div class=" border border-secondary rounded p-1 bg-light font-weight-bold">
-                                                <a href="{% url 'ved:TrademarkReportShow' tm|urlencode:"" %}?start_date={{ start_date }}&end_date={{ end_date }}">{% autoescape off %}{{ tm }}{% endautoescape %}</a>
-                                            </div>
-                                        {% endif %}
-                                    {% endif %}
-                                {% endfor %}
-                            {% endwith %}
-                            </div>
-
-                            
-                            </td>
                             <td  style="text-align: right;">
                                 {{ gr.count }}
                             </td>
