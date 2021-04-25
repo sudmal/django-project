@@ -686,7 +686,7 @@ def CompetitorsCatalogPeriodDetail(request,edrpou_num):
     CompetitorsDetailRaw = RecordsCompetitors.objects.filter(Q(recipient_code=edrpou_num) & Q(date__range=[start_date, end_date])).values('date','gtd','country', 'sender_name', 'recipient_name','recipient_code','product_code','trademark','description','cost_fact','cost_customs').order_by('date')
     if request.GET.get('SearchString'):
         #print("additional filtering by string "+request.GET.get('SearchString'))
-        CompetitorsDetailRaw = CompetitorsDetailRaw.filter(Q(description__icontains=request.GET.get('SearchString')) | Q(trademark__icontains=request.GET.get('SearchString')) )
+        CompetitorsDetailRaw = CompetitorsDetailRaw.filter(Q(description__icontains=request.GET.get('SearchString')) | Q(trademark__icontains=request.GET.get('SearchString')) | Q(gtd__icontains=request.GET.get('SearchString')) )
     table = CompetitorsComparsePeriodDetailTable(CompetitorsDetailRaw)
     RequestConfig(request, paginate={"per_page": 50}).configure(table)
     export_format = request.GET.get("_export", None)
