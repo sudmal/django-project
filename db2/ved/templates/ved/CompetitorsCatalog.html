@@ -70,11 +70,20 @@ $(document).ready(function(){
 						<td><a name="" id="" class="btn btn-secondary" href="{% url 'ved:CompetitorsCatalogPeriodDetail' firm.record__recipient__edrpou  %}" role="button">Перейти</a></td>
 						<td>{{ firm.y_fin_m_in }}</td>
 						<td>
-							{% for utk in firm.y_ved_utk %}
-							<p>
-								{{ utk|truncatechars:120|safe }}
-							</p>
-							{% endfor %}
+							{% with countern=forloop.counter%}
+								<button class="btn btn-light border rounded" style="height: 35px;" type="button" data-toggle="collapse" data-target="#data-collapse-{{ countern }}" aria-expanded="false" aria-controls="data-collapse-{{ countern }}">
+								<small>&#8675;&#8675;&#8675; Нажмите чтобы отобразить/скрыть текст описания &#8675;&#8675;&#8675;</small>
+								</button>
+								<div class="collapse" id="data-collapse-{{ countern }}">
+									{% for utk in firm.y_ved_utk %}
+										<p>
+											{{ utk|truncatechars:120|safe }}
+										</p>
+									{% endfor %}
+								</div>
+							{% endwith %}
+
+
 							</td>
 						</tr>
 						{% endfor %}

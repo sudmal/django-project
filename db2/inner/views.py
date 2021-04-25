@@ -923,7 +923,7 @@ def CompetitorsCatalog(request):
         .values('seller__edrpou','seller__name')\
             .annotate(total_cost=Sum(F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2),\
                 total_count=Count('one_product_cost')).order_by('-total_cost')
-    
+    print(competitors.query)
     edrpou_list=[]
     context={
         'competitors':competitors,

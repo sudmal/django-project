@@ -9,7 +9,7 @@ import django_tables2 as tables
 from django_tables2.export.export import TableExport
 from django_tables2.export.views import ExportMixin
 from .models import Competitors
-from .models import Organisation,GtdRecords,Records,Trademark,Sender,Country,TnvedGroup,Exchange,filter_codes,TnvedGroup,Youscore,RecordsStaging
+from .models import Organisation,GtdRecords,Records,Trademark,Sender,Country,TnvedGroup,Exchange,filter_codes,TnvedGroup,Youscore,RecordsStaging,RecordsCompetitors
 from .forms import SearchForm,SearchFormOrg
 from .tables import CompetitorsComparsePeriodDetailTable
 from django.db.models import Count, Sum, Q, Avg, Subquery, OuterRef, F, FloatField, Max
@@ -681,11 +681,11 @@ def CompetitorsCatalogPeriodDetail(request,edrpou_num):
         end_date=request.GET.get('end_date')
     firm=Organisation.objects.get(edrpou = edrpou_num)
  
-    period_summ = str(RecordsStaging.objects.filter(recipient_code=edrpou_num,date__range=[start_date, end_date]).aggregate(Sum('cost_fact'))['cost_fact__sum'])
-    print(period_summ)
-    CompetitorsDetailRaw = RecordsStaging.objects.filter(Q(recipient_code=edrpou_num) & Q(date__range=[start_date, end_date])).values('date','gtd','country', 'sender_name', 'recipient_name','recipient_code','product_code','trademark','description','cost_fact','cost_customs').order_by('date')
+    period_summ = str(RecordsCompetitors.objects.filter(recipient_code=edrpou_num,date__range=[start_date, end_date]).aggregate(Sum('cost_fact'))['cost_fact__sum'])
+    #print(period_summ)
+    CompetitorsDetailRaw = RecordsCompetitors.objects.filter(Q(recipient_code=edrpou_num) & Q(date__range=[start_date, end_date])).values('date','gtd','country', 'sender_name', 'recipient_name','recipient_code','product_code','trademark','description','cost_fact','cost_customs').order_by('date')
     if request.GET.get('SearchString'):
-        print("additional filtering by string "+request.GET.get('SearchString'))
+        #print("additional filtering by string "+request.GET.get('SearchString'))
         CompetitorsDetailRaw = CompetitorsDetailRaw.filter(Q(description__icontains=request.GET.get('SearchString')) | Q(trademark__icontains=request.GET.get('SearchString')) )
     table = CompetitorsComparsePeriodDetailTable(CompetitorsDetailRaw)
     RequestConfig(request, paginate={"per_page": 50}).configure(table)
