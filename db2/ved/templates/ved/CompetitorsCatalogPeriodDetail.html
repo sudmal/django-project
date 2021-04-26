@@ -13,6 +13,9 @@
 
 {% block js-before %}
 <link rel="stylesheet" href="{% static 'django_tables2/themes/paleblue/css/screen.css' %}" />
+<style>
+.highlight { background-color: yellow }
+</style>
 {% endblock js-before %}
 
 {% block export_button %}
@@ -56,8 +59,14 @@
     </div>
 
 </div>
+
+
 {% endautoescape %}
 {% render_table table %}
 {% endcache %}
 {% include 'ved/periods.html' %}
+<script>
+$('td').highlight('{{ SearchString }}');
+
+</script>
 {% endblock content %}

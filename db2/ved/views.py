@@ -24,8 +24,8 @@ from django_tables2 import RequestConfig
 
 
 ## https://dizballanze.com/ru/django-project-optimization-part-3/
-cache = caches['default']  # `default` is a key from CACHES dict in settings.py
-cache.clear()
+#cache = caches['default']  # `default` is a key from CACHES dict in settings.py
+#cache.clear()
 
 
 # if now is not jan or feb, year is current year, other way - previus
