@@ -10,7 +10,7 @@ from django.views.decorators.cache import cache_page
 import django_tables2 as tables
 from django_tables2.export.export import TableExport
 from django_tables2.export.views import ExportMixin
-from .models import Exchange,Youscore,ReestrStaging,CreditStaging,NlCredit,NlOrg,NlProduct,NlReestr,NlFilter,Competitors,Organisation
+from .models import Exchange,Youscore,ReestrStaging,CreditStaging,NlCredit,NlOrg,NlOrgClass,NlProduct,NlReestr,NlFilter,Competitors,Organisation
 from django.db.models import Count, Sum, Q, Avg, Subquery, OuterRef, F, FloatField, Max
 from django.db.models import FloatField
 from django.db.models.functions import Cast
@@ -119,6 +119,8 @@ def generateOrder(request,default_sort_order,default_sort_field):
     order={'sort_order_symbol':sort_order_symbol,'sort_order':sort_order,'sort_field':sort_field}
     return order
 
+
+
 def Youscore_get(competitors_top):
     year=2019
     api_key='1f0900000ebe229bcca6e39128b59d5be1fa2bb7'
@@ -170,31 +172,20 @@ def index(request):
 
 @login_required(login_url='login')
 def test(request):
+    # https://daruse.ru/prostaya-filtracziya-tabliczyi-na-jquery
     year=getCurrentYear()
     start_date=year+'-01-01'
     end_date=year+'-12-31'
-            ### FIX THIS!  # Получаем все записи из базы, соответствующие buyer_id и передаем в словарь {buyer_id,date,cost}
-                           # считаем сумму для каждого месяца
-                           # for m in 1...12
-    print('Get data from db')
-    df=pd.DataFrame(list(NlReestr.objects.filter(seller__edrpou=41189553,ordering_date__range=[start_date, end_date]).values('buyer__edrpou','ordering_date','one_product_cost','count','exchange__eur_com','exchange__eur_nbu','exchange__usd_com','exchange__usd_nbu','exchange__eur_mb_buy','exchange__eur_mb_sale')))
-    '''print('Generate df_data list')
-    df_data=[]
-    for t in ttt1:
-        df_data.append(t)
-    print('done')
-    df=pd.DataFrame(df_data)'''
-    df['ordering_date'] = pd.to_datetime(df['ordering_date'])
-    print(df.head())
-    print(df.dtypes)
-    edrpous=df['buyer__edrpou'].unique()
-    print (edrpous)
-    for e in edrpous:    
-        df1=df[df['buyer__edrpou']==e].groupby(df['ordering_date'].dt.strftime('%m'))['one_product_cost'].sum()
+    competitors=NlReestr.objects.all().values('seller__edrpou','seller__name','seller__class_field__name')\
+            .annotate(total_cost=Sum(F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2),\
+                total_count=Count('one_product_cost')).order_by('-total_cost')
 
+    edrpou_list=[]
     context={
+        'competitors':competitors,
         'year':year,
-    }
+        }
+    context.update({'help_page_id':17})
     return render(request,'inner/test.html',context)
 
 @login_required(login_url='login')
@@ -218,6 +209,7 @@ def SalesIndividual(request):
             organisations=organisations.annotate(sum=Sum((F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2)/F('exchange__eur_mb_sale'))).order_by('-sum')
         elif currency == 'USD':
             organisations=organisations.annotate(sum=Sum((F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2)/F('exchange__usd_com'))).order_by('-sum')   
+        print(organisations.query)
     context={
         'organisations':organisations,
         'currency':currency,
@@ -916,14 +908,14 @@ def PurchasesIndividualFirmRaw(request,edrpou_num,seller_code):
 
 @login_required(login_url='login')
 def CompetitorsCatalog(request):
+   # https://daruse.ru/prostaya-filtracziya-tabliczyi-na-jquery
     year=getCurrentYear()
     start_date=year+'-01-01'
     end_date=year+'-12-31'
-    competitors=NlReestr.objects.filter(Q(seller__edrpou__in=Competitors.objects.all().values('competitor_code')))\
-        .values('seller__edrpou','seller__name')\
+    competitors=NlReestr.objects.all().values('seller__edrpou','seller__name','seller__class_field__name')\
             .annotate(total_cost=Sum(F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2),\
                 total_count=Count('one_product_cost')).order_by('-total_cost')
-    print(competitors.query)
+
     edrpou_list=[]
     context={
         'competitors':competitors,

@@ -94,10 +94,18 @@ class NlOrg(models.Model):
     id = models.BigAutoField(primary_key=True)
     name = models.TextField(blank=True, null=True)
     edrpou = models.BigIntegerField(unique=True)
+    class_field = models.ForeignKey('NlOrgClass', models.DO_NOTHING, db_column='class')  # Field renamed because it was a Python reserved word.
 
     class Meta:
         managed = False
         db_table = 'nl_org'
+
+
+class NlOrgClass(models.Model):
+    name = models.TextField(unique=True)
+    class Meta:
+        managed = False
+        db_table = 'nl_org_class'
 
 
 class NlProduct(models.Model):

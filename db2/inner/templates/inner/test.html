@@ -1,15 +1,227 @@
 {% extends 'main/base.html' %}
-{% load times %}
+{% load bold_in_quotes %}
+{% load cache %}
 
 {% block title %}
-Тесты
+Внутренний рынок :: Справочники :: Конкуренты
 {% endblock title %}
 
+{% block js-before %}
+<script>
+$(document).ready(function(){
+  $("#myInput").on("keyup", function() {
+    var value = $(this).val().toLowerCase();
+    $("#myTable tr").filter(function() {
+      $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+    });
+  });
+});
+</script>
+<style>
+/* Стиль вкладки */
+.tab {
+  overflow: hidden;
+  border: 1px solid #ccc;
+  background-color: #f1f1f1;
+  width: 100%;
+}
 
+/* Стиль кнопок, используемых для открытия содержимого вкладки */
+.tab button {
+  background-color: inherit;
+  float: left;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  padding: 14px 12px;
+  transition: 0.3s;
+}
+
+/* Изменить цвет фона кнопок при наведении */
+.tab button:hover {
+  background-color: #ddd;
+}
+
+/* Создать активный / текущий класс tablink */
+.tab button.active {
+  background-color: #ccc;
+}
+
+/* Style the tab content */
+.tabcontent {
+  display: none;
+  padding: 6px 12px;
+  border: 1px solid #ccc;
+  border-top: none;
+}
+
+.tabcontent {
+  animation: fadeEffect 0.5s; /* Эффект затухания занимает 1 секунду */
+}
+
+/* Перейти от нуля к полной непрозрачности */
+@keyframes fadeEffect {
+  from {opacity: 0;}
+  to {opacity: 1;}
+}
+</style>
+{% endblock js-before %}
+{% block period_button %}
+<a class="btn btn-light" target=_blank href="https://customs-invecta.com.ua/ukt-ved/"><u>Коды УКТВЭД Украины 2020: поиск и расшифровка кода УКТЗЕД</u></a>
+{% endblock period_button %}
 {% block content %}
-<div class="row">
-    <div class="col">
-            ТЕСТ
+{% comment %} {% cache 1 InnerCompetitorsCatalog competitors.query %} {% endcomment %}
+
+
+
+
+
+
+<div class="row mt-3 ml-3 mr-3" >
+
+    <div class="tab">
+    <button class="tablinks" onclick="openCity(event, 'HORECA')" id="defaultOpen">HORECA</button>
+    <button class="tablinks" onclick="openCity(event, 'PACK')">УПАКОВКА</button>
+    <button class="tablinks" onclick="openCity(event, 'FOOD')">ФАСТ-ФУД</button>
+    <button class="tablinks" onclick="openCity(event, 'OTHER')">ДРУГОЕ</button>
+    <input style="margin-top: 10px; margin-left: 20px;" id="myInput" type="text" placeholder="Поиск..">
+
+    <!-- Содержимое вкладки -->
+    <div id="HORECA" class="tabcontent">
+        <div class="table-responsive-lg">
+				<table class="table table-hover table-secondary table-bordered table-striped">
+				<thead>
+					<tr class="table-secondary">
+					<th width="5%">ЕДРПОУ</th>
+					<th width="8%">Наименование</th>
+					</tr>
+				</thead>
+				<tbody id="myTable">
+						{% for firm in competitors %}
+                            {% if firm.seller__class_field__name in 'HORECA' %}
+                                <tr>
+                                    <td width="10%" ><a class="btn btn-secondary font-weight-bold" href="{% url 'inner:SalesIndividualFirmShow' firm.seller__edrpou %}?year={{ year }}">{{ firm.seller__edrpou | cut:' ' }}</a></td>
+                                    <td width="80%" >{% autoescape off %} {{ firm.seller__name|bold_in_quotes }} {% endautoescape %}</td>
+                                </tr>
+                            {% endif %}
+
+						{% endfor %}
+				</tbody>
+				</table>
+		</div>
     </div>
+
+    <div id="PACK" class="tabcontent">
+       <div class="table-responsive-lg">
+				<table class="table table-hover table-secondary table-bordered table-striped">
+				<thead>
+					<tr class="table-secondary">
+					<th width="5%">ЕДРПОУ</th>
+					<th width="8%">Наименование</th>
+					</tr>
+				</thead>
+				<tbody id="myTable">
+						{% for firm in competitors %}
+                            {% if firm.seller__class_field__name in 'PACK' %}
+                                <tr>
+                                    <td width="10%" ><a class="btn btn-secondary font-weight-bold" href="{% url 'inner:SalesIndividualFirmShow' firm.seller__edrpou %}?year={{ year }}">{{ firm.seller__edrpou | cut:' ' }}</a></td>
+                                    <td width="80%" >{% autoescape off %} {{ firm.seller__name|bold_in_quotes }} {% endautoescape %}</td>
+                                </tr>
+                            {% endif %}
+
+						{% endfor %}
+				</tbody>
+				</table>
+		</div>
+
+    </div>
+
+    <div id="FOOD" class="tabcontent">
+       <div class="table-responsive-lg">
+				<table class="table table-hover table-secondary table-bordered table-striped">
+				<thead>
+					<tr class="table-secondary">
+					<th width="5%">ЕДРПОУ</th>
+					<th width="8%">Наименование</th>
+					</tr>
+				</thead>
+				<tbody id="myTable">
+						{% for firm in competitors %}
+                            {% if firm.seller__class_field__name in 'FOOD' %}
+                                <tr>
+                                    <td width="10%" ><a class="btn btn-secondary font-weight-bold" href="{% url 'inner:SalesIndividualFirmShow' firm.seller__edrpou %}?year={{ year }}">{{ firm.seller__edrpou | cut:' ' }}</a></td>
+                                    <td width="80%" >{% autoescape off %} {{ firm.seller__name|bold_in_quotes }} {% endautoescape %}</td>
+                                </tr>
+                            {% endif %}
+
+						{% endfor %}
+				</tbody>
+				</table>
+		</div>
+
+    </div>
+
+    <div id="OTHER" class="tabcontent">
+       <div class="table-responsive-lg">
+				<table class="table table-hover table-secondary table-bordered table-striped">
+				<thead>
+					<tr class="table-secondary">
+					<th width="5%">ЕДРПОУ</th>
+					<th width="8%">Наименование</th>
+					</tr>
+				</thead>
+				<tbody id="myTable">
+						{% for firm in competitors %}
+                            {% if firm.seller__class_field__name in 'OTHER' %}
+                                <tr>
+                                    <td width="10%" ><a class="btn btn-secondary font-weight-bold" href="{% url 'inner:SalesIndividualFirmShow' firm.seller__edrpou %}?year={{ year }}">{{ firm.seller__edrpou | cut:' ' }}</a></td>
+                                    <td width="80%" >{% autoescape off %} {{ firm.seller__name|bold_in_quotes }} {% endautoescape %}</td>
+                                </tr>
+                            {% endif %}
+
+						{% endfor %}
+				</tbody>
+				</table>
+		</div>
+
+    </div>
+
+    </div>
+
+
 </div>
+
+
+{% comment %} {% endcache %} {% endcomment %}
 {% endblock content %}
+{% block js %}
+
+<script>
+
+
+function openCity(evt, cityName) {
+  // Объявить все переменные
+  var i, tabcontent, tablinks;
+
+  // Получить все элементы с class="tabcontent" и скрыть их
+  tabcontent = document.getElementsByClassName("tabcontent");
+  for (i = 0; i < tabcontent.length; i++) {
+    tabcontent[i].style.display = "none";
+  }
+
+  // Получить все элементы с class="tablinks" и удалить class "active"
+  tablinks = document.getElementsByClassName("tablinks");
+  for (i = 0; i < tablinks.length; i++) {
+    tablinks[i].className = tablinks[i].className.replace(" active", "");
+  }
+
+  // Показать текущую вкладку и добавить "active" класс для кнопки, открывшей вкладку
+  document.getElementById(cityName).style.display = "block";
+  evt.currentTarget.className += " active";
+}
+
+// Get the element with id="defaultOpen" and click on it
+document.getElementById("defaultOpen").click();
+
+</script>
+{% endblock js %}
