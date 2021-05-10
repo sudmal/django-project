@@ -209,7 +209,7 @@ def SalesIndividual(request):
             organisations=organisations.annotate(sum=Sum((F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2)/F('exchange__eur_mb_sale'))).order_by('-sum')
         elif currency == 'USD':
             organisations=organisations.annotate(sum=Sum((F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2)/F('exchange__usd_com'))).order_by('-sum')   
-        print(organisations.query)
+        #print(organisations.query)
     context={
         'organisations':organisations,
         'currency':currency,

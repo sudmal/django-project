@@ -23,7 +23,7 @@
         -
         {{ search_form_org.end_date }}
         <button type="submit" class="btn btn-info">Изменить</button>
-
+    </form>
 {% endblock DatePeriod %}
 
 {% block content %}
@@ -41,10 +41,12 @@
 <div class="row">
     <div class="col">
         <div class="input-group mb-3 ml-5">
+        <form method="get" class="form-inline" style="width: 600px;" action={% url 'ved:IndividualReport' %}>
         {{ search_form_org.search_string }} 
             <div class="input-group-append">
                 <button type="submit" class="btn btn-outline-secondary">Поиск</button>
             </div>
+        </form>
         </div>
     </div>
     <div class="col">
