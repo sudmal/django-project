@@ -303,6 +303,7 @@ def IndividualReport(request):
     if request.GET.get('end_date'):
         search_form_org = SearchFormOrg(request.GET)
         end_date=request.GET.get('end_date')
+  
     if request.GET.get('search_string'):
         search_form_org = SearchFormOrg(request.GET)
         grecords_all = GtdRecords.objects.filter((Q(record__recipient__edrpou__startswith=request.GET.get('search_string')) | \
@@ -327,6 +328,8 @@ def IndividualReport(request):
             "end_date": request.GET.get('end_date'),
         }
     ## ADD CONTEXT VARIABLES HERE 
+    context.update({'start_date':start_date})
+    context.update({'end_date':end_date})
     context.update({'help_page_id':help_page_id})
     context.update({"search_form_org": search_form_org})
     context.update({'dates': dates})
