@@ -918,6 +918,10 @@ def CompetitorsCatalog(request):
 
     edrpou_list=[]
     context={
+        'horeca_num':0,
+        'pack_num':0,
+        'food_num':0,
+        'other_num':0,
         'competitors':competitors,
         'year':year,
         }
