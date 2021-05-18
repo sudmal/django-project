@@ -564,7 +564,10 @@ def HRKReport(request):
     data=[]
     labels=[]
     for c in comparse2[:10]:
-        labels.append(c['record__recipient__name'])
+        if len(c['record__recipient__name'])>50:
+            labels.append(c['record__recipient__name'][:50]+"...")
+        else:
+            labels.append(c['record__recipient__name'])
         data.append(round(c['percent'],1))
     labels.append('Другие')
     data.append(round(100-sum(data),1))
