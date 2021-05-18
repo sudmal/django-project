@@ -27,7 +27,9 @@ marging-left: 16px;
 marging-right: 16px; 
 overflow: hidden;
 } 
-</style> 
+
+.highlight { background-color: yellow }
+</style>
 {% endblock js-before %}
 
 {% block export_button %}
@@ -61,8 +63,7 @@ overflow: hidden;
         <div class="col">
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
-                    <li class="breadcrumb-item">Внутренний рынок</li>
-                    <li class="breadcrumb-item">Поиск (стоимости указаны без НДС), <br>Доступна только валюта источника данных</li>
+                    <li class="breadcrumb-item"><span style="color: red;">Cтоимости указаны без НДС (<b>UAH</b>), смена валюты недоступна!</span></li>
                 </ol>
             </nav> 
         </div>
@@ -91,5 +92,8 @@ overflow: hidden;
 
 
 {% block js %}
+<script>
+$('td').highlight('{{ request.GET.search_string }}');
 
+</script>
 {% endblock js %}
