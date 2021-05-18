@@ -5,15 +5,23 @@ from django.dispatch import receiver
 from django.db.models.fields import BooleanField
 
 class Profile(models.Model):
+    ROWSPP=(
+        (25,'25'),
+        (50,'50'),
+        (100,'100'),
+        (0,'Все имеющиеся'),
+    )
     CHOICES = (
         ('USD', 'USD - Dollar'),
         ('EUR', 'EUR - Euro'),
         ('UAH', 'UAH - Hryvna'),
     )
+    
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     bio = models.TextField(max_length=500, blank=True)
     currency = models.CharField(max_length=30, blank=True, choices=CHOICES)
     delimiter = models.CharField(max_length=30, blank=True)
+    rows_per_page = models.IntegerField("Количество строк в таблице на странице",default=25, blank=False, choices=ROWSPP)
     ved_part = BooleanField("Доступ к отчетам ВЭД",default=False)
     nal_part = BooleanField("Доступ к отчетам Внутреннего рынка",default=False)
     def __str__(self):

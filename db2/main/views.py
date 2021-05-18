@@ -78,6 +78,7 @@ def ProfileUpdate(request):
         userProfile=Profile.objects.get(user__username=request.user.username)
         userProfile.bio = request.POST.get('bio')
         userProfile.currency = request.POST.get('currency')
+        userProfile.rows_per_page = request.POST.get('rows_per_page')
         userProfile.save()
         return HttpResponseRedirect(request.POST.get('ref'))
 

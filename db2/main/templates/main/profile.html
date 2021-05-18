@@ -33,6 +33,15 @@
         </td>
       </tr>
       <tr>
+        <td>Количество строк в таблице на одной странице:</td><td>
+          <select class="form-control" name="rows_per_page" id="exampleFormControlSelect2">
+            <option value="25" {% if user.profile.rows_per_page == 25  %} selected = "selected" {% endif %} >25</option>
+            <option value="50" {% if user.profile.rows_per_page == 50  %} selected = "selected" {% endif %} >50</option>
+            <option value="100" {% if user.profile.rows_per_page == 100  %} selected = "selected" {% endif %} >100</option>
+            <option value="0" {% if user.profile.rows_per_page == 0  %} selected = "selected" {% endif %} >Все имеющиеся</option>
+          </select>
+      </tr>
+      <tr>
         <td scope="row"></td>
         <td>
         <button type="submit" class="btn btn-secondary" data-dismiss="modal">Сохранить</button>

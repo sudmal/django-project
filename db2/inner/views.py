@@ -933,6 +933,9 @@ def CompetitorsCatalog(request):
 def RecordsSearch(request):
     recSearchForm = RecSearchForm()
     currency = User.objects.get(username=request.user).profile.currency
+    num_per_page = User.objects.get(username=request.user).profile.rows_per_page
+    if num_per_page==0:
+        num_per_page=99999999999
     results=[]
     if request.GET.get('search_string'):
         recSearchForm = RecSearchForm(request.GET)
@@ -942,7 +945,7 @@ def RecordsSearch(request):
             .values('ordering_date','seller_name','buyer_name','seller_edrpou','buyer_edrpou','product_code','product_name','one_product_cost','count').order_by('ordering_date')
 
     table = RecordsSearchTable(results)
-    RequestConfig(request, paginate={"per_page": 50}).configure(table)
+    RequestConfig(request, paginate={"per_page": num_per_page}).configure(table)
     if request.GET.get('_export'):
         name=request.GET.get('search_string')
         export_format = request.GET.get("_export", None)
