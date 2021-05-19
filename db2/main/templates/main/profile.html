@@ -23,7 +23,7 @@
         <td scope="row">E-Mail</td><td>
           <input type="email" class="form-control" name="email" id="" aria-describedby="helpId" value="{{ user.email }}" placeholder="name@example.com"></td>
         </tr>
-        <td>Основная валюта:</td><td>
+        <td>Основная валюта (для внутреннего рынка):</td><td>
           <select class="form-control" name="currency" id="exampleFormControlSelect1">
             <option value="USD" {% if user.profile.currency == "USD"  %} selected = "selected" {% endif %} >USD</option>
             <option value="EUR" {% if user.profile.currency == "EUR"  %} selected = "selected" {% endif %} >EUR</option>

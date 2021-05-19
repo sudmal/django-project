@@ -20,6 +20,7 @@ import hashlib
 from django.core.cache import caches
 
 from django.contrib.postgres.aggregates import ArrayAgg
+from django.contrib.auth.models import User
 from django_tables2 import RequestConfig
 
 
@@ -297,6 +298,9 @@ def IndividualReport(request):
     end_date=year+'-12-31'
     search_form_org = SearchFormOrg()
     dates=getRecDates()
+    num_per_page = User.objects.get(username=request.user).profile.rows_per_page
+    if num_per_page==0:
+        num_per_page=99999999999
     if request.GET.get('start_date'):
         search_form_org = SearchFormOrg(request.GET)
         start_date=request.GET.get('start_date')
@@ -312,7 +316,7 @@ def IndividualReport(request):
                  .annotate(count=Count("cost_fact"),total_cost=Sum('cost_fact'),total_cost_eur=Sum((F('record__exchange__usd_nbu')/F('record__exchange__eur_nbu'))*F('cost_fact')), tms_count=Count('trademark__name',distinct=True))\
                      .order_by(order['sort_order_symbol']+order['sort_field'])
         #print(grecords_all.query)
-        paginator = Paginator(grecords_all, 10)
+        paginator = Paginator(grecords_all, num_per_page)
         page_number = request.GET.get('page')
         try:
             grecords = paginator.page(page_number)
@@ -346,6 +350,9 @@ def IndividualReportFirmShow(request,edrpou_num):
     start_date=year+'-01-01'
     end_date=year+'-12-31'
     dates=getRecDates()
+    num_per_page = User.objects.get(username=request.user).profile.rows_per_page
+    if num_per_page==0:
+        num_per_page=99999999999
     if request.GET.get('start_date'):
         search_form = SearchForm(request.GET)
         start_date=request.GET.get('start_date')
@@ -359,7 +366,7 @@ def IndividualReportFirmShow(request,edrpou_num):
                 .annotate(count=Count("cost_fact"),total_cost=Sum('cost_fact'),\
                     total_cost_eur=Sum((F('record__exchange__usd_nbu')/F('record__exchange__eur_nbu'))*F('cost_fact')),tms=ArrayAgg('trademark__name', distinct=True))\
                     .order_by(order['sort_order_symbol']+order['sort_field'])
-        paginator = Paginator(queryset_list, 50)
+        paginator = Paginator(queryset_list, num_per_page)
         page_number = request.GET.get('page')
         try:
             queryset = paginator.page(page_number)
@@ -389,11 +396,14 @@ def IndividualReportRaw(request,edrpou_num,gtd_num):
     context=dict()
     dates=getRecDates()
     gtd=unquote(gtd_num)
+    num_per_page = User.objects.get(username=request.user).profile.rows_per_page
+    if num_per_page==0:
+        num_per_page=99999999999
     firm=Organisation.objects.get(edrpou = edrpou_num)
     queryset_list = GtdRecords.objects.filter((Q(record__recipient__edrpou=edrpou_num) & Q(record__gtd_name=gtd)))\
             .values('record__sender__name','record__sender__country__name','record__date','product_code','trademark__name','description','cost_fact')\
                 .annotate(total_cost_eur=Sum((F('record__exchange__usd_nbu')/F('record__exchange__eur_nbu'))*F('cost_fact'))).order_by(order['sort_order_symbol']+order['sort_field'])
-    paginator = Paginator(queryset_list, 10)
+    paginator = Paginator(queryset_list, num_per_page)
     page_number = request.GET.get('page')
     records = paginator.get_page(page_number)
     context = {
@@ -484,6 +494,9 @@ def TrademarkReportRaw(request,trademark_name,edrpou_num):
     if request.GET.get('end_date'):
         search_form = SearchForm(request.GET)
         end_date=request.GET.get('end_date')
+    num_per_page = User.objects.get(username=request.user).profile.rows_per_page
+    if num_per_page==0:
+        num_per_page=99999999999
     context=dict()
     dates=getRecDates()
     trademark_name=unquote(trademark_name)
@@ -494,7 +507,7 @@ def TrademarkReportRaw(request,trademark_name,edrpou_num):
     summ = GtdRecords.objects.filter(Q(record__recipient__edrpou=edrpou_num) & Q(trademark__name=trademark_name) & Q(record__date__range=[start_date, end_date]))\
                 .aggregate(cost_usd=Sum('cost_fact'))
     tm_firm_summ=summ['cost_usd']
-    paginator = Paginator(queryset_list, 25)
+    paginator = Paginator(queryset_list, num_per_page)
     page_number = request.GET.get('page')
     records = paginator.get_page(page_number)
     context = {
@@ -679,6 +692,9 @@ def CompetitorsCatalogPeriodDetail(request,edrpou_num):
     end_date=year+'-12-31'
     search_form=SearchForm()
     dates=getRecDates()
+    num_per_page = User.objects.get(username=request.user).profile.rows_per_page
+    if num_per_page==0:
+        num_per_page=99999999999
     if request.GET.get('start_date'):
         search_form = SearchForm(request.GET)
         start_date=request.GET.get('start_date')
@@ -695,7 +711,7 @@ def CompetitorsCatalogPeriodDetail(request,edrpou_num):
         CompetitorsDetailRaw = CompetitorsDetailRaw.filter(Q(description__icontains=request.GET.get('SearchString')) | Q(trademark__icontains=request.GET.get('SearchString')) | Q(gtd__icontains=request.GET.get('SearchString'))| Q(product_code__icontains=request.GET.get('SearchString')) )
         print(CompetitorsDetailRaw)
     table = CompetitorsComparsePeriodDetailTable(CompetitorsDetailRaw)
-    RequestConfig(request, paginate={"per_page": 50}).configure(table)
+    RequestConfig(request, paginate={"per_page": num_per_page}).configure(table)
     export_format = request.GET.get("_export", None)
     if TableExport.is_valid_format(export_format):
         exporter = TableExport(export_format, table, dataset_kwargs={"title": firm.name})
