@@ -26,7 +26,12 @@ from django_tables2 import RequestConfig
 from django.contrib.auth.models import User
 from django.db.models.functions import TruncMonth
 
-
+def getCurrentRowsPerPage(request):
+    num_per_page = User.objects.get(username=request.user).profile.rows_per_page
+    if num_per_page==0:
+        num_per_page=99999999999
+    return num_per_page
+    
 # if now is not jan or feb, year is current year, other way - previus
 def getCurrentYear():
     return str((datetime.date.today() - datetime.timedelta(days=120)).year)
@@ -185,13 +190,17 @@ def test(request):
         'competitors':competitors,
         'year':year,
         }
-    context.update({'help_page_id':17})
+    context.update({'help_page_id':1})
     return render(request,'inner/test.html',context)
 
 @login_required(login_url='login')
 def SalesIndividual(request):
     YearSelectForm=NlYearSelectForm()
     currency = User.objects.get(username=request.user).profile.currency
+    num_per_page = User.objects.get(username=request.user).profile.rows_per_page
+    if num_per_page==0:
+        num_per_page=99999999999
+
     year=getCurrentYear()
     if request.GET.get('selected_year'):
         YearSelectForm=NlYearSelectForm(request.GET)
@@ -217,7 +226,7 @@ def SalesIndividual(request):
         'YearSelectForm':YearSelectForm,
         'year':year
     }
-    context.update({'help_page_id':11})
+    context.update({'help_page_id':getCurrentRowsPerPage(request)})
     return render(request,'inner/SalesIndividual.html',context)
 
 @login_required(login_url='login')
@@ -227,7 +236,9 @@ def SalesIndividualFirmShow(request,edrpou_num):
     if request.GET.get('selected_year'):
         YearSelectForm=NlYearSelectForm(request.GET)
         year=request.GET.get('selected_year')
-
+    num_per_page = User.objects.get(username=request.user).profile.rows_per_page
+    if num_per_page==0:
+        num_per_page=99999999999
     currency = User.objects.get(username=request.user).profile.currency
     seller_name=NlOrg.objects.get(edrpou=edrpou_num).name
     buyers_dict = {}
@@ -285,7 +296,7 @@ def SalesIndividualFirmShow(request,edrpou_num):
         buyers_list.append(cur_firm)
 
 
-    paginator = Paginator(buyers_list, 15)
+    paginator = Paginator(buyers_list, getCurrentRowsPerPage(request))
     page_number = request.GET.get('page')
     try:
         buyers_list = paginator.page(page_number)
@@ -328,7 +339,7 @@ def SalesIndividualFirmRaw(request,edrpou_num,buyer_code):
     if request.GET.get('month'):
         raw_records = raw_records.filter(ordering_date__year=year,ordering_date__month=request.GET.get('month'))
 
-    paginator = Paginator(raw_records, 25)
+    paginator = Paginator(raw_records, getCurrentRowsPerPage(request))
     page_number = request.GET.get('page')
     try:
         raw_records = paginator.page(page_number)
@@ -448,7 +459,7 @@ def SalesCompetitorsComparse(request):
         organisations_list.append(cur_firm)
 
 
-    paginator = Paginator(organisations_list, 100)
+    paginator = Paginator(organisations_list, getCurrentRowsPerPage(request))
     page_number = request.GET.get('page')
     try:
         organisations_list = paginator.page(page_number)
@@ -563,7 +574,7 @@ def ClientsCompetitorsIndividualShow(request,edrpou_num):
         sellers_list.append(cur_firm)
 
 
-    paginator = Paginator(sellers_list, 15)
+    paginator = Paginator(sellers_list, getCurrentRowsPerPage(request))
     page_number = request.GET.get('page')
     try:
         sellers_list = paginator.page(page_number)
@@ -606,7 +617,7 @@ def ClientsCompetitorsIndividualRaw(request,edrpou_num,seller_code):
     if request.GET.get('month'):
         raw_records = raw_records.filter(ordering_date__year=year,ordering_date__month=request.GET.get('month'))
 
-    paginator = Paginator(raw_records, 25)
+    paginator = Paginator(raw_records, getCurrentRowsPerPage(request))
     page_number = request.GET.get('page')
     try:
         raw_records = paginator.page(page_number)
@@ -735,7 +746,7 @@ def ClientsCompetitorsComparse(request):
         organisations_list.append(cur_firm)
 
 
-    paginator = Paginator(organisations_list, 100)
+    paginator = Paginator(organisations_list, getCurrentRowsPerPage(request))
     page_number = request.GET.get('page')
     try:
         organisations_list = paginator.page(page_number)
@@ -846,7 +857,7 @@ def PurchasesIndividualFirmShow(request,edrpou_num):
         sellers_list.append(cur_firm)
 
 
-    paginator = Paginator(sellers_list, 15)
+    paginator = Paginator(sellers_list, getCurrentRowsPerPage(request))
     page_number = request.GET.get('page')
     try:
         sellers_list = paginator.page(page_number)
@@ -889,7 +900,7 @@ def PurchasesIndividualFirmRaw(request,edrpou_num,seller_code):
     if request.GET.get('month'):
         raw_records = raw_records.filter(ordering_date__year=year,ordering_date__month=request.GET.get('month'))
 
-    paginator = Paginator(raw_records, 25)
+    paginator = Paginator(raw_records, getCurrentRowsPerPage(request))
     page_number = request.GET.get('page')
     try:
         raw_records = paginator.page(page_number)
