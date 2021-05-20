@@ -95,6 +95,7 @@ $(document).ready(function(){
           <th>№</th>
 					<th width="5%">ЕДРПОУ</th>
 					<th width="8%">Наименование</th>
+          <th width="5%">Импортер</th>
 					</tr>
 				</thead>
 				<tbody id="myTable">
@@ -104,6 +105,7 @@ $(document).ready(function(){
                                     <td></td>
                                     <td width="10%" ><a class="btn btn-secondary font-weight-bold" href="{% url 'inner:SalesIndividualFirmShow' firm.seller__edrpou %}?year={{ year }}">{{ firm.seller__edrpou | cut:' ' }}</a></td>
                                     <td width="80%" >{% autoescape off %} {{ firm.seller__name|bold_in_quotes }} {% endautoescape %}</td>
+                                    <td width="80%" >{% if firm.is_importer %}&#9989;{% else %} &nbsp;{% endif %}</td>
                                 </tr>
                             {% endif %}
 
@@ -121,6 +123,7 @@ $(document).ready(function(){
           <th>№</th>
 					<th width="5%">ЕДРПОУ</th>
 					<th width="8%">Наименование</th>
+          <th width="5%">Импортер</th>
 					</tr>
 				</thead>
 				<tbody id="myTable">
@@ -130,6 +133,7 @@ $(document).ready(function(){
                                     <td></td>
                                     <td width="10%" ><a class="btn btn-secondary font-weight-bold" href="{% url 'inner:SalesIndividualFirmShow' firm.seller__edrpou %}?year={{ year }}">{{ firm.seller__edrpou | cut:' ' }}</a></td>
                                     <td width="80%" >{% autoescape off %} {{ firm.seller__name|bold_in_quotes }} {% endautoescape %}</td>
+                                    <td width="80%" >{% if firm.is_importer %}&#9989;{% else %} &nbsp;{% endif %}</td>
                                 </tr>
                             {% endif %}
 
@@ -148,6 +152,7 @@ $(document).ready(function(){
           <th>№</th>
 					<th width="5%">ЕДРПОУ</th>
 					<th width="8%">Наименование</th>
+          <th width="5%">Импортер</th>
 					</tr>
 				</thead>
 				<tbody id="myTable">
@@ -157,6 +162,7 @@ $(document).ready(function(){
                                     <td></td>
                                     <td width="10%" ><a class="btn btn-secondary font-weight-bold" href="{% url 'inner:SalesIndividualFirmShow' firm.seller__edrpou %}?year={{ year }}">{{ firm.seller__edrpou | cut:' ' }}</a></td>
                                     <td width="80%" >{% autoescape off %} {{ firm.seller__name|bold_in_quotes }} {% endautoescape %}</td>
+                                    <td width="80%" >{% if firm.is_importer %}&#9989;{% else %} &nbsp;{% endif %}</td>
                                 </tr>
                             {% endif %}
 
@@ -175,6 +181,7 @@ $(document).ready(function(){
           <th>№</th>
 					<th width="5%">ЕДРПОУ</th>
 					<th width="8%">Наименование</th>
+          <th width="5%">Импортер</th>
 					</tr>
 				</thead>
 				<tbody id="myTable">
@@ -184,6 +191,7 @@ $(document).ready(function(){
                                     <td></td>
                                     <td width="10%" ><a class="btn btn-secondary font-weight-bold" href="{% url 'inner:SalesIndividualFirmShow' firm.seller__edrpou %}?year={{ year }}">{{ firm.seller__edrpou | cut:' ' }}</a></td>
                                     <td width="80%" >{% autoescape off %} {{ firm.seller__name|bold_in_quotes }} {% endautoescape %}</td>
+                                    <td width="80%" >{% if firm.is_importer %}&#9989;{% else %} &nbsp;{% endif %}</td>
                                 </tr>
                             {% endif %}
 

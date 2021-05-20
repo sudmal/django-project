@@ -927,14 +927,20 @@ def CompetitorsCatalog(request):
     competitors=NlReestr.objects.all().values('seller__edrpou','seller__name','seller__class_field__name')\
             .annotate(total_cost=Sum(F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2),\
                 total_count=Count('one_product_cost')).order_by('-total_cost')
-
+    c_importer=list()
+    for c in competitors:
+        is_importer=False
+        if Organisation.objects.filter(edrpou=c['seller__edrpou']).count() > 0:
+            is_importer = True 
+        c.update({'is_importer': is_importer})
+        c_importer.append(c)
     edrpou_list=[]
     context={
         'horeca_num':0,
         'pack_num':0,
         'food_num':0,
         'other_num':0,
-        'competitors':competitors,
+        'competitors':c_importer,
         'year':year,
         }
     context.update({'help_page_id':17})
