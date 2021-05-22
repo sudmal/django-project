@@ -960,7 +960,7 @@ def RecordsSearch(request):
     if num_per_page==0:
         num_per_page=9999
     results=NlReestr.objects.none()
-    print (type(results))
+
     if request.GET.get('search_string'):
         recSearchForm = RecSearchForm(request.GET)
 
