@@ -982,8 +982,6 @@ def RecordsSearch(request):
         elif currency == 'USD':
             results=results.annotate(total_cost=Round2(Sum((F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2)/F('exchange__usd_com'))),cost=Round2((F('one_product_cost')+F('one_product_cost')*0.2)/F('exchange__usd_com'))).order_by('ordering_date')
 
-
-    print(results)
     table = RecordsSearchTable(results)
     RequestConfig(request, paginate={"per_page": num_per_page}).configure(table)
     if request.GET.get('_export'):
