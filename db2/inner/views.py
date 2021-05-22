@@ -958,15 +958,32 @@ def RecordsSearch(request):
     currency = User.objects.get(username=request.user).profile.currency
     num_per_page = User.objects.get(username=request.user).profile.rows_per_page
     if num_per_page==0:
-        num_per_page=99999999999
-    results=[]
+        num_per_page=9999
+    results=NlReestr.objects.none()
+    print (type(results))
     if request.GET.get('search_string'):
         recSearchForm = RecSearchForm(request.GET)
-        results= ReestrStaging.objects.filter(Q(seller_name__icontains=request.GET.get('search_string')) |Q(seller_edrpou__startswith=request.GET.get('search_string')) | \
-            Q(buyer_name__icontains=request.GET.get('search_string')) |Q(buyer_edrpou__startswith=request.GET.get('search_string')) | \
-                Q(product_name__icontains=request.GET.get('search_string')) |Q(product_code__startswith=request.GET.get('search_string')) )\
-            .values('ordering_date','seller_name','buyer_name','seller_edrpou','buyer_edrpou','product_code','product_name','one_product_cost','count').order_by('ordering_date')
 
+#        results= ReestrStaging.objects.filter(Q(seller_name__icontains=request.GET.get('search_string')) |Q(seller_edrpou__startswith=request.GET.get('search_string')) | \
+#            Q(buyer_name__icontains=request.GET.get('search_string')) |Q(buyer_edrpou__startswith=request.GET.get('search_string')) | \
+#                Q(product_name__icontains=request.GET.get('search_string')) |Q(product_code__startswith=request.GET.get('search_string')) )\
+#            .values('ordering_date','seller_name','buyer_name','seller_edrpou','buyer_edrpou','product_code','product_name','one_product_cost','count').order_by('ordering_date')
+#                        .annotate(total_cost=Sum(F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2),\
+#                                    total_count=Count('one_product_cost')).order_by('-total_cost')
+        results=NlReestr.objects.filter(Q(seller__name__icontains=request.GET.get('search_string')) |Q(seller__edrpou__startswith=request.GET.get('search_string')) | \
+            Q(buyer__name__icontains=request.GET.get('search_string')) |Q(buyer__edrpou__startswith=request.GET.get('search_string')) | \
+                Q(product__name__icontains=request.GET.get('search_string')) |Q(product__product_code__startswith=request.GET.get('search_string')) )\
+                    .values('ordering_date','seller__name','buyer__name','seller__edrpou','buyer__edrpou','product__product_code','product__name','count')\
+
+        if currency == 'UAH':
+            results=results.annotate(total_cost=Round2(Sum(F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2)),cost=Round2(F('one_product_cost')+F('one_product_cost')*0.2)).order_by('ordering_date')
+        elif currency == 'EUR':
+            results=results.annotate(total_cost=Round2(Sum((F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2)/F('exchange__eur_mb_sale'))),cost=Round2((F('one_product_cost')+F('one_product_cost')*0.2)/F('exchange__eur_mb_sale'))).order_by('ordering_date')
+        elif currency == 'USD':
+            results=results.annotate(total_cost=Round2(Sum((F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2)/F('exchange__usd_com'))),cost=Round2((F('one_product_cost')+F('one_product_cost')*0.2)/F('exchange__usd_com'))).order_by('ordering_date')
+
+
+    print(results)
     table = RecordsSearchTable(results)
     RequestConfig(request, paginate={"per_page": num_per_page}).configure(table)
     if request.GET.get('_export'):
@@ -979,6 +996,7 @@ def RecordsSearch(request):
         'recSearchForm':recSearchForm,
         'table':table,
         'results':results,
+        'currency':currency,
         }
     context.update({'help_page_id':13})
     return render(request,'inner/RecordsSearch.html',context)
