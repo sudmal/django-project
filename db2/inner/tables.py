@@ -16,7 +16,7 @@ class RecordsSearchTable(tables.Table):
     seller__edrpou = tables.Column(verbose_name= 'ЕДРПОУ продавца' )
     buyer__name = tables.Column(verbose_name= 'Покупатель' )
     buyer__edrpou = tables.Column(verbose_name= 'ЕДРПОУ покупателя' )
-    product__code = tables.Column(verbose_name= 'Товарный номер' )
+    product__product_code = tables.Column(verbose_name= 'Товарный номер' )
     product__name = tables.Column(verbose_name= 'Наименование товара' )
     cost = tables.Column(verbose_name= 'Цена' )
     count = tables.Column(verbose_name= 'Количество' )
@@ -25,7 +25,7 @@ class RecordsSearchTable(tables.Table):
     class Meta:
         export_formats = ['csv', 'xls', 'xlsx']
         model = NlReestr
-        fields = ('num','ordering_date','seller__name','seller__edrpou','buyer__name','buyer__edrpou','product__code','product__name','cost','count', 'total_cost')
-        sequence = ('num','ordering_date','seller__name','seller__edrpou','buyer__name','buyer__edrpou','product__code','product__name','cost','count', 'total_cost')
+        fields = ('num','ordering_date','seller__name','seller__edrpou','buyer__name','buyer__edrpou','product__product_code','product__name','cost','count', 'total_cost')
+        sequence = ('num','ordering_date','seller__name','seller__edrpou','buyer__name','buyer__edrpou','product__product_code','product__name','cost','count', 'total_cost')
         # add class="paleblue" to <table> tag
         attrs = {'class': 'paleblue'}
