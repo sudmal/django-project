@@ -651,6 +651,8 @@ def ClientsCompetitorsComparse(request):
         min_sum=50000
     if currency == 'USD':
         min_sum=60000
+    if request.GET.get('min_sum'):
+        min_sum=request.GET.get('min_sum')
     firmTypeSelectForm = FirmTypeSelectForm(initial={'min_sum':min_sum})
         
     if request.GET.get('firm_filter_set'):
@@ -761,7 +763,9 @@ def ClientsCompetitorsComparse(request):
     except EmptyPage:
         organisations_list = paginator.page(paginator.num_pages)
     mnth_list=["Январь","Февраль","Март","Апрель","Май","Июнь","Июль","Август","Сентябрь","Октябрь","Ноябрь","Декабрь"]
+    print(year)
     context={
+        'min_sum':min_sum,
         'mnth_list':mnth_list,
         'competitors':competitors,
         'organisations':organisations_list,

@@ -124,10 +124,10 @@
     <ul class="pagination justify-content-center">
         {% if organisations.has_previous %}
             <li class="page-item">
-                <a class="page-link" href="?page=1&selected_year={{year}}">&laquo;</a>
+                <a class="page-link" href="?page=1&selected_year={{year}}&min_sum={{ min_sum }}">&laquo;</a>
             </li>
              <li class="page-item">
-                <a class="page-link" href="?page={{ organisations.previous_page_number }}&selected_year={{year}}"> < </a>
+                <a class="page-link" href="?page={{ organisations.previous_page_number }}&selected_year={{year}}&min_sum={{ min_sum }}"> < </a>
             </li>
         {% endif %}
 
@@ -137,10 +137,10 @@
 
         {% if organisations.has_next %}
             <li class="page-item">
-                <a class="page-link" href="?page={{ organisations.next_page_number }}&selected_year={{year}}"> > </a>
+                <a class="page-link" href="?page={{ organisations.next_page_number }}&selected_year={{year}}&min_sum={{ min_sum }}"> > </a>
             </li>
             <li class="page-item">
-                <a class="page-link" href="?page={{ organisations.paginator.num_pages }}&selected_year={{year}}"> &raquo; </a>
+                <a class="page-link" href="?page={{ organisations.paginator.num_pages }}&selected_year={{year}}&min_sum={{ min_sum }}"> &raquo; </a>
             </li>
         {% endif %}
     </ul>
