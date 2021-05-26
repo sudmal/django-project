@@ -33,7 +33,8 @@ from django_tables2 import RequestConfig
 year = str((datetime.date.today() - datetime.timedelta(days=120)).year)
 
 def logUserData(request):
-    print(request.META['REMOTE_ADDR'])
+    pass
+    #print(request.META['REMOTE_ADDR'])
 
 def autocomplete_tm(request):
     titles = list()
@@ -113,7 +114,7 @@ def generateOrder(request,default_sort_order,default_sort_field):
             sort_order='asc'  # next link status
             sort_order_symbol='' # current query
             
-    print (sort_order)
+    #print (sort_order)
     # Если в request.GET присутствует параметр sort_field (была нажата кнопка) - 
     # устанавливаем текущее поле для сортировки
     if request.GET.get('sort_field'):
