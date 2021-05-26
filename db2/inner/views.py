@@ -390,7 +390,7 @@ def SalesCompetitorsComparse(request):
         YearSelectForm=NlYearSelectForm(request.GET)
         year=request.GET.get('selected_year')
     competitors= Competitors.objects.all().values_list('competitor_code', flat=True)
-    print(competitors.query)
+    #print(competitors.query)
     f_eat=NlFilter.objects.filter(type="eat").values_list('edrpou', flat=True)
     f_pack=NlFilter.objects.filter(type="pack").values_list('edrpou', flat=True)
     f_other=NlFilter.objects.filter(type="other").values_list('edrpou', flat=True)
@@ -408,7 +408,7 @@ def SalesCompetitorsComparse(request):
     organisations=organisations.filter(Q(seller__edrpou__in=f_horeca) | Q(seller__edrpou__in=f_eat) | Q(seller__edrpou__in=f_pack) |Q(seller__edrpou__in=f_other) )
 
     organisations = organisations.values('seller_id','seller__name','seller__edrpou').distinct()
-    print (organisations.query)
+    #print (organisations.query)
     if currency == 'UAH':
             organisations=organisations.annotate(sum=Round(Sum(F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2))).order_by('-sum')
     elif currency == 'EUR':
@@ -675,7 +675,7 @@ def ClientsCompetitorsComparse(request):
         YearSelectForm=NlYearSelectForm(request.GET)
         year=request.GET.get('selected_year')
     competitors= Competitors.objects.all().values_list('competitor_code', flat=True)
-    print(competitors.query)
+    #print(competitors.query)
     f_eat=NlFilter.objects.filter(type="eat").values_list('edrpou', flat=True)
     f_pack=NlFilter.objects.filter(type="pack").values_list('edrpou', flat=True)
     f_other=NlFilter.objects.filter(type="other").values_list('edrpou', flat=True)
