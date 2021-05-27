@@ -986,6 +986,11 @@ def RecordsSearch(request):
         elif currency == 'USD':
             results=results.annotate(total_cost=Round2(Sum((F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2)/F('exchange__usd_com'))),cost=Round2((F('one_product_cost')+F('one_product_cost')*0.2)/F('exchange__usd_com'))).order_by('ordering_date')
 
+    total_sum=0
+    for product in results:
+        total_sum+=product['total_cost']
+    total_sum=round(total_sum)
+
     table = RecordsSearchTable(results)
     RequestConfig(request, paginate={"per_page": num_per_page}).configure(table)
     if request.GET.get('_export'):
@@ -996,6 +1001,7 @@ def RecordsSearch(request):
             return exporter.response(filename='NalogSalesSearch.{0}'.format(export_format)) #
     context={
         'recSearchForm':recSearchForm,
+        'total_sum':total_sum,
         'table':table,
         'results':results,
         'currency':currency,
