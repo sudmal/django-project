@@ -985,10 +985,12 @@ def RecordsSearch(request):
             results=results.annotate(total_cost=Round2(Sum((F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2)/F('exchange__eur_mb_sale'))),cost=Round2((F('one_product_cost')+F('one_product_cost')*0.2)/F('exchange__eur_mb_sale'))).order_by('ordering_date')
         elif currency == 'USD':
             results=results.annotate(total_cost=Round2(Sum((F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2)/F('exchange__usd_com'))),cost=Round2((F('one_product_cost')+F('one_product_cost')*0.2)/F('exchange__usd_com'))).order_by('ordering_date')
-
+ 
     total_sum=0
+
     for product in results:
-        total_sum+=product['total_cost']
+        if product['total_cost'] != None:
+            total_sum+=product['total_cost']
     total_sum=round(total_sum)
 
     table = RecordsSearchTable(results)
