@@ -83,3 +83,22 @@ input[type="color"]:focus,
   /*border-collapse: separate;*/
   box-shadow: inset 1px -1px 1px black
 }
+.row {
+  margin-right: 0px;
+  margin-left: 0px;
+}
+
+.container { 
+  padding-left: 16px; 
+  padding-right: 16px;
+  marging-left: 16px; 
+  marging-right: 16px; 
+  overflow: hidden;
+} 
+  .container-fluid { 
+  padding-left: 16px; 
+  padding-right: 16px;
+  marging-left: 16px; 
+  marging-right: 16px; 
+  overflow: hidden;
+} 
