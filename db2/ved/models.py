@@ -288,3 +288,13 @@ class RecordsCompetitors(models.Model):
     class Meta:
         managed = False
         db_table = 'records_competitors'
+
+
+class TmAlias(models.Model):
+    tm_name = models.TextField(blank=True, null=True)
+    tm_alias = models.TextField(blank=True, null=True)
+    comment = models.TextField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'tm_alias'

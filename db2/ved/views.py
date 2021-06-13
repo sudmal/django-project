@@ -9,7 +9,7 @@ import django_tables2 as tables
 from django_tables2.export.export import TableExport
 from django_tables2.export.views import ExportMixin
 from .models import Competitors
-from .models import Organisation,GtdRecords,Records,Trademark,Sender,Country,TnvedGroup,Exchange,filter_codes,TnvedGroup,Youscore,RecordsStaging,RecordsCompetitors
+from .models import Organisation,GtdRecords,Records,Trademark,Sender,Country,TnvedGroup,Exchange,filter_codes,TnvedGroup,Youscore,RecordsStaging,RecordsCompetitors,TmAlias
 from .forms import SearchForm,SearchFormOrg
 from .tables import CompetitorsComparsePeriodDetailTable
 from django.db.models import Count, Sum, Q, Avg, Subquery, OuterRef, F, FloatField, Max
@@ -468,6 +468,9 @@ def TrademarkReportShow(request,trademark_name):
         end_date=request.GET.get('end_date')
     if  trademark_name:
         trademark_name=unquote(trademark_name)
+        tm_aliases=TmAlias.objects.filter(tm_name__icontains = trademark_name).values('tm_alias')
+        for ta in tm_aliases:
+            print(ta['tm_alias'])
         context.update({'trademark_name':trademark_name})
         queryset_list1 = GtdRecords.objects.filter((Q(trademark__name=trademark_name) & Q(record__date__range=[start_date, end_date])))\
            .values('record__recipient__edrpou','record__recipient__name').annotate(count=Count("cost_fact"),total_cost=Sum('cost_fact'),\
@@ -502,6 +505,7 @@ def TrademarkReportRaw(request,trademark_name,edrpou_num):
     dates=getRecDates()
     trademark_name=unquote(trademark_name)
     firm=Organisation.objects.get(edrpou = edrpou_num)
+
     queryset_list = GtdRecords.objects.filter(Q(record__recipient__edrpou=edrpou_num) & Q(trademark__name=trademark_name) & Q(record__date__range=[start_date, end_date]))\
             .values('record__sender__name','record__sender__country__name','record__date','product_code','description','cost_fact')\
                 .annotate(cost_eur=Sum((F('record__exchange__usd_nbu')/F('record__exchange__eur_nbu'))*F('cost_fact'))).order_by(order['sort_order_symbol']+order['sort_field'])
