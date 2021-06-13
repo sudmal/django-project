@@ -232,17 +232,6 @@ class SenderTrademark(models.Model):
         managed = False
         db_table = 'sender_trademark'
 
-
-class TmAlias(models.Model):
-    sender_name = models.TextField(blank=True, null=True)
-    trademark = models.TextField(blank=True, null=True)
-    comment = models.TextField(blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'tm_alias'
-
-
 class TnvedGroup(models.Model):
     id = models.BigIntegerField(primary_key=True)
     gname = models.TextField(blank=True, null=True)
