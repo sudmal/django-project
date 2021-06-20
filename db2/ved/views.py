@@ -457,10 +457,11 @@ def TrademarkReportSearch(request):
         grp_gr_count=0
         grp_gr_tcost=0.0
         grp_gr_tcost_eur=0.0
-        for gr in grecords_all:
-            grp_gr_count+=gr['count']    
-            grp_gr_tcost+=gr['total_cost']
-            grp_gr_tcost_eur+=gr['total_cost_eur']
+        if is_grouped:
+            for gr in grecords_all:
+                grp_gr_count+=gr['count']    
+                grp_gr_tcost+=gr['total_cost']
+                grp_gr_tcost_eur+=gr['total_cost_eur']
         tm_grouped_data.update({'tm_name':tm_name,'grp_gr_count':grp_gr_count,'grp_gr_tcost':grp_gr_tcost,'grp_gr_tcost_eur':grp_gr_tcost_eur})
         context.update({'tm_grouped_data':tm_grouped_data})
         context.update({'tm_aliases_list':tm_aliases_list})
