@@ -437,9 +437,13 @@ def TrademarkReportSearch(request):
         end_date=request.GET.get('end_date')
     if request.GET.get('search_string'):
         trademark_name=request.GET.get('search_string')
-        tm_aliases=TmAlias.objects.filter(tm_name__icontains = trademark_name).values('tm_alias')
-        tm_aliases_list=[]        
+        tm_aliases=TmAlias.objects.filter(tm_name__icontains = trademark_name).values('tm_name','tm_alias')
+        tm_aliases_list=[]
+        tm_name=trademark_name
+        is_grouped=False 
         if tm_aliases:
+            is_grouped=True
+            tm_name= tm_aliases[0]['tm_name']
             for ta in tm_aliases:
                 tm_aliases_list.append(str((ta['tm_alias'])).upper())
         tm_grouped_data=dict()
@@ -457,22 +461,25 @@ def TrademarkReportSearch(request):
             grp_gr_count+=gr['count']    
             grp_gr_tcost+=gr['total_cost']
             grp_gr_tcost_eur+=gr['total_cost_eur']
-        tm_grouped_data.update({'grp_gr_count':grp_gr_count,'grp_gr_tcost':grp_gr_tcost,'grp_gr_tcost_eur':grp_gr_tcost_eur})
+        tm_grouped_data.update({'tm_name':tm_name,'grp_gr_count':grp_gr_count,'grp_gr_tcost':grp_gr_tcost,'grp_gr_tcost_eur':grp_gr_tcost_eur})
         context.update({'tm_grouped_data':tm_grouped_data})
+        context.update({'tm_aliases_list':tm_aliases_list})
+        context.update({'is_grouped':is_grouped})
         print(tm_grouped_data)
         
 
         #print(grecords_all.query)
-        context = {
+        context.update({
                 'grecords_all': grecords_all,
                 'search_form': search_form,
                 'start_date': request.GET['start_date'],
                 'end_date':request.GET['end_date'],
-        }
+        })
     context.update({"search_form": search_form})
     context.update({'dates': dates})
     context.update({'help_page_id':help_page_id})
     context.update({'order':order})
+    print(context)
     return render(request,'ved/TMReportSearch.html',context)
 
 @login_required(login_url='login')

@@ -51,6 +51,53 @@
 </form>
 {% if request.GET.search_string|length > 0 %}
     {% if grecords_all %}
+{% if is_grouped %}
+<div class="table-responsive p-3">
+    <table class="table table-sm table-striped border border-secondary">
+        <thead style="font-weight: bold;">
+            <tr>
+                <td>
+                    &nbsp;
+                </td>
+                <td>
+                    Группа ТМ
+                </td>
+                <td>
+                    Записей в группе
+                </td>
+                <td>
+                    На сумму, $
+                </td>
+                <td>
+                    На сумму, €
+                </td>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>
+                    &nbsp;
+                </td>
+                <td>
+                    <a class="font-weight-bold" href="{% url 'ved:TrademarkReportShow' tm_grouped_data.tm_name|urlencode:"" %}?start_date={{ start_date }}&end_date={{ end_date }}">
+                        <span class="btn btn-info" style="cursor: pointer" data-toggle="tooltip" data-placement="top" title="{% for ta in tm_aliases_list %} {{ ta }}; {% endfor %}" > 
+                            {{ tm_grouped_data.tm_name }}
+                        </span>
+                    </a>
+                </td>
+                <td>
+                    {{ tm_grouped_data.grp_gr_count }}
+                </td>
+                <td>
+                    {{ tm_grouped_data.grp_gr_tcost |floatformat:2 }}
+                </td>
+                <td>
+                    {{ tm_grouped_data.grp_gr_tcost_eur | floatformat:2 }}
+                </td>
+            </tr>        
+        </tbody>
+    </table>
+{% endif %}
 
 
 
