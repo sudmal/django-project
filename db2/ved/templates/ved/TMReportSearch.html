@@ -79,7 +79,7 @@
                     &nbsp;
                 </td>
                 <td>
-                    <a class="font-weight-bold" href="{% url 'ved:TrademarkReportShow' tm_grouped_data.tm_name|urlencode:"" %}?start_date={{ start_date }}&end_date={{ end_date }}">
+                    <a class="font-weight-bold" href="{% url 'ved:TrademarkReportShow' tm_grouped_data.tm_name|urlencode:"" %}?start_date={{ start_date }}&end_date={{ end_date }}&is_grouped=1">
                         <span class="btn btn-info" style="cursor: pointer" data-toggle="tooltip" data-placement="top" title="{% for ta in tm_aliases_list %} {{ ta }}; {% endfor %}" > 
                             {{ tm_grouped_data.tm_name }}
                         </span>
@@ -89,7 +89,7 @@
                     {{ tm_grouped_data.grp_gr_count }}
                 </td>
                 <td>
-                    {{ tm_grouped_data.grp_gr_tcost |floatformat:2 }}
+                    {{ tm_grouped_data.grp_gr_tcost | floatformat:2 }}
                 </td>
                 <td>
                     {{ tm_grouped_data.grp_gr_tcost_eur | floatformat:2 }}
@@ -164,7 +164,7 @@
                             {{ forloop.counter }}
                         </td>
                         <td>
-                            <a class="btn btn-primary font-weight-bold" href="{% url 'ved:TrademarkReportShow' gr.trademark__name|urlencode:"" %}?start_date={{ start_date }}&end_date={{ end_date }}">{{ gr.trademark__name|truncatewords:8}}</a> 
+                            <a class="btn btn-primary font-weight-bold" href="{% url 'ved:TrademarkReportShow' gr.trademark__name|urlencode:"" %}?start_date={{ start_date }}&end_date={{ end_date }}&is_grouped=0">{{ gr.trademark__name|truncatewords:8}}</a> 
                         </td>
                         <td>
                             {{ gr.count }}

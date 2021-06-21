@@ -26,7 +26,10 @@ from django_tables2 import RequestConfig
 
 ## https://dizballanze.com/ru/django-project-optimization-part-3/
 #cache = caches['default']  # `default` is a key from CACHES dict in settings.py
+CACHE_TIME=1
 #cache.clear()
+
+
 
 
 # if now is not jan or feb, year is current year, other way - previus
@@ -287,6 +290,7 @@ def CompetitorsComparse(request):
         'end_date':end_date,
         'search_form':search_form
         }
+    context.update({'CACHE_TIME':CACHE_TIME})
     return render(request,'ved/CompetitorsComparse.html',context)
 
 @login_required(login_url='login')
@@ -340,7 +344,7 @@ def IndividualReport(request):
     context.update({'dates': dates})
     context.update({'request':request})
     context.update({'order':order})
-
+    context.update({'CACHE_TIME':CACHE_TIME})
     return render(request,'ved/IndividualReport.html',context)
 
 @login_required(login_url='login')
@@ -385,6 +389,7 @@ def IndividualReportFirmShow(request,edrpou_num):
             'end_date':request.GET['end_date']
             }
         context.update({'order':order})
+        context.update({'CACHE_TIME':CACHE_TIME})
         return render(request,'ved/IndividualReportFirmShow.html',context)
     else:
         return HttpResponse('EDRPOU {0} IS NOT VALID.<br><a href="/">  - Go back</a>'.format(edrpou_num))
@@ -418,6 +423,7 @@ def IndividualReportRaw(request,edrpou_num,gtd_num):
                 'edrpou_num':edrpou_num,
                 'order':order,
             }
+    context.update({'CACHE_TIME':CACHE_TIME})
     return render(request,'ved/IndividualReportRaw.html',context)
 
 @login_required(login_url='login')
@@ -466,7 +472,7 @@ def TrademarkReportSearch(request):
         context.update({'tm_grouped_data':tm_grouped_data})
         context.update({'tm_aliases_list':tm_aliases_list})
         context.update({'is_grouped':is_grouped})
-        print(tm_grouped_data)
+        #print(tm_grouped_data)
         
 
         #print(grecords_all.query)
@@ -480,7 +486,7 @@ def TrademarkReportSearch(request):
     context.update({'dates': dates})
     context.update({'help_page_id':help_page_id})
     context.update({'order':order})
-    print(context)
+    context.update({'CACHE_TIME':CACHE_TIME})
     return render(request,'ved/TMReportSearch.html',context)
 
 @login_required(login_url='login')
@@ -490,25 +496,29 @@ def TrademarkReportShow(request,trademark_name):
     context=dict()
     start_date=year+'-01-01'
     end_date=year+'-12-31'
+    is_grouped=False
     dates=getRecDates()
     if request.GET.get('start_date'):
-        search_form = SearchForm(request.GET)
         start_date=request.GET.get('start_date')
     if request.GET.get('end_date'):
-        search_form = SearchForm(request.GET)
         end_date=request.GET.get('end_date')
+    if request.GET.get('is_grouped') == "1":
+        is_grouped=True
+    #print(is_grouped)
     if  trademark_name:
+        context.update({'start_date':start_date})
+        context.update({'end_date':end_date})
         trademark_name=unquote(trademark_name)
         tm_aliases=TmAlias.objects.filter(tm_name__icontains = trademark_name).values('tm_alias')
         tm_aliases_list=[]        
         for ta in tm_aliases:
             tm_aliases_list.append(str((ta['tm_alias'])).upper())
-        print(tm_aliases_list)
         context.update({'trademark_name':trademark_name})
         context.update({'tm_aliases_list':tm_aliases_list})
         queryset_list1 = GtdRecords.objects.filter(( (Q(trademark__name=trademark_name) | Q(trademark__name__in = tm_aliases_list) ) & Q(record__date__range=[start_date, end_date])))\
            .values('record__recipient__edrpou','record__recipient__name').annotate(count=Count("cost_fact"),total_cost=Sum('cost_fact'),\
                total_cost_eur=Sum((F('record__exchange__usd_nbu')/F('record__exchange__eur_nbu'))*F('cost_fact'))).order_by(order['sort_order_symbol']+order['sort_field'])
+
         total_sum=0
         for c in queryset_list1:
             total_sum+=c['total_cost']
@@ -519,6 +529,8 @@ def TrademarkReportShow(request,trademark_name):
     context.update({'request':request})
     context.update({'help_page_id':help_page_id})
     context.update({'order':order})
+    context.update({'is_grouped':is_grouped})
+    context.update({'CACHE_TIME':CACHE_TIME})
     return render(request,'ved/TMReportShow.html',context)
 
 @login_required(login_url='login')
@@ -551,8 +563,8 @@ def TrademarkReportRaw(request,trademark_name,edrpou_num):
     records = paginator.get_page(page_number)
     context = {
                 "firm" : firm,
-                'start_date': request.GET['start_date'], 
-                'end_date':request.GET['end_date'],
+                'start_date': request.GET.get('start_date'), 
+                'end_date':request.GET.get('start_date'),
                 'dates' : dates,
                 'records': records,
                 'trademark_name': trademark_name,
@@ -562,6 +574,7 @@ def TrademarkReportRaw(request,trademark_name,edrpou_num):
             }
     help_page_id=9
     context.update({'help_page_id':help_page_id})
+    context.update({'CACHE_TIME':CACHE_TIME})
     return render(request,'ved/TMReportRaw.html',context)
 
 @login_required(login_url='login')
@@ -642,6 +655,7 @@ def HRKReport(request):
         }
     help_page_id=10
     context.update({'help_page_id':help_page_id})
+    context.update({'CACHE_TIME':CACHE_TIME})
     return render(request,'ved/HRKReport.html',context)
 
 def CompetitorsCatalog(request):
@@ -707,6 +721,7 @@ def CompetitorsCatalog(request):
         'end_date':end_date,
         'year':year,
         }
+    context.update({'CACHE_TIME':CACHE_TIME})
     return render(request,'ved/CompetitorsCatalog.html',context)
 
 def ProductCodesCatalog(request):
@@ -716,6 +731,7 @@ def ProductCodesCatalog(request):
         'ProductCodes':ProductCodes,
         'help_page_id':help_page_id,
         }
+    context.update({'CACHE_TIME':CACHE_TIME})
     return render(request,'ved/ProductCodesCatalog.html',context)
 
 def TnvedGroupCatalog(request):
@@ -724,6 +740,7 @@ def TnvedGroupCatalog(request):
         'TnvedGroup':TnvedGroupData,
         'help_page_id':6,
         }
+    context.update({'CACHE_TIME':CACHE_TIME})
     return  render(request, 'ved/TnvedGroupCatalog.html', context)
 
 def CompetitorsCatalogPeriodDetail(request,edrpou_num):
@@ -770,5 +787,6 @@ def CompetitorsCatalogPeriodDetail(request,edrpou_num):
         }
     help_page_id=4
     context.update({'help_page_id':help_page_id})
+    context.update({'CACHE_TIME':CACHE_TIME})
     return  render(request, 'ved/CompetitorsCatalogPeriodDetail.html', context)
 

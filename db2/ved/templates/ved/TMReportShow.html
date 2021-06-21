@@ -3,19 +3,22 @@
 {% load bold_in_quotes %}
 
 {% block title %}
+
+
 {{ trademark_name }} - ВЭД :: Поставщики :: Индивидуальный анализ :: Просмотр
 {% endblock title %}
 
+
 {% block content %}
-{% cache 3600 TMReportShow request.get_full_path %}
+{% cache 0 TMReportShow request.get_full_path %}
 
         <div class="container m-2">
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
                     <li class="breadcrumb-item"><a href="{% url 'ved:index' %}">ВЭД</a></li>
                     <li class="breadcrumb-item"><a href="{% url 'ved:index' %}">Поставщики</a></li>
-                    <li class="breadcrumb-item"><a href="{% url 'ved:TrademarkReportSearch' %}">Индивидульный анализ (Поиск) </a></li>
-                    <li class="breadcrumb-item active" aria-current="page">Индивидульный анализ ({{ trademark_name }})</li>
+                    <li class="breadcrumb-item"><a href="{% url 'ved:TrademarkReportSearch' %}">Индивидульный анализ</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Отчет  {% if is_grouped %} &nbsp; <span style="cursor: pointer;color: gray; text-decoration:underline;" data-toggle="tooltip" data-placement="top" title="{% for ta in tm_aliases_list %} {{ ta }}; {% endfor %}" ><b>для группы ТМ</b></span> &nbsp;{% else %} для ТМ {% endif %} (<b>{{ trademark_name }}</b>)   [{{ start_date }} - {{ end_date }}]</li>
                 </ol>
             </nav> 
         </div>
