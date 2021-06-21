@@ -31,7 +31,7 @@ TODO:
         <div class="row">
             <div class="col-md-3">
                         {% autoescape off %}
-                            <b>Торговая марка {% if is_grouped %} (группа): {% endif %} <span style="cursor: pointer;color: gray; text-decoration:underline;" data-toggle="tooltip" data-placement="top" title="{% for ta in tm_aliases_list %} {{ ta }}; {% endfor %}" >{{ trademark_name }}</b></span><br> 
+                            <b>Торговая марка {% if is_grouped %} (группа): {% endif %} <span style="cursor: pointer;color: #a56ac4; text-decoration:underline;" data-toggle="tooltip" data-placement="top" title="{% for ta in tm_aliases_list %} {{ ta }}; {% endfor %}" >{{ trademark_name }}</b></span><br> 
                             Импортер: {{ firm.name|bold_in_quotes }}
                         {% endautoescape %}
             </div>
