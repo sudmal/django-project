@@ -29,7 +29,7 @@
             <tr>
                 <th scope="col">№</th>
                 <th scope="col">                    
-                    <a class="btn btn-light w-100 h-100" style="display: inline-block; white-space: nowrap;" href={% url 'ved:TrademarkReportShow' trademark_name|urlencode:"" %}?start_date={{ start_date }}&end_date={{ end_date }}&sort_field=record__recipient__edrpou&sort_order={{ order.sort_order }}>
+                    <a class="btn btn-light w-100 h-100" style="display: inline-block; white-space: nowrap;" href={% url 'ved:TrademarkReportShow' trademark_name|urlencode:"" %}?start_date={{ start_date }}&end_date={{ end_date }}&is_grouped={% if is_grouped %}1{% else %}0{% endif %}&sort_field=record__recipient__edrpou&sort_order={{ order.sort_order }}>
                     {% if order.sort_field  ==  "record__recipient__edrpou" %}
                         {% if order.sort_order == 'asc' %}
                             &#8673;
@@ -41,7 +41,7 @@
                     {% endif %}
                     ЕДРПОУ</a></th>
                 <th scope="col">                    
-                    <a class="btn btn-light w-100 h-100" style="display: inline-block; white-space: nowrap;" href={% url 'ved:TrademarkReportShow' trademark_name|urlencode:"" %}?start_date={{ start_date }}&end_date={{ end_date }}&sort_field=record__recipient__name&sort_order={{ order.sort_order }}>
+                    <a class="btn btn-light w-100 h-100" style="display: inline-block; white-space: nowrap;" href={% url 'ved:TrademarkReportShow' trademark_name|urlencode:"" %}?start_date={{ start_date }}&end_date={{ end_date }}&is_grouped={% if is_grouped %}1{% else %}0{% endif %}&sort_field=record__recipient__name&sort_order={{ order.sort_order }}>
                     {% if order.sort_field  ==  "record__recipient__name" %}
                         {% if order.sort_order == 'asc' %}
                             &#8673;
@@ -53,7 +53,7 @@
                     {% endif %}
                     Наименование получателя</a></th>
                 <th scope="col">                    
-                    <a class="btn btn-light w-100 h-100" style="display: inline-block; white-space: nowrap;" href={% url 'ved:TrademarkReportShow' trademark_name|urlencode:"" %}?start_date={{ start_date }}&end_date={{ end_date }}&sort_field=count&sort_order={{ order.sort_order }}>
+                    <a class="btn btn-light w-100 h-100" style="display: inline-block; white-space: nowrap;" href={% url 'ved:TrademarkReportShow' trademark_name|urlencode:"" %}?start_date={{ start_date }}&end_date={{ end_date }}&is_grouped={% if is_grouped %}1{% else %}0{% endif %}&sort_field=count&sort_order={{ order.sort_order }}>
                     {% if order.sort_field  ==  "count" %}
                         {% if order.sort_order == 'asc' %}
                             &#8673;
@@ -65,7 +65,7 @@
                     {% endif %}
                     Количество записей</a></th>
                 <th scope="col">                    
-                    <a class="btn btn-light w-100 h-100" style="display: inline-block; white-space: nowrap;" href={% url 'ved:TrademarkReportShow' trademark_name|urlencode:"" %}?start_date={{ start_date }}&end_date={{ end_date }}&sort_field=total_cost&sort_order={{ order.sort_order }}>
+                    <a class="btn btn-light w-100 h-100" style="display: inline-block; white-space: nowrap;" href={% url 'ved:TrademarkReportShow' trademark_name|urlencode:"" %}?start_date={{ start_date }}&end_date={{ end_date }}&is_grouped={% if is_grouped %}1{% else %}0{% endif %}&sort_field=total_cost&sort_order={{ order.sort_order }}>
                     {% if order.sort_field  ==  "total_cost" %}
                         {% if order.sort_order == 'asc' %}
                             &#8673;
@@ -77,7 +77,7 @@
                     {% endif %}
                     Сумма, $</a></th>
                 <th scope="col">                    
-                    <a class="btn btn-light w-100 h-100" style="display: inline-block; white-space: nowrap;" href={% url 'ved:TrademarkReportShow' trademark_name|urlencode:"" %}?start_date={{ start_date }}&end_date={{ end_date }}&sort_field=total_cost_eur&sort_order={{ order.sort_order }}>
+                    <a class="btn btn-light w-100 h-100" style="display: inline-block; white-space: nowrap;" href={% url 'ved:TrademarkReportShow' trademark_name|urlencode:"" %}?start_date={{ start_date }}&end_date={{ end_date }}&is_grouped={% if is_grouped %}1{% else %}0{% endif %}&sort_field=total_cost_eur&sort_order={{ order.sort_order }}>
                     {% if order.sort_field  ==  "total_cost_eur" %}
                         {% if order.sort_order == 'asc' %}
                             &#8673;
@@ -98,7 +98,7 @@
                      {{ forloop.counter }}
                 </td>
                 <td {% if row.record__recipient__edrpou in competitors %} style="background-color: #F0E68C;" {% endif %}>
-                   <a class="btn btn-primary font-weight-bold" href="{% url 'ved:TrademarkReportRaw' trademark_name|urlencode:"" row.record__recipient__edrpou %}?start_date={{ start_date }}&end_date={{ end_date }}"> {{ row.record__recipient__edrpou| cut:' ' }}</a>
+                   <a class="btn btn-primary font-weight-bold" href="{% url 'ved:TrademarkReportRaw' trademark_name|urlencode:"" row.record__recipient__edrpou %}?start_date={{ start_date }}&end_date={{ end_date }}&is_grouped={% if is_grouped %}1{% else %}0{% endif %}"> {{ row.record__recipient__edrpou| cut:' ' }}</a>
                 </td>
                 <td {% if row.record__recipient__edrpou in competitors %} style="background-color: #F0E68C;" {% endif %}>
                     {% autoescape off %}
@@ -124,6 +124,6 @@
         </tbody>
     </table>
    </div>
-{% include 'ved/periods.html' %}
+
 {% endcache %}
 {% endblock %}

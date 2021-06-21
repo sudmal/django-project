@@ -14,26 +14,28 @@ TODO:
 
 {% block content %}
 
-{% cache 3600 IndividualReportRaw request.get_full_path %}
+{% cache 0 IndividualReportRaw request.get_full_path %}
     <div class="container m-2">
         <nav aria-label="breadcrumb">
             <ol class="breadcrumb">
                 <li class="breadcrumb-item"><a href="{% url 'ved:index' %}">ВЭД</a></li>
                 <li class="breadcrumb-item"><a href="{% url 'ved:index' %}">Поставщики</a></li>
                 <li class="breadcrumb-item"><a href="{% url 'ved:TrademarkReportSearch' %}">Индивидульный анализ (Поиск)</a></li>
-                <li class="breadcrumb-item"><a href="{% url 'ved:TrademarkReportShow' trademark_name|urlencode:"" %}?start_date={{ start_date }}&end_date={{ end_date }}">Индивидульный анализ ({% autoescape off %}{{ trademark_name }}{% endautoescape %})</a></li>
+                {# <li class="breadcrumb-item"><a href="{% url 'ved:TrademarkReportShow' trademark_name|urlencode:"" %}?start_date={{ start_date }}&end_date={{ end_date }}&is_grouped={% if is_grouped %}1{% else %}0{% endif %}">Записи импорта  {% if is_grouped %} &nbsp; <span style="cursor: pointer;color: gray; text-decoration:underline;" data-toggle="tooltip" data-placement="top" title="{% for ta in tm_aliases_list %} {{ ta }}; {% endfor %}" ><b>для группы ТМ</b></span> &nbsp;{% else %} для ТМ {% endif %} ({% autoescape off %}{{ trademark_name }}{% endautoescape %})   [{{ start_date }} - {{ end_date }}]</a></li> #}
+                <li class="breadcrumb-item">Записи импорта  {% if is_grouped %} &nbsp;<b>для группы ТМ</b> &nbsp;{% else %} для ТМ {% endif %} ({% autoescape off %}{{ trademark_name }}{% endautoescape %})   [{{ start_date }} - {{ end_date }}]</li>
                 <li class="breadcrumb-item active" aria-current="page">{{ gtd }}</li>
              </ol>
         </nav> 
     </div>
     <div class="table-responsive p-3">
         <div class="row">
-            <div class="col-md-2">
+            <div class="col-md-3">
                         {% autoescape off %}
-                            <b>{{ trademark_name }}</b><br> {{ firm.name|bold_in_quotes }}
+                            <b>Торговая марка {% if is_grouped %} (группа): {% endif %} <span style="cursor: pointer;color: gray; text-decoration:underline;" data-toggle="tooltip" data-placement="top" title="{% for ta in tm_aliases_list %} {{ ta }}; {% endfor %}" >{{ trademark_name }}</b></span><br> 
+                            Импортер: {{ firm.name|bold_in_quotes }}
                         {% endautoescape %}
             </div>
-            <div class="col-md-8">
+            <div class="col-md-7">
 
             </div>
             <div class="col-md-2">
@@ -47,7 +49,7 @@ TODO:
             <tr>
                 <th>№</th>
                 <th>                    
-                    <a class="btn btn-light w-100 h-100" style="display: inline-block; white-space: nowrap;" href={% url 'ved:TrademarkReportRaw' trademark_name|urlencode:"" edrpou_num %}?start_date={{ start_date }}&end_date={{ end_date }}&sort_field=record__date&sort_order={{ order.sort_order }}>
+                    <a class="btn btn-light w-100 h-100" style="display: inline-block; white-space: nowrap;" href={% url 'ved:TrademarkReportRaw' trademark_name|urlencode:"" edrpou_num %}?start_date={{ start_date }}&end_date={{ end_date }}&is_grouped={% if is_grouped %}1{% else %}0{% endif %}&sort_field=record__date&sort_order={{ order.sort_order }}>
                     {% if order.sort_field  ==  "record__date" %}
                         {% if order.sort_order == 'asc' %}
                             &#8673;
@@ -59,7 +61,7 @@ TODO:
                     {% endif %}
                     Дата</a></th>
                 <th>                    
-                    <a class="btn btn-light w-100 h-100" style="display: inline-block; white-space: nowrap;" href={% url 'ved:TrademarkReportRaw' trademark_name|urlencode:"" edrpou_num %}?start_date={{ start_date }}&end_date={{ end_date }}&sort_field=record__sender__name&sort_order={{ order.sort_order }}>
+                    <a class="btn btn-light w-100 h-100" style="display: inline-block; white-space: nowrap;" href={% url 'ved:TrademarkReportRaw' trademark_name|urlencode:"" edrpou_num %}?start_date={{ start_date }}&end_date={{ end_date }}&is_grouped={% if is_grouped %}1{% else %}0{% endif %}&sort_field=record__sender__name&sort_order={{ order.sort_order }}>
                     {% if order.sort_field  ==  "record__sender__name" %}
                         {% if order.sort_order == 'asc' %}
                             &#8673;
@@ -71,7 +73,7 @@ TODO:
                     {% endif %}
                     Экспортер</th>
                 <th>                    
-                    <a class="btn btn-light w-100 h-100" style="display: inline-block; white-space: nowrap;" href={% url 'ved:TrademarkReportRaw' trademark_name|urlencode:"" edrpou_num %}?start_date={{ start_date }}&end_date={{ end_date }}&sort_field=record__sender__country__name&sort_order={{ order.sort_order }}>
+                    <a class="btn btn-light w-100 h-100" style="display: inline-block; white-space: nowrap;" href={% url 'ved:TrademarkReportRaw' trademark_name|urlencode:"" edrpou_num %}?start_date={{ start_date }}&end_date={{ end_date }}&is_grouped={% if is_grouped %}1{% else %}0{% endif %}&sort_field=record__sender__country__name&sort_order={{ order.sort_order }}>
                     {% if order.sort_field  ==  "record__sender__country__name" %}
                         {% if order.sort_order == 'asc' %}
                             &#8673;
@@ -83,7 +85,7 @@ TODO:
                     {% endif %}
                     Страна</th>
                 <th>                    
-                    <a class="btn btn-light w-100 h-100" style="display: inline-block; white-space: nowrap;" href={% url 'ved:TrademarkReportRaw' trademark_name|urlencode:"" edrpou_num %}?start_date={{ start_date }}&end_date={{ end_date }}&sort_field=product_code&sort_order={{ order.sort_order }}>
+                    <a class="btn btn-light w-100 h-100" style="display: inline-block; white-space: nowrap;" href={% url 'ved:TrademarkReportRaw' trademark_name|urlencode:"" edrpou_num %}?start_date={{ start_date }}&end_date={{ end_date }}&is_grouped={% if is_grouped %}1{% else %}0{% endif %}&sort_field=product_code&sort_order={{ order.sort_order }}>
                     {% if order.sort_field  ==  "product_code" %}
                         {% if order.sort_order == 'asc' %}
                             &#8673;
@@ -95,7 +97,7 @@ TODO:
                     {% endif %}
                     Код товара</th>
                 <th>                    
-                    <a class="btn btn-light w-100 h-100" style="display: inline-block; white-space: nowrap;" href={% url 'ved:TrademarkReportRaw' trademark_name|urlencode:"" edrpou_num %}?start_date={{ start_date }}&end_date={{ end_date }}&sort_field=description&sort_order={{ order.sort_order }}>
+                    <a class="btn btn-light w-100 h-100" style="display: inline-block; white-space: nowrap;" href={% url 'ved:TrademarkReportRaw' trademark_name|urlencode:"" edrpou_num %}?start_date={{ start_date }}&end_date={{ end_date }}&is_grouped={% if is_grouped %}1{% else %}0{% endif %}&sort_field=description&sort_order={{ order.sort_order }}>
                     {% if order.sort_field  ==  "description" %}
                         {% if order.sort_order == 'asc' %}
                             &#8673;
@@ -107,7 +109,7 @@ TODO:
                     {% endif %}
                     Описание</th>
                 <th>                    
-                    <a class="btn btn-light w-100 h-100" style="display: inline-block; white-space: nowrap;" href={% url 'ved:TrademarkReportRaw' trademark_name|urlencode:"" edrpou_num %}?start_date={{ start_date }}&end_date={{ end_date }}&sort_field=cost_fact&sort_order={{ order.sort_order }}>
+                    <a class="btn btn-light w-100 h-100" style="display: inline-block; white-space: nowrap;" href={% url 'ved:TrademarkReportRaw' trademark_name|urlencode:"" edrpou_num %}?start_date={{ start_date }}&end_date={{ end_date }}&is_grouped={% if is_grouped %}1{% else %}0{% endif %}&sort_field=cost_fact&sort_order={{ order.sort_order }}>
                     {% if order.sort_field  ==  "cost_fact" %}
                         {% if order.sort_order == 'asc' %}
                             &#8673;
@@ -119,7 +121,7 @@ TODO:
                     {% endif %}
                     Стоимость, $</th>
                 <th>                    
-                    <a class="btn btn-light w-100 h-100" style="display: inline-block; white-space: nowrap;" href={% url 'ved:TrademarkReportRaw' trademark_name|urlencode:"" edrpou_num %}?start_date={{ start_date }}&end_date={{ end_date }}&sort_field=cost_eur&sort_order={{ order.sort_order }}>
+                    <a class="btn btn-light w-100 h-100" style="display: inline-block; white-space: nowrap;" href={% url 'ved:TrademarkReportRaw' trademark_name|urlencode:"" edrpou_num %}?start_date={{ start_date }}&end_date={{ end_date }}&is_grouped={% if is_grouped %}1{% else %}0{% endif %}&sort_field=cost_eur&sort_order={{ order.sort_order }}>
                     {% if order.sort_field  ==  "cost_eur" %}
                         {% if order.sort_order == 'asc' %}
                             &#8673;
