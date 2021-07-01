@@ -107,7 +107,7 @@
                      {{ forloop.counter0|add:report.start_index }}
                 </td>
                 <td>
-                    {{ row.record__date | date:"Y-M-d" |wordwrap:50 }} 
+                    {{ row.record__date | date:"d-M-Y"  |wordwrap:50 }} 
                 </td>
                 <td>
                    <a class="btn btn-primary font-weight-bold" href="{% url 'ved:IndividualReportRaw' edrpou_detail row.record__gtd_name|urlencode:""  %}?start_date={{ start_date }}&end_date={{ end_date }}"> {{ row.record__gtd_name }}</a>
