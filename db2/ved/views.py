@@ -682,6 +682,8 @@ def CompetitorsCatalog(request):
         .values('record__recipient__edrpou','record__recipient__name','record__recipient__firm_alias')\
             .annotate(total_cost=Sum('cost_fact'),total_cost_eur=Sum((F('record__exchange__usd_nbu')/F('record__exchange__eur_nbu'))*F('cost_fact')),\
                 total_count=Count('cost_fact')).order_by('-total_cost')
+
+    # List for youscore
     competitors_top=competitors[:42]
     yresults_dict={}
     yresult=Youscore_get(competitors_top)
@@ -725,6 +727,12 @@ def CompetitorsCatalog(request):
                     utk_top=yresults_dict[y]['ved']['utkved']
         c['y_fin_m_in'] = money_in
         c['y_ved_utk'] = utk_top
+        c_name=Competitors.objects.filter(competitor_code=c['record__recipient__edrpou']).values('competitor_name','competitor_surname')
+        if c_name[0]['competitor_name']:
+            c['record__recipient__name'] = str(c_name[0]['competitor_name'])
+        else:
+            c['record__recipient__name'] = str(c_name[0]['competitor_surname'])
+        
         competitors_list.append(c)
     context={
         'help_page_id':help_page_id,
