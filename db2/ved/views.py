@@ -518,7 +518,7 @@ def TrademarkReportShow(request,trademark_name):
         queryset_list1 = GtdRecords.objects.filter(( (Q(trademark__name=trademark_name) | Q(trademark__name__in = tm_aliases_list) ) & Q(record__date__range=[start_date, end_date])))\
            .values('record__recipient__edrpou','record__recipient__name').annotate(count=Count("cost_fact"),total_cost=Sum('cost_fact'),\
                total_cost_eur=Sum((F('record__exchange__usd_nbu')/F('record__exchange__eur_nbu'))*F('cost_fact'))).order_by(order['sort_order_symbol']+order['sort_field'])
-
+        print(queryset_list1.query)
         total_sum=0
         for c in queryset_list1:
             total_sum+=c['total_cost']

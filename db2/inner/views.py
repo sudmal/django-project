@@ -676,11 +676,17 @@ def ClientsCompetitorsComparse(request):
     if request.GET.get('selected_year'):
         YearSelectForm=NlYearSelectForm(request.GET)
         year=request.GET.get('selected_year')
+    # Список всех конкурентов
     competitors= Competitors.objects.all().values_list('competitor_code', flat=True)
     #print(competitors.query)
+    # организации по продуктам питания
     f_eat=NlFilter.objects.filter(type="eat").values_list('edrpou', flat=True)
+    # организации по упаковке
     f_pack=NlFilter.objects.filter(type="pack").values_list('edrpou', flat=True)
+    # организации - другие
     f_other=NlFilter.objects.filter(type="other").values_list('edrpou', flat=True)
+
+    # HORECA - организации - все, кто не попадает под предыдущие три
     f_horeca=Competitors.objects.exclude(Q(competitor_code__in=f_eat) | Q(competitor_code__in=f_pack) | Q(competitor_code__in=f_other)).values_list('competitor_code', flat=True)
     
     organisations = NlReestr.objects.filter(ordering_date__year=year)
@@ -693,8 +699,7 @@ def ClientsCompetitorsComparse(request):
         f_pack = ['111111']
     if not filter_dict['f_other']:
         f_other = ['111111']
-    organisations=organisations.filter(Q(buyer__edrpou__in=f_horeca) | Q(buyer__edrpou__in=f_eat) | Q(buyer__edrpou__in=f_pack) |Q(buyer__edrpou__in=f_other) )
-    #print(organisations.query)
+    organisations=organisations.filter(Q(seller__edrpou__in=f_horeca) | Q(seller__edrpou__in=f_eat) | Q(seller__edrpou__in=f_pack) |Q(seller__edrpou__in=f_other) )
     organisations = organisations.values('buyer_id','buyer__name','buyer__edrpou').distinct()
     
     if currency == 'UAH':
@@ -704,12 +709,12 @@ def ClientsCompetitorsComparse(request):
     elif currency == 'USD':
             organisations=organisations.annotate(sum=Round(Sum((F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2)/F('exchange__usd_com')))).order_by('-sum')
     organisations=organisations.filter(Q(sum__gte=min_sum))
-    #print (organisations.query)
+    print (organisations.query)
     organisations_list=[]
     totals=[]
     # Total sums
     for m in range(1,13):
-        t_sum=NlReestr.objects.filter(Q(buyer__edrpou__in=f_horeca) | Q(buyer__edrpou__in=f_eat) | Q(buyer__edrpou__in=f_pack) |Q(buyer__edrpou__in=f_other) ).filter(ordering_date__year=year,ordering_date__month=m)
+        t_sum=NlReestr.objects.filter(Q(seller__edrpou__in=f_horeca) | Q(seller__edrpou__in=f_eat) | Q(seller__edrpou__in=f_pack) |Q(seller__edrpou__in=f_other) ).filter(ordering_date__year=year,ordering_date__month=m)
         if currency == 'UAH':
             t_sum=t_sum.aggregate(sum=Sum(F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2))
         elif currency == 'EUR':
@@ -717,6 +722,7 @@ def ClientsCompetitorsComparse(request):
         elif currency == 'USD':
             t_sum=t_sum.aggregate(sum=Sum((F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2)/F('exchange__usd_com')))
         totals.append(t_sum['sum'])
+    print (totals)
     importers=[]
     for o in organisations:
         #print(o['buyer__edrpou'])
@@ -735,7 +741,7 @@ def ClientsCompetitorsComparse(request):
         cur_firm.update({'buyer__edrpou':o['buyer__edrpou']})
         cur_firm.update({'sum':o['sum']})
         #print (cur_firm['buyer__edrpou'])
-        o_pms=NlReestr.objects.filter(ordering_date__year=year).filter(buyer_id=cur_firm['buyer_id']).filter(Q(buyer__edrpou__in=f_horeca) | Q(buyer__edrpou__in=f_eat) | Q(buyer__edrpou__in=f_pack) |Q(buyer__edrpou__in=f_other) ).annotate(month=TruncMonth('ordering_date')).values('month') 
+        o_pms=NlReestr.objects.filter(ordering_date__year=year).filter(buyer_id=cur_firm['buyer_id']).filter(Q(seller__edrpou__in=f_horeca) | Q(seller__edrpou__in=f_eat) | Q(seller__edrpou__in=f_pack) |Q(seller__edrpou__in=f_other) ).annotate(month=TruncMonth('ordering_date')).values('month') 
         if currency == 'UAH':
             o_pms=o_pms.annotate(sum=Round(Sum(F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2))).order_by()
         elif currency == 'EUR':
