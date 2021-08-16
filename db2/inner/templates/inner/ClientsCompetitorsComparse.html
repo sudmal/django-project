@@ -22,6 +22,7 @@
 {% endblock DatePeriod %}
 
 {% block content %}
+
 <div class="row mx-2">
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
@@ -124,10 +125,10 @@
     <ul class="pagination justify-content-center">
         {% if organisations.has_previous %}
             <li class="page-item">
-                <a class="page-link" href="?page=1&selected_year={{year}}&min_sum={{ min_sum }}">&laquo;</a>
+                <a class="page-link" href="?page=1&selected_year={{year}}&min_sum={{ min_sum|cut:' ' }}">&laquo;</a>
             </li>
              <li class="page-item">
-                <a class="page-link" href="?page={{ organisations.previous_page_number }}&selected_year={{year}}&min_sum={{ min_sum }}"> < </a>
+                <a class="page-link" href="?page={{ organisations.previous_page_number }}&selected_year={{year}}&min_sum={{ min_sum|cut:' ' }}"> < </a>
             </li>
         {% endif %}
 
@@ -137,10 +138,10 @@
 
         {% if organisations.has_next %}
             <li class="page-item">
-                <a class="page-link" href="?page={{ organisations.next_page_number }}&selected_year={{year}}&min_sum={{ min_sum }}"> > </a>
+                <a class="page-link" href="?page={{ organisations.next_page_number }}&selected_year={{year}}&min_sum={{ min_sum|cut:' ' }}"> > </a>
             </li>
             <li class="page-item">
-                <a class="page-link" href="?page={{ organisations.paginator.num_pages }}&selected_year={{year}}&min_sum={{ min_sum }}"> &raquo; </a>
+                <a class="page-link" href="?page={{ organisations.paginator.num_pages }}&selected_year={{year}}&min_sum={{ min_sum|cut:' ' }}"> &raquo; </a>
             </li>
         {% endif %}
     </ul>

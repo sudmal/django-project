@@ -652,7 +652,7 @@ def ClientsCompetitorsComparse(request):
     if currency == 'USD':
         min_sum=60000
     if request.GET.get('min_sum'):
-        min_sum=request.GET.get('min_sum')
+        min_sum=int(request.GET.get('min_sum'))
     firmTypeSelectForm = FirmTypeSelectForm(initial={'min_sum':min_sum})
         
     if request.GET.get('firm_filter_set'):
@@ -709,7 +709,7 @@ def ClientsCompetitorsComparse(request):
     elif currency == 'USD':
             organisations=organisations.annotate(sum=Round(Sum((F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2)/F('exchange__usd_com')))).order_by('-sum')
     organisations=organisations.filter(Q(sum__gte=min_sum))
-    print (organisations.query)
+    #print (organisations.query)
     organisations_list=[]
     totals=[]
     # Total sums
@@ -722,7 +722,7 @@ def ClientsCompetitorsComparse(request):
         elif currency == 'USD':
             t_sum=t_sum.aggregate(sum=Sum((F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2)/F('exchange__usd_com')))
         totals.append(t_sum['sum'])
-    print (totals)
+    #print (totals)
     importers=[]
     for o in organisations:
         #print(o['buyer__edrpou'])
