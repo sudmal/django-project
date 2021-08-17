@@ -444,14 +444,16 @@ def TrademarkReportSearch(request):
     if request.GET.get('search_string'):
         trademark_name=request.GET.get('search_string')
         tm_aliases=TmAlias.objects.filter(tm_name__icontains = trademark_name).values('tm_name','tm_alias')
-        tm_aliases_list=[]
+        tm_aliases_list=['NO_GROUP_TM_234652T78Y']
         tm_name=trademark_name
         is_grouped=False 
         if tm_aliases:
             is_grouped=True
             tm_name= tm_aliases[0]['tm_name']
+            tm_aliases_list=[]
             for ta in tm_aliases:
                 tm_aliases_list.append(str((ta['tm_alias'])).upper())
+            
         tm_grouped_data=dict()
 
 
@@ -460,6 +462,7 @@ def TrademarkReportSearch(request):
         grecords_all = GtdRecords.objects.filter((  (Q(trademark__name__icontains=request.GET.get('search_string')) | Q(trademark__name__iregex=r'(' + '|'.join(tm_aliases_list) + ')') ) & Q(record__date__range=[start_date, end_date])))\
            .values('trademark__name').annotate(count=Count("product_code"),total_cost=Sum('cost_fact'),\
                total_cost_eur=Sum((F('record__exchange__usd_nbu')/F('record__exchange__eur_nbu'))*F('cost_fact'))).order_by(order['sort_order_symbol']+order['sort_field'])
+        print(grecords_all.query)
         grp_gr_count=0
         grp_gr_tcost=0.0
         grp_gr_tcost_eur=0.0
