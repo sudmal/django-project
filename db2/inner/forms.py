@@ -4,7 +4,7 @@ from django.db.models import Max
 import datetime 
 from django.db.models.functions import ExtractYear
 from django.forms.fields import BooleanField,IntegerField
-
+from .models import Competitors
 
 reestr_years = NlReestr.objects.extra(select={'year':"extract(year from ordering_date)"}).distinct().values('year').order_by()
 
@@ -13,7 +13,7 @@ class DateInput(forms.DateInput):
     input_type='date'
 
 year = str((datetime.date.today() - datetime.timedelta(days=120)).year)
-print(year)
+#print(year)
 db_max_date=str(NlReestr.objects.filter(ordering_date__range=[str(year)+'-01-01', str(year)+'-12-31']).aggregate(Max('ordering_date'))['ordering_date__max'])
 
 class SearchFormOrg(forms.Form):
@@ -28,6 +28,16 @@ class DatesStartEndForm(forms.Form):
 class NlYearSelectForm(forms.Form):
     CHOICES = [('2017','2017'), ('2018','2018'), ('2019','2019'), ('2020','2020'),('2021','2021')]
     selected_year = forms.ChoiceField(label='', choices=CHOICES,initial=year, widget=forms.Select(attrs={'class':'form-control'}))
+
+class CompetitorsChoice(forms.Form):
+    cmpt_list = Competitors.objects.all().values()
+    CHOICES=[]
+    # {'competitor_code': 43486282, 'competitor_name': None, 'competitor_surname': 'ТОВАРИСТВО З ОБМЕЖЕНОЮ ВIДПОВIДАЛЬНIСТЮ "САМОРОДОК ТМ"'}
+    for c in cmpt_list:
+        CHOICES.append((str(c['competitor_code']),str(c['competitor_code'])+' - '+str(c['competitor_surname'])))
+    #print(CHOICES)
+    cmpt_selector = forms.ChoiceField(label='', choices=CHOICES, widget=forms.Select(attrs={'class':'form-control'}))
+
 
 class FirmTypeSelectForm(forms.Form):
     f_horeca = BooleanField(required=False,widget=forms.CheckboxInput(attrs={'class':'form-check-input','id':'f_horeca'}))
