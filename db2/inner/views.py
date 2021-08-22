@@ -14,7 +14,7 @@ from .models import Exchange,Youscore,ReestrStaging,CreditStaging,NlCredit,NlOrg
 from django.db.models import Count, Sum, Q, Avg, Subquery, OuterRef, F, FloatField, Max
 from django.db.models import FloatField
 from django.db.models.functions import Cast
-from .forms import SearchFormOrg,DatesStartEndForm,NlYearSelectForm,FirmTypeSelectForm,RecSearchForm,CompetitorsChoice
+from .forms import SearchFormOrg,DatesStartEndForm,NlYearSelectForm,FirmTypeSelectForm,RecSearchForm
 from .tables import RecordsSearchTable
 import pandas as pd
 import datetime
@@ -43,7 +43,7 @@ class Round(Func):
     function = 'ROUND'
     template='%(function)s(%(expressions)s::numeric, 0)'
 
-from django.db.models import Func
+
 
 class Round2(Func):
     function = "ROUND"
@@ -1015,22 +1015,41 @@ def RecordsSearch(request):
 
 @login_required(login_url='login')
 def topSales(request):
-    recSearchForm = RecSearchForm()
+    YearSelectForm=NlYearSelectForm()
     currency = User.objects.get(username=request.user).profile.currency
     num_per_page = User.objects.get(username=request.user).profile.rows_per_page
     if num_per_page==0:
-        num_per_page=9999
-    results=NlReestr.objects.none()
+        num_per_page=99999999999
 
+    year=getCurrentYear()
+    if request.GET.get('selected_year'):
+        YearSelectForm=NlYearSelectForm(request.GET)
+        year=request.GET.get('selected_year')
+    searchFormOrg=SearchFormOrg()
+    organisations=[]
     if request.GET.get('search_string'):
-        recSearchForm = RecSearchForm(request.GET)
-
-       
+        searchFormOrg = SearchFormOrg(request.GET)
+        organisations=NlReestr.objects.filter(Q(ordering_date__year=year)&(Q(seller__name__icontains=request.GET.get('search_string'))|Q(seller__edrpou__icontains=request.GET.get('search_string'))))\
+            .values('seller__name','seller__edrpou').distinct()
+        if currency == 'UAH':
+            organisations=organisations.annotate(sum=Sum(F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2)).order_by('-sum')
+        elif currency == 'EUR':
+            organisations=organisations.annotate(sum=Sum((F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2)/F('exchange__eur_mb_sale'))).order_by('-sum')
+        elif currency == 'USD':
+            organisations=organisations.annotate(sum=Sum((F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2)/F('exchange__usd_com'))).order_by('-sum')   
+        #print(organisations.query)
     context={
-        'recSearchForm':recSearchForm,
-        'results':results,
+        'organisations':organisations,
         'currency':currency,
-        }
+        'searchFormOrg':searchFormOrg,
+        'YearSelectForm':YearSelectForm,
+        'year':year
+    }
     context.update({'help_page_id':19})
     return render(request,'inner/topSales.html',context)
 
+@login_required(login_url='login')
+def topSalesFirmShow(request,edrpou_num):
+    context={}
+    return render(request,'inner/topSalesFirmShow.html',context)
+    

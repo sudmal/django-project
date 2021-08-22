@@ -4,7 +4,7 @@ from django.db.models import Max
 import datetime 
 from django.db.models.functions import ExtractYear
 from django.forms.fields import BooleanField,IntegerField
-from .models import Competitors
+from .models import NlReestr,NlOrg,NlOrgClass
 
 reestr_years = NlReestr.objects.extra(select={'year':"extract(year from ordering_date)"}).distinct().values('year').order_by()
 
@@ -29,14 +29,15 @@ class NlYearSelectForm(forms.Form):
     CHOICES = [('2017','2017'), ('2018','2018'), ('2019','2019'), ('2020','2020'),('2021','2021')]
     selected_year = forms.ChoiceField(label='', choices=CHOICES,initial=year, widget=forms.Select(attrs={'class':'form-control'}))
 
-class CompetitorsChoice(forms.Form):
-    cmpt_list = Competitors.objects.all().values()
-    CHOICES=[]
+#class CompetitorsChoice(forms.Form):
+#   cmpt_list = NlReestr.objects.filter(seller__class_field__name='HORECA').values('seller__name','seller__edrpou').distinct()
+#   print(cmpt_list)
+#   CHOICES=[]
     # {'competitor_code': 43486282, 'competitor_name': None, 'competitor_surname': 'ТОВАРИСТВО З ОБМЕЖЕНОЮ ВIДПОВIДАЛЬНIСТЮ "САМОРОДОК ТМ"'}
-    for c in cmpt_list:
-        CHOICES.append((str(c['competitor_code']),str(c['competitor_code'])+' - '+str(c['competitor_surname'])))
+#    for c in cmpt_list:
+#        CHOICES.append((str(c['seller__edrpou']),str(c['seller__edrpou'])+' - '+str(c['seller__name'])))
     #print(CHOICES)
-    cmpt_selector = forms.ChoiceField(label='', choices=CHOICES, widget=forms.Select(attrs={'class':'form-control'}))
+#    cmpt_selector = forms.ChoiceField(label='', choices=CHOICES, widget=forms.Select(attrs={'class':'form-control'}))
 
 
 class FirmTypeSelectForm(forms.Form):

@@ -24,5 +24,5 @@ urlpatterns = [
     path('CompetitorsCatalog/', views.CompetitorsCatalog, name = 'CompetitorsCatalog'),
     path('RecordsSearch/', views.RecordsSearch, name = 'RecordsSearch'),
     path('topSales/',views.topSales, name='topSales'),
-
+    path('topSales/<int:edrpou_num>/',views.topSalesFirmShow, name='topSalesFirmShow'), 
 ]
