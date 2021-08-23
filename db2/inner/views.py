@@ -26,6 +26,9 @@ from django_tables2 import RequestConfig
 from django.contrib.auth.models import User
 from django.db.models.functions import TruncMonth
 
+
+year = str((datetime.date.today() - datetime.timedelta(days=120)).year)
+
 def getCurrentRowsPerPage(request):
     num_per_page = User.objects.get(username=request.user).profile.rows_per_page
     if num_per_page==0:
@@ -1016,9 +1019,42 @@ def RecordsSearch(request):
 
 @login_required(login_url='login')
 def topSalesFirmShow(request,edrpou_num):
-    context={
-        'edrpou_num':edrpou_num,
+    start_date=year+'-01-01'
+    end_date=year+'-12-31'
+    period_form=DatesStartEndForm()
+    dates=getRecDates()
+    if request.GET.get('start_date'):
+        period_form = DatesStartEndForm(request.GET)
+        start_date=request.GET.get('start_date')
+    if request.GET.get('end_date'):
+        period_form = DatesStartEndForm(request.GET)
+        end_date=request.GET.get('end_date')
+    firm=NlOrg.objects.filter(edrpou = edrpou_num).values('name')[0]['name']
+    top_records=NlReestr.objects.filter(Q(seller__edrpou=edrpou_num) & Q(ordering_date__range=[start_date, end_date])).values('product__name')\
+        .annotate(total_cost=Round(Sum(F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2)),\
+                total_count=Round(Sum('count'))).filter(Q(total_count__gte=50) | Q(total_cost__gte=300000)).order_by('-total_cost')[:100]
+    
+    print(top_records.query)
 
-    }
+ #   table = CompetitorsComparsePeriodDetailTable(CompetitorsDetailRaw)
+ #   RequestConfig(request, paginate={"per_page": num_per_page}).configure(table)
+ #   export_format = request.GET.get("_export", None)
+ #   if TableExport.is_valid_format(export_format):
+ #       exporter = TableExport(export_format, table, dataset_kwargs={"title": firm.name})
+ #       return exporter.response(filename="VEDImport_{0}_{1}_{2}.{3}".format(edrpou_num,start_date,end_date,export_format))
+    context={
+        'period_form': period_form,
+        'edrpou_num':edrpou_num,
+        'start_date':start_date,
+        'end_date':end_date,
+        'year':year,  
+        'dates':dates,
+ #       'table':table,
+        'firm': firm,
+        'edrpou_num':edrpou_num,
+        }
+    help_page_id=19
+    context.update({'help_page_id':help_page_id})
+    context.update({'edrpou_num':edrpou_num})
     return render(request,'inner/topSalesFirmShow.html',context)
     
