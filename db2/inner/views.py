@@ -1013,43 +1013,12 @@ def RecordsSearch(request):
     return render(request,'inner/RecordsSearch.html',context)
 
 
-@login_required(login_url='login')
-def topSales(request):
-    YearSelectForm=NlYearSelectForm()
-    currency = User.objects.get(username=request.user).profile.currency
-    num_per_page = User.objects.get(username=request.user).profile.rows_per_page
-    if num_per_page==0:
-        num_per_page=99999999999
-
-    year=getCurrentYear()
-    if request.GET.get('selected_year'):
-        YearSelectForm=NlYearSelectForm(request.GET)
-        year=request.GET.get('selected_year')
-    searchFormOrg=SearchFormOrg()
-    organisations=[]
-    if request.GET.get('search_string'):
-        searchFormOrg = SearchFormOrg(request.GET)
-        organisations=NlReestr.objects.filter(Q(ordering_date__year=year)&(Q(seller__name__icontains=request.GET.get('search_string'))|Q(seller__edrpou__icontains=request.GET.get('search_string'))))\
-            .values('seller__name','seller__edrpou').distinct()
-        if currency == 'UAH':
-            organisations=organisations.annotate(sum=Sum(F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2)).order_by('-sum')
-        elif currency == 'EUR':
-            organisations=organisations.annotate(sum=Sum((F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2)/F('exchange__eur_mb_sale'))).order_by('-sum')
-        elif currency == 'USD':
-            organisations=organisations.annotate(sum=Sum((F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2)/F('exchange__usd_com'))).order_by('-sum')   
-        #print(organisations.query)
-    context={
-        'organisations':organisations,
-        'currency':currency,
-        'searchFormOrg':searchFormOrg,
-        'YearSelectForm':YearSelectForm,
-        'year':year
-    }
-    context.update({'help_page_id':19})
-    return render(request,'inner/topSales.html',context)
 
 @login_required(login_url='login')
 def topSalesFirmShow(request,edrpou_num):
-    context={}
+    context={
+        'edrpou_num':edrpou_num,
+
+    }
     return render(request,'inner/topSalesFirmShow.html',context)
     

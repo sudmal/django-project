@@ -1,0 +1,99 @@
+{% extends 'main/base.html' %}
+
+{% load bold_in_quotes %}
+{% load render_table from django_tables2 %}
+{% load static %}
+{% load cache %}
+{% load querystring from django_tables2 %}
+
+{% block title %}
+    Продажи :: Топ 100 товаров за период (поиск)
+{% endblock title %}
+
+{% block js-before %}
+<link rel="stylesheet" href="{% static 'django_tables2/themes/paleblue/css/screen.css' %}" />
+<style> 
+.container { 
+padding-left: 16px; 
+padding-right: 16px;
+marging-left: 16px; 
+marging-right: 16px; 
+overflow: hidden;
+} 
+.container-fluid { 
+padding-left: 16px; 
+padding-right: 16px;
+marging-left: 16px; 
+marging-right: 16px; 
+overflow: hidden;
+} 
+
+.highlight { background-color: #c8f6cd; }
+</style>
+{% endblock js-before %}
+
+{% block export_button %}
+{% if results %}
+    <a href="{% querystring '_export'='xlsx' %}"><button type="button" class="btn btn-outline-success">Export to EXCEL</button></a>
+{% endif %}
+{% endblock export_button %}
+
+{% block DatePeriod %}
+
+{% endblock DatePeriod %}
+
+{% block period_button %}
+{% endblock period_button %}
+
+{% block content %}
+<div class="container-fluid p-0">
+  <div class="row">
+        <div class="col">
+            <form method="GET" action="{% url 'inner:topSalesFirmShow' edrpou_num %}">
+                {% csrf_token %}
+                <div class="input-group mb-3 ml-5">
+                {{ searchFormOrg.search_string }} 
+                    <div class="input-group-append">
+                        <button type="submit" class="btn btn-outline-secondary">Поиск</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div class="col" style="padding-left: 100px;">Найдено записей на сумму: <b>{{total_sum}} {{currency}}</b></div>
+        <div class="col">
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><span style="color: green;">Стоимости с учетом НДС, текущая валюта (<b>{{ currency }}</b>)</span></li>
+                </ol>
+            </nav> 
+        </div>
+    </div>
+</div>
+<div class="container-fluid p-5">
+    <div class="row">
+    <div class"col">
+    {% if results %}
+        {% render_table table %}
+    
+    {% else %}
+        {% if request.GET.search_string|length > 0 %}
+            По заданному запросу за выбранный период записей не обнаружено
+        {% else %}
+            Пожалуйста выполните запрос
+        {% endif %}
+    {% endif %}
+    </div>
+    </div>
+</div>
+
+
+
+{% endblock content %}
+
+
+{% block js %}
+<script>
+$('td').highlight('{{ request.GET.search_string }}');
+
+</script>
+{% endblock js %}

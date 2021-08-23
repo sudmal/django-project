@@ -1,6 +1,7 @@
 {% extends 'main/base.html' %}
 {% load bold_in_quotes %}
 {% load cache %}
+{% load static %}
 
 {% block title %}
 Внутренний рынок :: Справочники :: Конкуренты
@@ -95,6 +96,7 @@ $(document).ready(function(){
           <th>№</th>
 					<th width="5%">ЕДРПОУ</th>
 					<th width="8%">Наименование</th>
+          <th width="8%">Топ 100 товаров</th>
           <th width="5%">Импортер</th>
 					</tr>
 				</thead>
@@ -104,8 +106,9 @@ $(document).ready(function(){
                                 <tr>
                                     <td></td>
                                     <td width="10%" ><a class="btn btn-secondary font-weight-bold" href="{% url 'inner:SalesIndividualFirmShow' firm.seller__edrpou %}?year={{ year }}">{{ firm.seller__edrpou | cut:' ' }}</a></td>
-                                    <td width="80%" >{% autoescape off %} {{ firm.seller__name|bold_in_quotes }} {% endautoescape %}</td>
-                                    <td width="80%" >{% if firm.is_importer %}&#9989;{% else %} &nbsp;{% endif %}</td>
+                                    <td width="70%" >{% autoescape off %} {{ firm.seller__name|bold_in_quotes }} {% endautoescape %}</td>
+                                    <td width="10%" ><a class="btn btn-warning font-weight-bold" style="margin:auto;" href="{% url 'inner:topSalesFirmShow' firm.seller__edrpou %}?year={{ year }}"><img src="{% static 'top100.png' %}"></a></td>
+                                    <td width="10%" >{% if firm.is_importer %}&#9989;{% else %} &nbsp;{% endif %}</td>
                                 </tr>
                             {% endif %}
 
