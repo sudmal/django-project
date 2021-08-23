@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.urls import reverse
 from django.db import models
-from django.db.models import Func
+from django.db.models import Func,IntegerField
 from urllib.parse import unquote
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.contrib.auth.decorators import login_required,user_passes_test
@@ -15,7 +15,7 @@ from django.db.models import Count, Sum, Q, Avg, Subquery, OuterRef, F, FloatFie
 from django.db.models import FloatField
 from django.db.models.functions import Cast
 from .forms import SearchFormOrg,DatesStartEndForm,NlYearSelectForm,FirmTypeSelectForm,RecSearchForm
-from .tables import RecordsSearchTable
+from .tables import RecordsSearchTable,Top100Table
 import pandas as pd
 import datetime
 import requests
@@ -1019,6 +1019,7 @@ def RecordsSearch(request):
 
 @login_required(login_url='login')
 def topSalesFirmShow(request,edrpou_num):
+    currency = 'UAH'
     start_date=year+'-01-01'
     end_date=year+'-12-31'
     period_form=DatesStartEndForm()
@@ -1031,30 +1032,29 @@ def topSalesFirmShow(request,edrpou_num):
         end_date=request.GET.get('end_date')
     firm=NlOrg.objects.filter(edrpou = edrpou_num).values('name')[0]['name']
     top_records=NlReestr.objects.filter(Q(seller__edrpou=edrpou_num) & Q(ordering_date__range=[start_date, end_date])).values('product__name')\
-        .annotate(total_cost=Round(Sum(F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2)),\
-                total_count=Round(Sum('count'))).filter(Q(total_count__gte=50) | Q(total_cost__gte=300000)).order_by('-total_cost')[:100]
-    
-    print(top_records.query)
-
- #   table = CompetitorsComparsePeriodDetailTable(CompetitorsDetailRaw)
- #   RequestConfig(request, paginate={"per_page": num_per_page}).configure(table)
- #   export_format = request.GET.get("_export", None)
- #   if TableExport.is_valid_format(export_format):
- #       exporter = TableExport(export_format, table, dataset_kwargs={"title": firm.name})
- #       return exporter.response(filename="VEDImport_{0}_{1}_{2}.{3}".format(edrpou_num,start_date,end_date,export_format))
+        .annotate(total_cost=Cast(Round(Sum(F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2)),IntegerField()),\
+                total_count=Cast(Round(Sum('count')),IntegerField())).filter(Q(total_count__gte=50) | Q(total_cost__gte=300000)).order_by('-total_cost')
+    #print(top_records.values_list)
+    table = Top100Table(top_records[:100])
+    RequestConfig(request, paginate={"per_page": 100}).configure(table)
+    export_format = request.GET.get("_export", None)
+    if TableExport.is_valid_format(export_format):
+        exporter = TableExport(export_format, table, dataset_kwargs={"title": firm.name})
+        return exporter.response(filename="top100_{0}_{1}_{2}.{3}".format(edrpou_num,start_date,end_date,export_format))
     context={
+        'top_records':top_records,
         'period_form': period_form,
         'edrpou_num':edrpou_num,
         'start_date':start_date,
         'end_date':end_date,
         'year':year,  
         'dates':dates,
- #       'table':table,
+        'table':table,
         'firm': firm,
         'edrpou_num':edrpou_num,
+        'currency':currency,
         }
     help_page_id=19
     context.update({'help_page_id':help_page_id})
-    context.update({'edrpou_num':edrpou_num})
     return render(request,'inner/topSalesFirmShow.html',context)
     

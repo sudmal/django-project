@@ -7,7 +7,7 @@
 {% load querystring from django_tables2 %}
 
 {% block title %}
-    Продажи :: Топ 100 товаров за период (поиск)
+    Продажи :: Топ 100 товаров за период
 {% endblock title %}
 
 {% block js-before %}
@@ -27,7 +27,15 @@ marging-left: 16px;
 marging-right: 16px; 
 overflow: hidden;
 } 
+.table-container {
+  width: 300%;
+}
+td{
+    height: 25px;
+    padding-left: 100px;
 
+
+}
 .highlight { background-color: #c8f6cd; }
 </style>
 {% endblock js-before %}
@@ -39,7 +47,13 @@ overflow: hidden;
 {% endblock export_button %}
 
 {% block DatePeriod %}
-
+    <form method="get" class="form-inline" action={% url 'inner:topSalesFirmShow' edrpou_num %}>
+    {% csrf_token %}    
+         {{ period_form.start_date }}
+        -
+        {{ period_form.end_date }}
+        <button type="submit" class="btn btn-info">Изменить</button>
+    </form>
 {% endblock DatePeriod %}
 
 {% block period_button %}
@@ -49,17 +63,8 @@ overflow: hidden;
 <div class="container-fluid p-0">
   <div class="row">
         <div class="col">
-            <form method="GET" action="{% url 'inner:topSalesFirmShow' edrpou_num %}">
-                {% csrf_token %}
-                <div class="input-group mb-3 ml-5">
-                {{ searchFormOrg.search_string }} 
-                    <div class="input-group-append">
-                        <button type="submit" class="btn btn-outline-secondary">Поиск</button>
-                    </div>
-                </div>
-            </form>
+        {{ firm }}
         </div>
-        <div class="col" style="padding-left: 100px;">Найдено записей на сумму: <b>{{total_sum}} {{currency}}</b></div>
         <div class="col">
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
@@ -69,22 +74,15 @@ overflow: hidden;
         </div>
     </div>
 </div>
-<div class="container-fluid p-5">
-    <div class="row">
-    <div class"col">
-    {% if results %}
+    <div class="container" style="margin: auto;">
+    {% if top_records %}
         {% render_table table %}
     
     {% else %}
-        {% if request.GET.search_string|length > 0 %}
-            По заданному запросу за выбранный период записей не обнаружено
-        {% else %}
-            Пожалуйста выполните запрос
-        {% endif %}
+        По заданному запросу за выбранный период записей не обнаружено
     {% endif %}
     </div>
-    </div>
-</div>
+
 
 
 

@@ -1,7 +1,8 @@
 import django_tables2 as tables
 from django_tables2 import columns
-
+import itertools
 from .models import NlReestr
+
 
 class RecordsSearchTable(tables.Table):
     export_formats = ['csv', 'xls', 'xlsx']
@@ -30,3 +31,27 @@ class RecordsSearchTable(tables.Table):
         sequence = ('num','ordering_date','seller__name','seller__edrpou','buyer__name','buyer__edrpou','product__product_code','product__name','cost','count', 'total_cost', 'curr')
         # add class="paleblue" to <table> tag
         attrs = {'class': 'paleblue'}
+
+class Top100Table(tables.Table):
+    counter = tables.Column(empty_values=(), orderable=False)
+    def render_counter(self):
+        self.row_counter = getattr(self, 'row_counter',
+                                   itertools.count(self.page.start_index()))
+        return next(self.row_counter)
+
+
+    export_formats = ['csv', 'xls', 'xlsx']
+    #num = tables.TemplateColumn("{{ row_counter }}",verbose_name= '№' )
+    product__name = tables.Column(verbose_name= 'Наименование товара' )
+    total_count = tables.Column(verbose_name= 'Количество' )
+    total_cost = tables.Column(verbose_name= 'Сумма' )
+    curr = tables.TemplateColumn("{{ currency }}",verbose_name= 'Валюта' )
+
+    class Meta:
+        orderable = False
+        export_formats = ['csv', 'xls', 'xlsx']
+        model = NlReestr
+        fields = ('counter','product__name','total_count', 'total_cost', 'curr')
+        sequence = ('counter','product__name','total_count', 'total_cost', 'curr')
+        # add class="paleblue" to <table> tag
+        attrs = {'class': 'paleblue', 'style':'font-family: Verdana; font-size: 12pt;'}
