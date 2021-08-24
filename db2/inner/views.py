@@ -236,7 +236,8 @@ def SalesIndividual(request):
         'YearSelectForm':YearSelectForm,
         'year':year
     }
-    context.update({'help_page_id':getCurrentRowsPerPage(request)})
+
+    context.update({'help_page_id':11})
     return render(request,'inner/SalesIndividual.html',context)
 
 @login_required(login_url='login')
