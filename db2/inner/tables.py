@@ -33,7 +33,7 @@ class RecordsSearchTable(tables.Table):
         attrs = {'class': 'paleblue'}
 
 class Top100Table(tables.Table):
-    counter = tables.Column(empty_values=(), orderable=False)
+    counter = tables.Column(verbose_name= '№',empty_values=(), orderable=False)
     def render_counter(self):
         self.row_counter = getattr(self, 'row_counter',
                                    itertools.count(self.page.start_index()))
@@ -45,13 +45,13 @@ class Top100Table(tables.Table):
     product__name = tables.Column(verbose_name= 'Наименование товара' )
     total_count = tables.Column(verbose_name= 'Количество' )
     total_cost = tables.Column(verbose_name= 'Сумма' )
-    curr = tables.TemplateColumn("{{ currency }}",verbose_name= 'Валюта' )
+    curr = tables.TemplateColumn("UAH",verbose_name= 'Валюта' )
 
     class Meta:
         orderable = False
         export_formats = ['csv', 'xls', 'xlsx']
         model = NlReestr
-        fields = ('counter','product__name','total_count', 'total_cost', 'curr')
-        sequence = ('counter','product__name','total_count', 'total_cost', 'curr')
+        fields = ('counter','product__name','total_count', 'total_cost','curr')
+        sequence = ('counter','product__name','total_count', 'total_cost','curr')
         # add class="paleblue" to <table> tag
         attrs = {'class': 'paleblue', 'style':'font-family: Verdana; font-size: 12pt;'}

@@ -28,6 +28,7 @@ from django.db.models.functions import TruncMonth
 
 
 year = str((datetime.date.today() - datetime.timedelta(days=120)).year)
+db_max_date=str(NlReestr.objects.filter(ordering_date__range=[str(year)+'-01-01', str(year)+'-12-31']).aggregate(Max('ordering_date'))['ordering_date__max'])
 
 def getCurrentRowsPerPage(request):
     num_per_page = User.objects.get(username=request.user).profile.rows_per_page
@@ -1022,8 +1023,9 @@ def topSalesFirmShow(request,edrpou_num):
     currency = 'UAH'
     start_date=year+'-01-01'
     end_date=year+'-12-31'
+    if year == str(db_max_date)[:4]:
+        end_date=db_max_date
     period_form=DatesStartEndForm()
-    dates=getRecDates()
     if request.GET.get('start_date'):
         period_form = DatesStartEndForm(request.GET)
         start_date=request.GET.get('start_date')
@@ -1034,21 +1036,20 @@ def topSalesFirmShow(request,edrpou_num):
     top_records=NlReestr.objects.filter(Q(seller__edrpou=edrpou_num) & Q(ordering_date__range=[start_date, end_date])).values('product__name')\
         .annotate(total_cost=Cast(Round(Sum(F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2)),IntegerField()),\
                 total_count=Cast(Round(Sum('count')),IntegerField())).filter(Q(total_count__gte=50) | Q(total_cost__gte=300000)).order_by('-total_cost')
-    #print(top_records.values_list)
+
     table = Top100Table(top_records[:100])
     RequestConfig(request, paginate={"per_page": 100}).configure(table)
     export_format = request.GET.get("_export", None)
     if TableExport.is_valid_format(export_format):
-        exporter = TableExport(export_format, table, dataset_kwargs={"title": firm.name})
-        return exporter.response(filename="top100_{0}_{1}_{2}.{3}".format(edrpou_num,start_date,end_date,export_format))
+        exporter = TableExport(export_format, table, dataset_kwargs={"title": firm})
+        return exporter.response(filename="top100_{0}_{1}_{2}_UAH.{3}".format(edrpou_num,start_date,end_date,export_format))
     context={
-        'top_records':top_records,
+        'top_records':top_records[:100],
         'period_form': period_form,
         'edrpou_num':edrpou_num,
-        'start_date':start_date,
-        'end_date':end_date,
+        'start_date':datetime.datetime.strptime(start_date,"%Y-%m-%d"),
+        'end_date':datetime.datetime.strptime(end_date,"%Y-%m-%d"),
         'year':year,  
-        'dates':dates,
         'table':table,
         'firm': firm,
         'edrpou_num':edrpou_num,

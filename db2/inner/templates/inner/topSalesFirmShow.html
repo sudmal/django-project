@@ -27,14 +27,27 @@ marging-left: 16px;
 marging-right: 16px; 
 overflow: hidden;
 } 
-
+.div-cell-right {
+     text-align: right; 
+     vertical-align: middle; 
+     border-bottom: 1px solid lightgrey;
+     border-left: 1px solid lightgrey;
+     padding: 5 px;
+}
+.div-cell-left {
+     text-align: left; 
+     vertical-align: middle; 
+     border-bottom: 1px solid lightgrey;
+     border-left: 1px solid lightgrey;
+     padding: 5 px;
+}
 
 .highlight { background-color: #c8f6cd; }
 </style>
 {% endblock js-before %}
 
 {% block export_button %}
-{% if results %}
+{% if top_records %}
     <a href="{% querystring '_export'='xlsx' %}"><button type="button" class="btn btn-outline-success">Export to EXCEL</button></a>
 {% endif %}
 {% endblock export_button %}
@@ -55,22 +68,57 @@ overflow: hidden;
 {% block content %}
 <div class="container-fluid p-0">
   <div class="row">
-        <div class="col">
-        {{ firm }}
-        </div>
-        <div class="col">
+        <div class="col"></div>
+        <div class="col-md-10">
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><span style="color: green;">Топ 100 товаров за период [{{start_date|date}} - {{end_date|date}}] организации (<b>{{ firm }}</b>)</span></li>
                     <li class="breadcrumb-item"><span style="color: green;">Стоимости с учетом НДС, текущая валюта (<b>{{ currency }}</b>)</span></li>
                 </ol>
             </nav> 
         </div>
+        <div class="col"></div>
     </div>
 </div>
-    <div  style="margin: auto;">
+    <div  class="container-fluid" style="margin: auto;">
     {% if top_records %}
-        {% render_table table %}
-    
+        
+        <div class="table  table-stripped">
+            <div class="row thead border-bottom-0" >
+                <div class="col-md-1"></div>
+                <div class="col-md-1 div-cell-right" style="background-color: darkgrey; color: white;">
+                    №
+                </div>
+                <div class="col-md-5 div-cell-left" style="background-color: darkgrey; color: white;">
+                    Наименование
+                </div>
+                <div class="col-md-2 div-cell-right" style="background-color: darkgrey; color: white;">
+                    Количество
+                </div>
+                <div class="col-md-2 div-cell-right" style="background-color: darkgrey; color: white;">
+                    На сумму
+                </div>
+                <div class="col-md-1"></div>
+        </div>
+        {% for row in top_records %}
+                <div class="row">
+                    <div class="col-md-1"></div>
+                    <div class="col-md-1  bg-white div-cell-right">
+                        {{forloop.counter}}
+                    </div>
+                    <div class="col-md-5  bg-white div-cell-left">
+                        <p class="text-capitalize">{{row.product__name}}</p>
+                    </div>
+                        <div class="col-md-2  bg-white div-cell-right">
+                        {{row.total_count}}
+                    </div>
+                        <div class="col-md-2 bg-white div-cell-right" style="border-right: 1px solid lightgrey;">
+                        {{row.total_cost}}
+                    </div>
+                    <div class="col-md-1"></div>
+                </div>
+        {% endfor %}
+        </div>
     {% else %}
         По заданному запросу за выбранный период записей не обнаружено
     {% endif %}
