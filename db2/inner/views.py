@@ -1035,7 +1035,7 @@ def topSalesFirmShow(request,edrpou_num):
     firm=NlOrg.objects.filter(edrpou = edrpou_num).values('name')[0]['name']
     top_records=NlReestr.objects.filter(Q(seller__edrpou=edrpou_num) & Q(ordering_date__range=[start_date, end_date])).values('product__name')\
         .annotate(total_cost=Cast(Round(Sum(F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2)),IntegerField()),\
-                total_count=Cast(Round(Sum('count')),IntegerField())).filter(Q(total_count__gte=50) | Q(total_cost__gte=300000)).order_by('-total_cost')
+                total_count=Cast(Round(Sum('count')),IntegerField())).filter(Q(total_count__gte=100) | Q(total_cost__gte=300000)).order_by('-total_cost')
 
     table = Top100Table(top_records[:100])
     RequestConfig(request, paginate={"per_page": 100}).configure(table)

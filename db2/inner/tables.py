@@ -55,3 +55,4 @@ class Top100Table(tables.Table):
         sequence = ('counter','product__name','total_count', 'total_cost','curr')
         # add class="paleblue" to <table> tag
         attrs = {'class': 'paleblue', 'style':'font-family: Verdana; font-size: 12pt;'}
+        
