@@ -1043,7 +1043,7 @@ def topSalesFirmShow(request,edrpou_num):
     export_format = request.GET.get("_export", None)
     if TableExport.is_valid_format(export_format):
         exporter = TableExport(export_format, table, dataset_kwargs={"title": firm})
-        return exporter.response(filename="top100_{0}_{1}_{2}_UAH.{3}".format(edrpou_num,start_date,end_date,export_format))
+        return exporter.response(filename="topSales_{0}_{1}_{2}_UAH.{3}".format(edrpou_num,start_date,end_date,export_format))
     context={
         'top_records':top_records[:100],
         'period_form': period_form,
