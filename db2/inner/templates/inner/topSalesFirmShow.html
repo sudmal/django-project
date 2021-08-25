@@ -72,8 +72,9 @@ overflow: hidden;
         <div class="col-md-10">
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><span style="color: green;">Топ продаж за период [{{start_date|date}} - {{end_date|date}}] организации (<b>{{ firm }}</b>)</span></li>
-                    <li class="breadcrumb-item"><span style="color: green;">Стоимости с учетом НДС, текущая валюта (<b>{{ currency }}</b>)</span></li>
+                    <li class="breadcrumb-item"><span style="color: green;">Топ продаж [{{start_date|date}} - {{end_date|date}}] организации (<b>{{ firm }}</b>)</span></li>
+                    <li class="breadcrumb-item"><span style="color: green;">С учетом НДС, валюта (<b>{{ currency }}</b>)</span></li>
+                    <li class="breadcrumb-item"><span style="color: green;">Сумма за товар <b>более 300 000 грн</b> или продано <b>от 100 единиц</b>.</span></li>
                 </ol>
             </nav> 
         </div>
