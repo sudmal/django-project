@@ -65,6 +65,12 @@ $(document).ready(function(){
   from {opacity: 0;}
   to {opacity: 1;}
 }
+
+td, th  !important{
+    padding: .0rem;
+    vertical-align: middle;
+
+}
 </style>
 {% endblock js-before %}
 {% block period_button %}
@@ -100,15 +106,15 @@ $(document).ready(function(){
           <th width="5%">Импортер</th>
 					</tr>
 				</thead>
-				<tbody id="myTable">
+				<tbody id="myTable" >
 						{% for firm in competitors %}
                             {% if firm.seller__class_field__name in 'HORECA' %}
                                 <tr>
                                     <td></td>
-                                    <td width="10%" ><a class="btn btn-secondary font-weight-bold" href="{% url 'inner:SalesIndividualFirmShow' firm.seller__edrpou %}?year={{ year }}">{{ firm.seller__edrpou | cut:' ' }}</a></td>
-                                    <td width="70%" >{% autoescape off %} {{ firm.seller__name|bold_in_quotes }} {% endautoescape %}</td>
-                                    <td width="10%" ><a class="btn btn-warning font-weight-bold" style="margin:auto;" href="{% url 'inner:topSalesFirmShow' firm.seller__edrpou %}?year={{ year }}"><img src="{% static 'top100.png' %}"></a></td>
-                                    <td width="10%" >{% if firm.is_importer %}&#9989;{% else %} &nbsp;{% endif %}</td>
+                                    <td  width="10%" class="py-0 align-middle" ><a class="btn btn-secondary font-weight-bold" href="{% url 'inner:SalesIndividualFirmShow' firm.seller__edrpou %}?year={{ year }}">{{ firm.seller__edrpou | cut:' ' }}</a></td>
+                                    <td  width="70%" class="py-0 align-middle" >{% autoescape off %} {{ firm.seller__name|bold_in_quotes }} {% endautoescape %}</td>
+                                    <td  width="10%" class="py-0 align-middle" ><a class="btn btn-warning btn-sm" style="margin:auto;" href="{% url 'inner:topSalesFirmShow' firm.seller__edrpou %}?year={{ year }}"><img src="{% static 'top100.png' %}"></a></td>
+                                    <td  width="10%" class="py-0 align-middle" >{% if firm.is_importer %}&#9989;{% else %} &nbsp;{% endif %}</td>
                                 </tr>
                             {% endif %}
 						{% endfor %}

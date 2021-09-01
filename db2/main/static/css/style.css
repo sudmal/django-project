@@ -102,3 +102,7 @@ input[type="color"]:focus,
   marging-right: 16px; 
   overflow: hidden;
 } 
+.padd-0 {
+  padding: .0rem;
+  vertical-align: middle;
+}
