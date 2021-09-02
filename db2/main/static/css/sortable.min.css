@@ -23,7 +23,7 @@
 }
 
 .sortable th {
-    background: gray;
+    background: rgb(143, 142, 142);
     color: #fff;
     cursor: pointer;
     font-weight: normal;

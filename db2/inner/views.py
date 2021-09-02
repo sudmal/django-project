@@ -1042,7 +1042,7 @@ def topSalesFirmShow(request,edrpou_num):
     RequestConfig(request, paginate={"per_page": 100}).configure(table)
     export_format = request.GET.get("_export", None)
     if TableExport.is_valid_format(export_format):
-        exporter = TableExport(export_format, table, dataset_kwargs={"title": firm})
+        exporter = TableExport(export_format, table, dataset_kwargs={"title": firm[:30]})
         return exporter.response(filename="topSales_{0}_{1}_{2}_UAH.{3}".format(edrpou_num,start_date,end_date,export_format))
     context={
         'top_records':top_records[:100],

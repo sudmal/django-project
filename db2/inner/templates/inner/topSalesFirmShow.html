@@ -1,9 +1,11 @@
 {% extends 'main/base.html' %}
 
 {% load bold_in_quotes %}
-{% load render_table from django_tables2 %}
+
+
 {% load static %}
 {% load cache %}
+{% load humanize %}
 {% load querystring from django_tables2 %}
 
 {% block title %}
@@ -111,10 +113,10 @@ overflow: hidden;
                         <span class="text-capitalize font-weight-bold"><a style="color:black" href="{% url 'inner:RecordsSearch' %}?search_string={{row.product__name}}"> {{row.product__name}}</a></span>
                     </td>
                     <td>
-                        {{row.total_count}}
+                        {{row.total_count|cut:" "}}
                     </td>
                     <td>
-                        {{row.total_cost}}
+                        {{row.total_cost|cut:" "}}
                     </td>
                 </tr>
             {% endfor %}
@@ -132,9 +134,5 @@ overflow: hidden;
 
 
 {% block js %}
-<script>
-$('td').highlight('{{ request.GET.search_string }}');
-
-</script>
 <script src="{% static 'js/sortable.min.js' %}"></script>
 {% endblock js %}
