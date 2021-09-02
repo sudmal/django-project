@@ -106,16 +106,16 @@ overflow: hidden;
             <tbody>
             {% for row in top_records %}
                 <tr>
-                    <td>
+                    <td class="py-0 align-middle">
                         {{forloop.counter}}
                     </td>
-                    <td>
+                    <td class="py-0 align-middle">
                         <span class="text-capitalize font-weight-bold"><a style="color:black" href="{% url 'inner:RecordsSearch' %}?search_string={{row.product__name}}"> {{row.product__name}}</a></span>
                     </td>
-                    <td>
+                    <td class="py-0 align-middle">
                         {{row.total_count|cut:" "}}
                     </td>
-                    <td>
+                    <td class="py-0 align-middle">
                         {{row.total_cost|cut:" "}}
                     </td>
                 </tr>

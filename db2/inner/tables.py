@@ -42,6 +42,7 @@ class Top100Table(tables.Table):
 
     export_formats = ['csv', 'xls', 'xlsx']
     #num = tables.TemplateColumn("{{ row_counter }}",verbose_name= '№' )
+    seller__name = tables.Column(verbose_name= 'Продавец' )
     product__name = tables.Column(verbose_name= 'Наименование товара' )
     total_count = tables.Column(verbose_name= 'Количество' )
     total_cost = tables.Column(verbose_name= 'Сумма' )
@@ -51,8 +52,8 @@ class Top100Table(tables.Table):
         orderable = False
         export_formats = ['csv', 'xls', 'xlsx']
         model = NlReestr
-        fields = ('counter','product__name','total_count', 'total_cost','curr')
-        sequence = ('counter','product__name','total_count', 'total_cost','curr')
+        fields = ('counter','seller__name','product__name','total_count', 'total_cost','curr')
+        sequence = ('counter','seller__name','product__name','total_count', 'total_cost','curr')
         # add class="paleblue" to <table> tag
         attrs = {'class': 'paleblue', 'style':'font-family: Verdana; font-size: 12pt;'}
         

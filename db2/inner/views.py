@@ -1034,7 +1034,7 @@ def topSalesFirmShow(request,edrpou_num):
         period_form = DatesStartEndForm(request.GET)
         end_date=request.GET.get('end_date')
     firm=NlOrg.objects.filter(edrpou = edrpou_num).values('name')[0]['name']
-    top_records=NlReestr.objects.filter(Q(seller__edrpou=edrpou_num) & Q(ordering_date__range=[start_date, end_date])).values('product__name')\
+    top_records=NlReestr.objects.filter(Q(seller__edrpou=edrpou_num) & Q(ordering_date__range=[start_date, end_date])).values('product__name','seller__name')\
         .annotate(total_cost=Cast(Round(Sum(F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2)),IntegerField()),\
                 total_count=Cast(Round(Sum('count')),IntegerField())).filter(Q(total_count__gte=100) | Q(total_cost__gte=300000)).order_by('-total_cost')
 
@@ -1042,7 +1042,7 @@ def topSalesFirmShow(request,edrpou_num):
     RequestConfig(request, paginate={"per_page": 100}).configure(table)
     export_format = request.GET.get("_export", None)
     if TableExport.is_valid_format(export_format):
-        exporter = TableExport(export_format, table, dataset_kwargs={"title": firm[:30]})
+        exporter = TableExport(export_format, table, dataset_kwargs={"title": '{0}_{1}'.format(start_date,end_date)})
         return exporter.response(filename="topSales_{0}_{1}_{2}_UAH.{3}".format(edrpou_num,start_date,end_date,export_format))
     context={
         'top_records':top_records[:100],
