@@ -103,20 +103,20 @@ overflow: hidden;
         </div>
         {% for row in top_records %}
                 <div class="row">
-                    <div class="col-md-1"></div>
-                    <div class="col-md-1  bg-white div-cell-right">
+                    <div class="col-md-1 py-0"></div>
+                    <div class="col-md-1 py-0 div-cell-right" style="background-color: {% cycle '#e9e9e9' '#d5d5d5'  %}">
                         {{forloop.counter}}
                     </div>
-                    <div class="col-md-5  bg-white div-cell-left">
-                        <p class="text-capitalize">{{row.product__name}}</p>
+                    <div class="col-md-5 py-0 div-cell-left" style="background-color: {% cycle '#e9e9e9' '#d5d5d5'  %}">
+                        <span class="text-capitalize font-weight-bold">{{row.product__name}}</span>
                     </div>
-                        <div class="col-md-2  bg-white div-cell-right">
+                        <div class="col-md-2 py-0 div-cell-right" style="background-color: {% cycle '#e9e9e9' '#d5d5d5'  %}">
                         {{row.total_count}}
                     </div>
-                        <div class="col-md-2 bg-white div-cell-right" style="border-right: 1px solid lightgrey;">
+                        <div class="col-md-2 py-0 div-cell-right" style="background-color: {% cycle '#e9e9e9' '#d5d5d5'  %}" style="border-right: 1px solid lightgrey;">
                         {{row.total_cost}}
                     </div>
-                    <div class="col-md-1"></div>
+                    <div class="col-md-1 py-0"></div>
                 </div>
         {% endfor %}
         </div>

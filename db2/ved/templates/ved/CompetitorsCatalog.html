@@ -63,17 +63,17 @@ $(document).ready(function(){
 						{% for firm in competitors %}
 						<tr>
 						<th scope="row">{{ forloop.counter }}</th>
-						<td><a class="btn btn-secondary font-weight-bold" href="{% url 'ved:IndividualReportFirmShow' firm.record__recipient__edrpou %}?start_date={{ start_date }}&end_date={{ end_date }}">{{ firm.record__recipient__edrpou | cut:' ' }}</a></td>
-						<td>{% autoescape off %} {{ firm.record__recipient__name|bold_in_quotes }} {% endautoescape %}</td>
+						<td class="py-0 align-middle"><a class="btn btn-secondary font-weight-bold" href="{% url 'ved:IndividualReportFirmShow' firm.record__recipient__edrpou %}?start_date={{ start_date }}&end_date={{ end_date }}">{{ firm.record__recipient__edrpou | cut:' ' }}</a></td>
+						<td class="py-0 align-middle">{% autoescape off %} {{ firm.record__recipient__name|bold_in_quotes }} {% endautoescape %}</td>
 {% comment %}			
 						<th width="6%">Псевдоним</th>
 						<td>{% autoescape off %} {{ firm.record__recipient__name|bold_in_quotes }} {% endautoescape %}</td>
 						<td><span class="font-weight-bold">{{ firm.record__recipient__firm_alias }}</span></td>
 {% endcomment %}
 
-						<td><a name="" id="" class="btn btn-secondary" href="{% url 'ved:CompetitorsCatalogPeriodDetail' firm.record__recipient__edrpou  %}" role="button">Перейти</a></td>
-						<td>{{ firm.y_fin_m_in }}</td>
-						<td>
+						<td class="py-0 align-middle"><a name="" id="" class="btn btn-secondary" href="{% url 'ved:CompetitorsCatalogPeriodDetail' firm.record__recipient__edrpou  %}" role="button">Перейти</a></td>
+						<td class="py-0 align-middle">{{ firm.y_fin_m_in }}</td>
+						<td class="py-0 align-middle">
 							{% with countern=forloop.counter%}
 								{% if firm.y_fin_m_in %}
 									<button class="btn btn-light border rounded" style="height: 35px;" type="button" data-toggle="collapse" data-target="#data-collapse-{{ countern }}" aria-expanded="false" aria-controls="data-collapse-{{ countern }}">
