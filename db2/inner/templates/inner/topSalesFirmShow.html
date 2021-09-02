@@ -11,7 +11,8 @@
 {% endblock title %}
 
 {% block js-before %}
-<link rel="stylesheet" href="{% static 'django_tables2/themes/paleblue/css/screen.css' %}" />
+<link rel="stylesheet" href="{% static 'css/sortable.min.css' %}" />
+
 <style> 
 .container { 
 padding-left: 16px; 
@@ -84,42 +85,42 @@ overflow: hidden;
     <div  class="container-fluid" style="margin: auto;">
     {% if top_records %}
         
-        <div class="table  table-stripped">
-            <div class="row thead border-bottom-0" >
-                <div class="col-md-1"></div>
-                <div class="col-md-1 div-cell-right" style="background-color: darkgrey; color: white;">
-                    №
-                </div>
-                <div class="col-md-5 div-cell-left" style="background-color: darkgrey; color: white;">
-                    Наименование
-                </div>
-                <div class="col-md-2 div-cell-right" style="background-color: darkgrey; color: white;">
-                    Количество
-                </div>
-                <div class="col-md-2 div-cell-right" style="background-color: darkgrey; color: white;">
+        <table class="table table-stripped sortable">
+            <thead>
+                <tr>
+                    <th>
+                        №
+                    </th>
+                    <th>
+                        Наименование
+                    </th>
+                    <th>
+                        Количество 
+                    </th>
+                    <th>
                     На сумму (UAH)
-                </div>
-                <div class="col-md-1"></div>
-        </div>
-        {% for row in top_records %}
-                <div class="row">
-                    <div class="col-md-1 py-0"></div>
-                    <div class="col-md-1 py-0 div-cell-right" style="background-color: {% cycle '#e9e9e9' '#d5d5d5'  %}">
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for row in top_records %}
+                <tr>
+                    <td>
                         {{forloop.counter}}
-                    </div>
-                    <div class="col-md-5 py-0 div-cell-left" style="background-color: {% cycle '#e9e9e9' '#d5d5d5'  %}">
+                    </td>
+                    <td>
                         <span class="text-capitalize font-weight-bold"><a style="color:black" href="{% url 'inner:RecordsSearch' %}?search_string={{row.product__name}}"> {{row.product__name}}</a></span>
-                    </div>
-                        <div class="col-md-2 py-0 div-cell-right" style="background-color: {% cycle '#e9e9e9' '#d5d5d5'  %}">
+                    </td>
+                    <td>
                         {{row.total_count}}
-                    </div>
-                        <div class="col-md-2 py-0 div-cell-right" style="background-color: {% cycle '#e9e9e9' '#d5d5d5'  %}" style="border-right: 1px solid lightgrey;">
+                    </td>
+                    <td>
                         {{row.total_cost}}
-                    </div>
-                    <div class="col-md-1 py-0"></div>
-                </div>
-        {% endfor %}
-        </div>
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
     {% else %}
         По заданному запросу за выбранный период записей не обнаружено
     {% endif %}
@@ -136,4 +137,5 @@ overflow: hidden;
 $('td').highlight('{{ request.GET.search_string }}');
 
 </script>
+<script src="{% static 'js/sortable.min.js' %}"></script>
 {% endblock js %}
