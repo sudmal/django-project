@@ -97,7 +97,7 @@ overflow: hidden;
                     Количество
                 </div>
                 <div class="col-md-2 div-cell-right" style="background-color: darkgrey; color: white;">
-                    На сумму
+                    На сумму (UAH)
                 </div>
                 <div class="col-md-1"></div>
         </div>
@@ -108,7 +108,7 @@ overflow: hidden;
                         {{forloop.counter}}
                     </div>
                     <div class="col-md-5 py-0 div-cell-left" style="background-color: {% cycle '#e9e9e9' '#d5d5d5'  %}">
-                        <span class="text-capitalize font-weight-bold">{{row.product__name}}</span>
+                        <span class="text-capitalize font-weight-bold"><a style="color:black" href="{% url 'inner:RecordsSearch' %}?search_string={{row.product__name}}"> {{row.product__name}}</a></span>
                     </div>
                         <div class="col-md-2 py-0 div-cell-right" style="background-color: {% cycle '#e9e9e9' '#d5d5d5'  %}">
                         {{row.total_count}}
