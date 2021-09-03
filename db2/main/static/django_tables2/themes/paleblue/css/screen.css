@@ -1,7 +1,7 @@
 table.paleblue {
     border-collapse: collapse;
-    border-color: #CCC;
-    border: 1px solid #DDD;
+    border-color: #888;
+    border: 1px solid #888;
 }
 
 table.paleblue,
@@ -10,11 +10,16 @@ table.paleblue +  ul.pagination {
 }
 
 table.paleblue a:link,
-table.paleblue a:visited,
+table.paleblue a:visited{
+    color: #909192;
+    text-decoration: none;
+    font-weight: bold; 
+}
 table.paleblue + ul.pagination > li > a {
-    color: #5B80B2;
+    color: #909192;
     text-decoration: none;
     font-weight: bold;
+    font-size: medium;
 }
 
 table.paleblue a:hover {
@@ -25,9 +30,10 @@ table.paleblue td,
 table.paleblue th {
     padding: 5px;
     line-height: 13px;
-    border-bottom: 1px solid #EEE;
-    border-left: 1px solid #DDD;
+    border-bottom: 1px solid #555;
+    border-left: 1px solid #888;
     text-align: left;
+    color: black;
 }
 
 table.paleblue thead th:first-child,
@@ -37,12 +43,13 @@ table.paleblue thead td:first-child {
 
 table.paleblue thead th,
 table.paleblue thead td {
-    background: #FCFCFC url(../img/header-bg.png) left bottom repeat-x;
-    border-bottom: 1px solid #DDD;
+    background: #7b7b81;
+    /*url(../img/header-bg.png) left bottom repeat-x*/
+    border-bottom: 1px solid #888;
     padding: 2px 5px;
     font-size: 11px;
     vertical-align: middle;
-    color: #666;
+    color: rgb(233, 221, 221);
 }
 
 table.paleblue thead th > a:link,
@@ -52,6 +59,7 @@ table.paleblue thead th > a:visited {
 
 table.paleblue thead th.orderable > a {
     padding-right: 20px;
+    color:#eaeaea;
     background: url(../img/arrow-inactive-up.png) right center no-repeat;
 }
 table.paleblue thead th.orderable.asc > a {
@@ -62,13 +70,15 @@ table.paleblue thead th.orderable.desc > a {
 }
 
 table.paleblue tr.odd {
-    background-color: #EDF3FE;
+    background-color: #e4e4e4;
 }
 
 table.paleblue tr.even {
-    background-color: white;
+    background-color: #ececec;
 }
-
+table.paleblue tr:hover {
+    background-color: #fefefe;
+}
 table.paleblue + ul.pagination {
     background: white url(../img/pagination-bg.gif) left 180% repeat-x;
     overflow: auto;

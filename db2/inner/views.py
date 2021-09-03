@@ -984,7 +984,7 @@ def RecordsSearch(request):
             Q(buyer__name__icontains=request.GET.get('search_string')) |Q(buyer__edrpou__startswith=request.GET.get('search_string')) | \
                 Q(product__name__icontains=request.GET.get('search_string')) |Q(product__product_code__startswith=request.GET.get('search_string')) )\
                     .values('ordering_date','seller__name','buyer__name','seller__edrpou','buyer__edrpou','product__product_code','product__name','count')
-        print(results.query)
+        #print(results.query)
         if currency == 'UAH':
             results=results.annotate(total_cost=Round2(Sum(F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2)),cost=Round2(F('one_product_cost')+F('one_product_cost')*0.2)).order_by('ordering_date')
         elif currency == 'EUR':
