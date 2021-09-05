@@ -32,7 +32,7 @@
 {# ('product__name','product__product_code','unit','one_product_cost','count','ordering_date') #}
 <table class="table">
     <thead>
-        <tr>
+        <tr style="background-color:darkgrey;">
             <th>#</th>
             <th>Дата</th>
             <th>Код товара</th>
@@ -45,14 +45,14 @@
     <tbody>
 
             {% for r in raw_records %}
-            <tr>
-                <td scope="row">{{ forloop.counter0|add:raw_records.start_index }}</td>
-                <td>{{ r.ordering_date | date:"d-M-Y" }}</td>
-                <td>{{ r.product__product_code|cut:" " }}</td>
-                <td>{{ r.product__name }}</td>
-                <td>{{ r.one_product_cost|floatformat:2 }}</td>
-                <td>{{ r.count|floatformat:3 }}</td>
-                <td><b>{{ r.sum |floatformat:2 }}</b></td>
+            <tr class="py-0">
+                <td class="py-0" scope="row">{{ forloop.counter0|add:raw_records.start_index }}</td>
+                <td class="py-0">{{ r.ordering_date | date:"d-M-Y" }}</td>
+                <td class="py-0">{{ r.product__product_code|cut:" " }}</td>
+                <td class="py-0">{{ r.product__name }}</td>
+                <td class="py-0">{{ r.one_product_cost|floatformat:2 }}</td>
+                <td class="py-0">{{ r.count|floatformat:3 }}</td>
+                <td class="py-0"><b>{{ r.sum |floatformat:2 }}</b></td>
             </tr>
             {% endfor %}
         
