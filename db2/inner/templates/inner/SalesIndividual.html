@@ -91,7 +91,7 @@ table.table-bordered > tbody > tr > td{
                 <b>{{ forloop.counter }}</b>
             </div>
             <div class="col-md-1 d-flex">
-                <a class="btn btn-primary btn-sm font-weight-bold" href="{% url 'inner:SalesIndividualFirmShow' org.seller__edrpou %}?selected_year={{ year }}">{{ org.seller__edrpou | cut:' ' }}</a>
+                <a class="btn btn-primary btn-sm py-0 font-weight-bold" href="{% url 'inner:SalesIndividualFirmShow' org.seller__edrpou %}?selected_year={{ year }}">{{ org.seller__edrpou | cut:' ' }}</a>
             </div>
             <div class="col-md-5 align-middle py-1">
                 {% autoescape off %}
@@ -102,7 +102,7 @@ table.table-bordered > tbody > tr > td{
                 {{ org.sum | floatformat:2 }}
             </div>
             <div class="col">
-                <a class="btn btn-warning btn-sm font-weight-bold" style="margin:auto;" target=_blank  href="{% url 'inner:topSalesFirmShow' org.seller__edrpou %}?year={{ year }}"><img src="{% static 'top100.png' %}"></a>
+                <a class="btn btn-warning btn-sm py-0 font-weight-bold" style="margin:auto;" target=_blank  href="{% url 'inner:topSalesFirmShow' org.seller__edrpou %}?year={{ year }}"><img src="{% static 'top100.png' %}"></a>
             </div>
             <div class="col" style="text-align: right;">
             </div>
