@@ -94,8 +94,8 @@
 
             {% for f in organisations %}
             <tr {% if f.buyer__edrpou in competitors %}  style="background-color: #CDFECD;" {% endif %}>
-                <td  class="py-0 align-middle"  scope="row">{{ forloop.counter0|add:organisations.start_index }}</td>
-                <td class="py-0 align-middle" ><a class="btn btn-primary shadow-sm font-weight-bold" href="{% url 'inner:ClientsCompetitorsIndividualShow' f.buyer__edrpou|cut:' ' %}?selected_year={{year}}">{{ f.buyer__edrpou|cut:' ' }}</a></td>
+                <td class="py-0 align-middle"  scope="row">{{ forloop.counter0|add:organisations.start_index }}</td>
+                <td class="py-0 align-middle" ><a class="btn btn-primary btn-sm shadow-sm font-weight-bold" href="{% url 'inner:ClientsCompetitorsIndividualShow' f.buyer__edrpou|cut:' ' %}?selected_year={{year}}">{{ f.buyer__edrpou|cut:' ' }}</a></td>
                 <td class="py-0 align-middle" >
                 {% if f.buyer__edrpou == 0 %}
                     Иностранные предприятия/неплательщики                
@@ -106,14 +106,14 @@
                 <td class="py-0 align-middle" > {% if f.is_importer %} <center><b>✓</b></center> {% endif %} </td>
                 {% for s in f.pms %}
                     {% if s %}
-                        <td class="py-0 align-middle" > <a class="btn btn-light shadow-sm btn-sm border-secondary" style="min-width: 40px;" href="{% url 'inner:ClientsCompetitorsIndividualShow' f.buyer__edrpou|cut:' ' %}?month={{ forloop.counter }}&selected_year={{ year }}">{{ s | floatformat:'0' }} </a></td>
+                        <td class="py-0 align-middle" > <a class="btn btn-light btn-sm  shadow-sm btn-sm border-secondary" style="min-width: 40px;" href="{% url 'inner:ClientsCompetitorsIndividualShow' f.buyer__edrpou|cut:' ' %}?month={{ forloop.counter }}&selected_year={{ year }}">{{ s | floatformat:'0' }} </a></td>
                     {% else%}
                         <td class="py-0 align-middle" > <span class="text-muted">-</td>
                     {% endif %}
 
                 {% endfor %}
 
-                <td class="py-0 align-middle" ><a class="btn btn-light shadow-sm font-weight-bold border-secondary" href="{% url 'inner:ClientsCompetitorsIndividualShow' f.buyer__edrpou|cut:' ' %}?selected_year={{year}}">{{ f.sum |floatformat:0 }}</a></td>
+                <td class="py-0 align-middle" ><a class="btn btn-light btn-sm  shadow-sm font-weight-bold border-secondary" href="{% url 'inner:ClientsCompetitorsIndividualShow' f.buyer__edrpou|cut:' ' %}?selected_year={{year}}">{{ f.sum |floatformat:0 }}</a></td>
             </tr>
             {% endfor %}
         

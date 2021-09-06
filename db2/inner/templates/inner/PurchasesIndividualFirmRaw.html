@@ -29,30 +29,30 @@
    </nav> 
 </div>
 
-{# ('product__name','product__product_code','unit','one_product_cost','count','ordering_date') #}
-<table class="table">
+
+<table class="table px-1">
     <thead>
-        <tr>
-            <th>#</th>
-            <th>Дата</th>
-            <th>Код товара</th>
-            <th>Наименование</th>
-            <th>Стоимость</th>
-            <th>Количество</th>
-            <th>Сумма, {{ currency }}</th>
+        <tr style="background-color: #b4b4b4">
+            <th class="text-right">#</th>
+            <th class="text-right">Дата</th>
+            <th class="text-right">Код товара</th>
+            <th class="text-left">Наименование</th>
+            <th class="text-right">Стоимость</th>
+            <th class="text-right">Количество</th>
+            <th class="text-right">Сумма, {{ currency }}</th>
         </tr>
     </thead>
     <tbody>
 
             {% for r in raw_records %}
-            <tr>
-                <td scope="row">{{ forloop.counter0|add:raw_records.start_index }}</td>
-                <td>{{ r.ordering_date | date:"d-M-Y" }}</td>
-                <td>{{ r.product__product_code|cut:" " }}</td>
-                <td>{{ r.product__name }}</td>
-                <td>{{ r.one_product_cost|floatformat:2 }}</td>
-                <td>{{ r.count|floatformat:3 }}</td>
-                <td><b>{{ r.sum |floatformat:2 }}</b></td>
+            <tr  style="background-color:{% cycle '#d4d4d4' '#e9e9e9' %}">
+                <td class="py-0 text-right" scope="row">{{ forloop.counter0|add:raw_records.start_index }}</td>
+                <td class="py-0 text-right">{{ r.ordering_date | date:"d-M-Y" }}</td>
+                <td class="py-0 text-right">{{ r.product__product_code|cut:" " }}</td>
+                <td class="py-0 text-left">{{ r.product__name }}</td>
+                <td class="py-0 text-right">{{ r.one_product_cost|floatformat:2 }}</td>
+                <td class="py-0 text-right">{{ r.count|floatformat:3 }}</td>
+                <td class="py-0 text-right"><b>{{ r.sum |floatformat:2 }}</b></td>
             </tr>
             {% endfor %}
         

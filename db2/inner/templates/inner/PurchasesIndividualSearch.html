@@ -72,12 +72,12 @@
             </div>
         </div>
     {% for org in organisations %}
-        <div class="row  mx-3 py-2 border-bottom">
+        <div class="row mx-3 py-0 border-bottom" style="background-color:{% cycle '#d4d4d4' '#e9e9e9' %}">
             <div class="col-md-1 d-flex justify-content-center align-items-center">
                 <b>{{ forloop.counter }}</b>
             </div>
             <div class="col-md-1 d-flex justify-content-center align-items-center">
-                <a class="btn btn-primary font-weight-bold" href="{% url 'inner:PurchasesIndividualFirmShow' org.buyer__edrpou %}?selected_year={{ year }}">{{ org.buyer__edrpou | cut:' ' }}</a>
+                <a class="btn btn-primary btn-sm font-weight-bold" href="{% url 'inner:PurchasesIndividualFirmShow' org.buyer__edrpou %}?selected_year={{ year }}">{{ org.buyer__edrpou | cut:' ' }}</a>
             </div>
             <div class="col align-items-center">
                 {% autoescape off %}

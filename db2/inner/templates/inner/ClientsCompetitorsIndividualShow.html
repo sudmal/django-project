@@ -62,10 +62,10 @@
     <tbody>
 
             {% for f in sellers_list %}
-            <tr>
-                <td scope="row">{{ forloop.counter0|add:sellers_list.start_index }}</td>
-                <td><a class="btn btn-primary font-weight-bold" href="{% url 'inner:ClientsCompetitorsIndividualRaw' edrpou_num|cut:' '  f.seller__edrpou|cut:' ' %}?selected_year={{year}}">{{ f.seller__edrpou|cut:' ' }}</a></td>
-                <td>
+            <tr style="background-color:{% cycle '#d4d4d4' '#e9e9e9' %}">
+                <td class="py-0">{{ forloop.counter0|add:sellers_list.start_index }}</td>
+                <td class="py-0"><a class="btn btn-primary btn-sm font-weight-bold" href="{% url 'inner:ClientsCompetitorsIndividualRaw' edrpou_num|cut:' '  f.seller__edrpou|cut:' ' %}?selected_year={{year}}">{{ f.seller__edrpou|cut:' ' }}</a></td>
+                <td class="py-0">
                 {% if f.seller__edrpou == 0 %}
                     Иностранные предприятия/неплательщики                
                 {% else %}
@@ -75,14 +75,14 @@
                 </td>
                 {% for s in f.pms %}
                     {% if s %}
-                        <td> <a class="btn btn-light border-secondary" style="min-width: 60px;" href="{% url 'inner:ClientsCompetitorsIndividualRaw' edrpou_num|cut:' '  f.seller__edrpou|cut:' ' %}?month={{ forloop.counter }}&selected_year={{ year }}">{{ s | floatformat:'0' }} </a></td>
+                        <td class="py-0"> <a class="btn btn-light btn-sm border-secondary" style="min-width: 60px;" href="{% url 'inner:ClientsCompetitorsIndividualRaw' edrpou_num|cut:' '  f.seller__edrpou|cut:' ' %}?month={{ forloop.counter }}&selected_year={{ year }}">{{ s | floatformat:'0' }} </a></td>
                     {% else%}
-                        <td> <span class="text-muted">-</td>
+                        <td class="py-0"> <span class="text-muted">-</td>
                     {% endif %}
 
                 {% endfor %}
 
-                <td><a class="btn btn-light font-weight-bold border-secondary" href="{% url 'inner:ClientsCompetitorsIndividualRaw' edrpou_num|cut:' '  f.seller__edrpou|cut:' ' %}?selected_year={{year}}">{{ f.sum |floatformat:0 }}</a></td>
+                <td class="py-0"><a class="btn btn-light btn-sm font-weight-bold border-secondary" href="{% url 'inner:ClientsCompetitorsIndividualRaw' edrpou_num|cut:' '  f.seller__edrpou|cut:' ' %}?selected_year={{year}}">{{ f.sum |floatformat:0 }}</a></td>
             </tr>
             {% endfor %}
         
