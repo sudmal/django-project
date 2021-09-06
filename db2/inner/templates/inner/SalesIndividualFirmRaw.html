@@ -45,7 +45,7 @@
     <tbody>
 
             {% for r in raw_records %}
-            <tr class="py-0">
+            <tr class="py-0" style="background-color:{% cycle '#d4d4d4' '#e9e9e9' %}">
                 <td class="py-0" scope="row">{{ forloop.counter0|add:raw_records.start_index }}</td>
                 <td class="py-0">{{ r.ordering_date | date:"d-M-Y" }}</td>
                 <td class="py-0">{{ r.product__product_code|cut:" " }}</td>
