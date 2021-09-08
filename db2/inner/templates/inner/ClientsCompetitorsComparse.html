@@ -78,8 +78,8 @@
             <th class="header py-0" >#</th>
             <th class="header py-0" >ЕДРПОУ</th>
             <th class="header py-0" >ИМЯ</th>
-            <th class="header py-0" ><span style="cursor: help; font-size: 16px !important; font-weight: bold;color:green;" data-toggle="tooltip" data-placement="right" title="Конкурент">&#128712;</span></th>
-            <th class="header py-0" ><span style="cursor: help; font-size: 16px !important; font-weight: bold;color:blue;" data-toggle="tooltip" data-placement="right" title="Импортер">&#128712;</span></th>
+            <th class="header py-0" ><span style="cursor: help; font-size: 16px !important; color:green;" data-toggle="tooltip" data-placement="right" title="Конкурент">&#128712;</span></th>
+            <th class="header py-0" ><span style="cursor: help; font-size: 16px !important; color:blue;" data-toggle="tooltip" data-placement="right" title="Импортер">&#128712;</span></th>
             {% for m in mnth_list %}
                 <th class="header py-0"> {{m}} </th>
             {% endfor %}
@@ -110,8 +110,8 @@
                     {% autoescape off %}{{ f.buyer__name|bold_in_quotes }}{% endautoescape %}
                 {% endif %}
                 </td>
-                <td>{% if f.buyer__edrpou in competitors %} <center><span style="color:green;">✓</span></center> {% endif %}</td>
-                <td class="py-0 align-middle" > {% if f.is_importer %} <center><span style="color:blue;">✓</span></center> {% endif %} </td>
+                <td>{% if f.buyer__edrpou in competitors %} <center><b><span style="color:green;">✓</span></b></center> {% endif %}</td>
+                <td class="py-0 align-middle" > {% if f.is_importer %} <center><b><span style="color:blue;">✓</span></b></center> {% endif %} </td>
                 {% for s in f.pms %}
                     {% if s %}
                         <td class="py-0 align-middle" > <a class="btn btn-light btn-sm  shadow-sm btn-sm border-secondary" style="min-width: 40px;" href="{% url 'inner:ClientsCompetitorsIndividualShow' f.buyer__edrpou|cut:' ' %}?month={{ forloop.counter }}&selected_year={{ year }}">{{ s | floatformat:'0' }} </a></td>
