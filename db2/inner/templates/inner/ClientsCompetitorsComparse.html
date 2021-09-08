@@ -12,6 +12,19 @@
 <link rel="stylesheet" href="{% static 'css/stycky-table.css' %}">
 {% endblock js-before %}
 
+{% block breadcrumb %}
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb bg-transparent">
+            <li class="breadcrumb-item"><a href="{% url 'home' %}">Внутренний рынок</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'home' %}">Продажи</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Сравнительный анализ клиентов конкурентов</li>
+        </ol>
+   </nav> 
+
+{% endblock breadcrumb %}
+
+
+
 {% block period_button %}
 {% endblock period_button %}
 
@@ -24,13 +37,7 @@
 {% block content %}
 
 <div class="row mx-2">
-    <nav aria-label="breadcrumb">
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="{% url 'home' %}">Внутренний рынок</a></li>
-            <li class="breadcrumb-item"><a href="{% url 'home' %}">Продажи</a></li>
-            <li class="breadcrumb-item active" aria-current="page">Сравнительный анализ клиентов конкурентов</li>
-        </ol>
-   </nav> 
+
    <div class="col-md-1"></div>
   
     <div class="form-check-inline">
@@ -54,11 +61,10 @@
     </label>
     </div>
 
-    <label  for="min_sum">Показать организации с суммарными<br> закупками на сумму более ({{ currency }}):  {{ firmTypeSelectForm.min_sum }}&nbsp;</label>
+    <label  for="min_sum">Показать организации с суммарными закупками на сумму более ({{ currency }}):  {{ firmTypeSelectForm.min_sum }}&nbsp;</label>
 
     <input type=hidden name="firm_filter_set" value="1" />
-    <button type="submit" class="btn btn-light border-secondary">Применить</button>
-
+    <button type="submit" class="btn btn-light btn-sm border-secondary">Применить</button>
     </form>
 </div>
 
@@ -66,34 +72,35 @@
 <table class="table table-bordered" id="table" data-show-columns="true">
     <thead class="thead table-active">
         <tr>
-			<th colspan="4"><center>Покупатели</center></th><th colspan="13"><center>Период анализа / Суммы в {{ currency }} с НДС</center></th>
+			<th class="py-0" colspan="5"><center>Покупатели</center></th><th class="py-0" colspan="13"><center>Период анализа / Суммы в {{ currency }} с НДС</center></th>
 	    </tr>
         <tr>
-            <th class="header" >#</th>
-            <th class="header" >ЕДРПОУ</th>
-            <th class="header" >ИМЯ</th>
-            <th class="header" >Импортер</th>
+            <th class="header py-0" >#</th>
+            <th class="header py-0" >ЕДРПОУ</th>
+            <th class="header py-0" >ИМЯ</th>
+            <th class="header py-0" ><span style="cursor: help; font-size: 16px !important; font-weight: bold;color:green;" data-toggle="tooltip" data-placement="right" title="Конкурент">&#128712;</span></th>
+            <th class="header py-0" ><span style="cursor: help; font-size: 16px !important; font-weight: bold;color:blue;" data-toggle="tooltip" data-placement="right" title="Импортер">&#128712;</span></th>
             {% for m in mnth_list %}
-                <th class="header"> {{m}} </th>
+                <th class="header py-0"> {{m}} </th>
             {% endfor %}
-            <th class="header"><center>{{ year }}, {{ currency }} </center></th>
+            <th class="header py-0"><center>{{ year }},&nbsp;{{ currency }} </center></th>
         </tr>
         <tr>
-            <th colspan=4>
+            <th class="py-0" colspan=5>
                 <center>Всего</center>
             </th>
             {% for t in totals %}
-                <th> {{t|floatformat:'0'}} </th>
+                <th class="py-0"> {{t|floatformat:'0'}} </th>
             {% endfor %}
             </th>
-            <th></th>
+            <th class="py-0"></th>
         </tr>
     </thead>
 
     <tbody>
 
             {% for f in organisations %}
-            <tr {% if f.buyer__edrpou in competitors %}  style="background-color: #CDFECD;" {% endif %}>
+            <tr style="background-color:{% cycle '#d4d4d4' '#e9e9e9' %}">
                 <td class="py-0 align-middle"  scope="row">{{ forloop.counter0|add:organisations.start_index }}</td>
                 <td class="py-0 align-middle" ><a class="btn btn-primary btn-sm shadow-sm font-weight-bold" href="{% url 'inner:ClientsCompetitorsIndividualShow' f.buyer__edrpou|cut:' ' %}?selected_year={{year}}">{{ f.buyer__edrpou|cut:' ' }}</a></td>
                 <td class="py-0 align-middle" >
@@ -103,7 +110,8 @@
                     {% autoescape off %}{{ f.buyer__name|bold_in_quotes }}{% endautoescape %}
                 {% endif %}
                 </td>
-                <td class="py-0 align-middle" > {% if f.is_importer %} <center><b>✓</b></center> {% endif %} </td>
+                <td>{% if f.buyer__edrpou in competitors %} <center><span style="color:green;">✓</span></center> {% endif %}</td>
+                <td class="py-0 align-middle" > {% if f.is_importer %} <center><span style="color:blue;">✓</span></center> {% endif %} </td>
                 {% for s in f.pms %}
                     {% if s %}
                         <td class="py-0 align-middle" > <a class="btn btn-light btn-sm  shadow-sm btn-sm border-secondary" style="min-width: 40px;" href="{% url 'inner:ClientsCompetitorsIndividualShow' f.buyer__edrpou|cut:' ' %}?month={{ forloop.counter }}&selected_year={{ year }}">{{ s | floatformat:'0' }} </a></td>

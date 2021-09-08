@@ -31,7 +31,7 @@
 <body>
 
 
-<nav class="navbar  fixed-top navbar-expand-lg navbar-light bg-light" style="z-index:99; box-shadow: 0 0 10px rgba(0,0,0,0.5);">
+<nav class="navbar fixed-top navbar-expand-lg navbar-light bg-light" style="z-index:99; box-shadow: 0 0 10px rgba(0,0,0,0.5);height:70px;">
   <a class="navbar-brand" href="{% url 'home' %}"><img src="{% static 'favicon-32x32.png' %}"></a>
   {% block help_link %}
  	{% if help_page_id %}
@@ -135,8 +135,9 @@
      </nav>
     </nav>
   </div>
- 
-  <div class="col md-2 ml-2 mr-2" width="40px">
+ {% block breadcrumb %}
+ {% endblock breadcrumb %}
+  <div class="col md-2 ml-2 mr-2" width="20px">
   </div>
     <div class="my-2 my-lg-0 ">
      <nav class="input-group date" data-provide="datepicker">
