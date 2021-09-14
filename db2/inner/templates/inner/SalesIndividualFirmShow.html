@@ -12,6 +12,16 @@
 <link rel="stylesheet" href="{% static 'css/stycky-table.css' %}">
 {% endblock js-before %}
 
+{% block breadcrumb %}
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb bg-transparent">
+            <li class="breadcrumb-item"><a href="{% url 'home' %}">Внутренний рынок</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'home' %}">Продажи</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Индивидульный анализ ({{ edrpou_num| cut:' ' }}) - {{ seller_name }}</li>
+        </ol>
+   </nav> 
+{% endblock breadcrumb %}
+
 {% block period_button %}
 
 {% endblock period_button %}
@@ -24,37 +34,26 @@
 {% endblock DatePeriod %}
 
 {% block content %}
-<div class="row mx-2">
-    <nav aria-label="breadcrumb">
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="{% url 'home' %}">Внутренний рынок</a></li>
-            <li class="breadcrumb-item"><a href="{% url 'home' %}">Продажи</a></li>
-            <li class="breadcrumb-item active" aria-current="page">Индивидульный анализ ({{ edrpou_num| cut:' ' }}) - {{ seller_name }}</li>
-        </ol>
-   </nav> 
-</div>
-
-
 <table class="table table-stiped table-hover table-bordered" id="table" data-show-columns="true">
     <thead class="thead table-active sticky-header">
         <tr class="py-0">
-			<th colspan="3"><center>Покупатели</center></th><th colspan="13"><center>Период анализа / Суммы в {{ currency }} с НДС</center></th>
+			<th  class="py-0" colspan="3"><center>Покупатели</center></th><th  class="py-0" colspan="13"><center>Период анализа / Суммы в {{ currency }} с НДС</center></th>
 	    </tr>
         <tr class="py-0">
-            <th class="header">#</th>
-            <th class="header">ЕДРПОУ</th>
-            <th class="header">ИМЯ</th>
+            <th class="header py-0">#</th>
+            <th class="header py-0">ЕДРПОУ</th>
+            <th class="header py-0">ИМЯ</th>
             {% for m in mnth_list %}
-                <th class="header"> {{m}} </th>
+                <th class="header py-0"> {{m}} </th>
             {% endfor %}
-            <th class="header">{{ year }}, {{ currency }} </th>
+            <th class="header py-0">{{ year }}, {{ currency }} </th>
         </tr>
         <tr class="py-0">
-            <th colspan=3>
+            <th  class="py-0" colspan=3>
                 <center>Всего</center>
             </th>
             {% for t in totals %}
-                <th> {{t|floatformat:'0'}} </th>
+                <th  class="py-0"> {{t|floatformat:'0'}} </th>
             {% endfor %}
             </th>
         </tr>
