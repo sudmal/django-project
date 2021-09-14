@@ -16,6 +16,16 @@
 </style>
 {% endblock js-before %}
 
+{% block breadcrumb %}
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb bg-transparent">
+                    <li class="breadcrumb-item"><a href="{% url 'home' %}">Внутренний рынок</a></li>
+                    <li class="breadcrumb-item"><a href="{% url 'home' %}">Закупки</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Индивидульный анализ (Поиск)</li>
+        </ol>
+   </nav> 
+{% endblock breadcrumb %}
+
 {% block DatePeriod %}
     <form method="get" class="form-inline" action={% url 'inner:PurchasesIndividualSearch' %}>
         {{ YearSelectForm }}
@@ -44,13 +54,7 @@
         </div>
         <div class="col-md-3"></div>
         <div class="col">
-            <nav aria-label="breadcrumb">
-                <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="{% url 'home' %}">Внутренний рынок</a></li>
-                    <li class="breadcrumb-item"><a href="{% url 'home' %}">Закупки</a></li>
-                    <li class="breadcrumb-item active" aria-current="page">Индивидульный анализ (Поиск)</li>
-                </ol>
-            </nav> 
+
         </div>
 </div>
 
