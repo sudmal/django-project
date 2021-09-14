@@ -12,6 +12,17 @@
 <link rel="stylesheet" href="{% static 'css/stycky-table.css' %}">
 {% endblock js-before %}
 
+{% block breadcrumb %}
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb bg-transparent">
+            <li class="breadcrumb-item"><a href="{% url 'home' %}">Внутренний рынок</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'home' %}">Продажи</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Сравнительный анализ конкурентов</li>
+        </ol>
+   </nav> 
+{% endblock breadcrumb %}
+
+
 {% block period_button %}
 
 {% endblock period_button %}
@@ -25,20 +36,13 @@
 {% block content %}
 
 <div class="row mx-2">
-    <nav aria-label="breadcrumb">
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="{% url 'home' %}">Внутренний рынок</a></li>
-            <li class="breadcrumb-item"><a href="{% url 'home' %}">Продажи</a></li>
-            <li class="breadcrumb-item active" aria-current="page">Сравнительный анализ конкурентов</li>
-        </ol>
-   </nav> 
    <div class="col-md-2"></div>
    <div class="form-check form-check-inline">
 
             {{ firmTypeSelectForm.f_horeca }}&nbsp;&nbsp;<label for="f_horeca">Horeca</label>
             <div class="col-sm-1"></div>
 
-            {{ firmTypeSelectForm.f_eat }}&nbsp;&nbsp;<label  for="f_eat">Продукты питания</label>
+            {{ firmTypeSelectForm.f_eat }}&nbsp;&nbsp;<label  for="f_eat">Продукты&nbsp;питания</label>
             <div class="col-sm-1"></div>
 
             {{ firmTypeSelectForm.f_pack }}&nbsp;&nbsp;<label  for="f_pack">Упаковка</label>
@@ -55,35 +59,35 @@
 
 <table class="table table-bordered" id="table" data-show-columns="true">
     <thead class="thead table-active sticky-header">
-        <tr>
-			<th colspan="4"><center>Покупатели</center></th><th colspan="13"><center>Период анализа / Суммы в {{ currency }} с НДС</center></th>
+        <tr class="py-0">
+			<th class="py-0" colspan="4"><center>Покупатели</center></th><th class="py-0" colspan="13"><center>Период анализа / Суммы в {{ currency }} с НДС</center></th>
             
 	    </tr>
-        <tr>
-            <th class="header">#</th>
-            <th class="header">ЕДРПОУ</th>
-            <th class="header">ИМЯ</th>
-            <th class="header">Импортер</th>
+        <tr class="py-0">
+            <th class="header py-0">#</th>
+            <th class="header py-0">ЕДРПОУ</th>
+            <th class="header py-0">ИМЯ</th>
+            <th class="header py-0">Импортер</th>
             {% for m in mnth_list %}
-                <th class="header"> {{m}} </th>
+                <th class="header py-0"> {{m}} </th>
             {% endfor %}
-            <th class="header"><center>{{ year }}, {{ currency }} </center></th>
+            <th class="header py-0"><center>{{ year }}, {{ currency }} </center></th>
         </tr>
-        <tr>
-            <th colspan=4>
+        <tr class="py-0">
+            <th class="py-0" colspan=4>
                 <center>Всего</center>
             </th>
             {% for t in totals %}
-                <th> {{t|floatformat:'0'}} </th>
+                <th class="py-0"> {{t|floatformat:'0'}} </th>
             {% endfor %}
             </th>
-            <th>&nbsp;</th>
+            <th class="py-0">&nbsp;</th>
         </tr>
     </thead>
     <tbody>
 
             {% for f in organisations %}
-            <tr {% if f.seller__edrpou in competitors %}  style="background-color: #CDFECD;" {% endif %}>
+            <tr  style="background-color:{% cycle '#d4d4d4' '#e9e9e9' %}">
                 <td class="py-0" scope="row">{{ forloop.counter0|add:organisations.start_index }}</td>
                 <td class="py-0"><a class="btn btn-primary btn-sm font-weight-bold" href="{% url 'inner:SalesIndividualFirmShow' f.seller__edrpou|cut:' ' %}?selected_year={{year}}">{{ f.seller__edrpou|cut:' ' }}</a></td>
                 <td class="py-0">

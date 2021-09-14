@@ -12,6 +12,17 @@
 
 {% endblock js-before %}
 
+{% block breadcrumb %}
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb bg-transparent">
+            <li class="breadcrumb-item"><a href="{% url 'home' %}">Внутренний рынок</a></li>
+            <li class="breadcrumb-item"><a href="{% url 'home' %}">Продажи</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Анализ Клиентов конкурентов ({{ edrpou_num| cut:' ' }} - {{ seller_code| cut:' ' }} за период {{ year|cut:' ' }} )</li>
+        </ol>
+   </nav> 
+
+{% endblock breadcrumb %}
+
 {% block period_button %}
 {% endblock period_button %}
 
@@ -20,16 +31,6 @@
 {% endblock DatePeriod %}
 
 {% block content %}
-<div class="row mx-2">
-    <nav aria-label="breadcrumb">
-        <ol class="breadcrumb">
-            <li class="breadcrumb-item"><a href="{% url 'home' %}">Внутренний рынок</a></li>
-            <li class="breadcrumb-item"><a href="{% url 'home' %}">Продажи</a></li>
-            <li class="breadcrumb-item active" aria-current="page">Анализ Клиентов конкурентов ({{ edrpou_num| cut:' ' }} - {{ seller_code| cut:' ' }} за период {{ year|cut:' ' }} )</li>
-        </ol>
-   </nav> 
-</div>
-
 {# ('product__name','product__product_code','unit','one_product_cost','count','ordering_date') #}
 <table class="table">
     <thead  class="thead"  style="background-color:#b4b4b4">
