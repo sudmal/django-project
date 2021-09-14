@@ -35,7 +35,7 @@ $(document).ready(function(){
   border: none;
   outline: none;
   cursor: pointer;
-  padding: 14px 12px;
+  padding: 3px 12px;
   transition: 0.3s;
 }
 
@@ -139,9 +139,9 @@ td, th  !important{
                             {% if firm.seller__class_field__name in 'PACK' %}
                                 <tr>
                                     <td></td>
-                                    <td width="10%" ><a class="btn btn-secondary font-weight-bold" href="{% url 'inner:SalesIndividualFirmShow' firm.seller__edrpou %}?year={{ year }}">{{ firm.seller__edrpou | cut:' ' }}</a></td>
-                                    <td width="80%" >{% autoescape off %} {{ firm.seller__name|bold_in_quotes }} {% endautoescape %}</td>
-                                    <td width="80%" >{% if firm.is_importer %}&#9989;{% else %} &nbsp;{% endif %}</td>
+                                    <td width="10%" class="py-0"><a class="btn btn-secondary font-weight-bold" href="{% url 'inner:SalesIndividualFirmShow' firm.seller__edrpou %}?year={{ year }}">{{ firm.seller__edrpou | cut:' ' }}</a></td>
+                                    <td width="80%" class="py-0">{% autoescape off %} {{ firm.seller__name|bold_in_quotes }} {% endautoescape %}</td>
+                                    <td width="80%" class="py-0">{% if firm.is_importer %}&#9989;{% else %} &nbsp;{% endif %}</td>
                                 </tr>
                             {% endif %}
 
@@ -168,9 +168,9 @@ td, th  !important{
                             {% if firm.seller__class_field__name in 'FOOD' %}
                                 <tr>
                                     <td></td>
-                                    <td width="10%" ><a class="btn btn-secondary font-weight-bold" href="{% url 'inner:SalesIndividualFirmShow' firm.seller__edrpou %}?year={{ year }}">{{ firm.seller__edrpou | cut:' ' }}</a></td>
-                                    <td width="80%" >{% autoescape off %} {{ firm.seller__name|bold_in_quotes }} {% endautoescape %}</td>
-                                    <td width="80%" >{% if firm.is_importer %}&#9989;{% else %} &nbsp;{% endif %}</td>
+                                    <td width="10%" class="py-0"><a class="btn btn-secondary font-weight-bold" href="{% url 'inner:SalesIndividualFirmShow' firm.seller__edrpou %}?year={{ year }}">{{ firm.seller__edrpou | cut:' ' }}</a></td>
+                                    <td width="80%" class="py-0">{% autoescape off %} {{ firm.seller__name|bold_in_quotes }} {% endautoescape %}</td>
+                                    <td width="80%" class="py-0">{% if firm.is_importer %}&#9989;{% else %} &nbsp;{% endif %}</td>
                                 </tr>
                             {% endif %}
 
@@ -197,9 +197,9 @@ td, th  !important{
                             {% if firm.seller__class_field__name in 'OTHER' %}
                                 <tr>
                                     <td></td>
-                                    <td width="10%" ><a class="btn btn-secondary font-weight-bold" href="{% url 'inner:SalesIndividualFirmShow' firm.seller__edrpou %}?year={{ year }}">{{ firm.seller__edrpou | cut:' ' }}</a></td>
-                                    <td width="80%" >{% autoescape off %} {{ firm.seller__name|bold_in_quotes }} {% endautoescape %}</td>
-                                    <td width="80%" >{% if firm.is_importer %}&#9989;{% else %} &nbsp;{% endif %}</td>
+                                    <td width="10%" class="py-0"><a class="btn btn-secondary font-weight-bold" href="{% url 'inner:SalesIndividualFirmShow' firm.seller__edrpou %}?year={{ year }}">{{ firm.seller__edrpou | cut:' ' }}</a></td>
+                                    <td width="80%" class="py-0">{% autoescape off %} {{ firm.seller__name|bold_in_quotes }} {% endautoescape %}</td>
+                                    <td width="80%" class="py-0">{% if firm.is_importer %}&#9989;{% else %} &nbsp;{% endif %}</td>
                                 </tr>
                             {% endif %}
 
