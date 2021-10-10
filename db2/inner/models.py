@@ -191,3 +191,27 @@ class Youscore(models.Model):
     class Meta:
         managed = False
         db_table = 'youscore'
+
+
+class NlPeriodPurchases(models.Model):
+    edrpou = models.IntegerField(blank=True, null=True)
+    min_date = models.DateTimeField(blank=True, null=True)
+    max_date = models.DateTimeField(blank=True, null=True)
+    import_date = models.DateTimeField(blank=True, null=True)
+    filepath = models.TextField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'nl_period_purchases'
+
+
+class NlPeriodSales(models.Model):
+    edrpou = models.IntegerField(blank=True, null=True)
+    min_date = models.DateTimeField(blank=True, null=True)
+    max_date = models.DateTimeField(blank=True, null=True)
+    import_date = models.DateTimeField(blank=True, null=True)
+    filepath = models.TextField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'nl_period_sales'

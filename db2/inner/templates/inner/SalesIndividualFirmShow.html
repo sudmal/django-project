@@ -52,9 +52,10 @@
             <th  class="py-0" colspan=3>
                 <center>Всего</center>
             </th>
-            {% for t in totals %}
-                <th  class="py-0"> {{t|floatformat:'0'}} </th>
+            {% for p in periods %}
+                <th  class="py-0"> {#   {{t|floatformat:'0'}} #} {{ p }}</th>
             {% endfor %}
+                <th  class="py-0">{{total_year}}</th>
             </th>
         </tr>
     </thead>

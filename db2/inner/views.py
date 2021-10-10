@@ -10,7 +10,7 @@ from django.views.decorators.cache import cache_page
 import django_tables2 as tables
 from django_tables2.export.export import TableExport
 from django_tables2.export.views import ExportMixin
-from .models import Exchange,Youscore,ReestrStaging,CreditStaging,NlCredit,NlOrg,NlOrgClass,NlProduct,NlReestr,NlFilter,Competitors,Organisation
+from .models import Exchange,Youscore,ReestrStaging,CreditStaging,NlCredit,NlOrg,NlOrgClass,NlProduct,NlReestr,NlFilter,Competitors,Organisation,NlPeriodPurchases,NlPeriodSales
 from django.db.models import Count, Sum, Q, Avg, Subquery, OuterRef, F, FloatField, Max
 from django.db.models import FloatField
 from django.db.models.functions import Cast
@@ -262,9 +262,16 @@ def SalesIndividualFirmShow(request,edrpou_num):
         buyers=buyers.annotate(sum=Round2(Sum((F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2)/F('exchange__usd_com')))).order_by('-sum')
     buyers=buyers.filter(sum__isnull=False)
     buyers_list=[]
+    periods=[]
+    for m in range(1,13):
+        check_period=str(year)+'-'+str(m).zfill(2)
+        if NlPeriodSales.objects.filter(edrpou=edrpou_num).extra(where=["(to_char(min_date, 'YYYY-MM') <= '"+check_period+"' and to_char(max_date, 'YYYY-MM') >= '"+check_period+"')"]).count() >0:
+            periods.append(1)
+        else:
+            periods.append(0)
     totals=[]
     # Total sums
-    for m in range(1,13):
+    '''for m in range(1,13):
         t_sum=NlReestr.objects.filter(seller__edrpou=edrpou_num,ordering_date__year=year,ordering_date__month=m)
         if currency == 'UAH':
             t_sum=t_sum.aggregate(sum=Sum(F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2))
@@ -272,7 +279,7 @@ def SalesIndividualFirmShow(request,edrpou_num):
             t_sum=t_sum.aggregate(sum=Sum((F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2)/F('exchange__eur_mb_sale')))
         elif currency == 'USD':
             t_sum=t_sum.aggregate(sum=Sum((F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2)/F('exchange__usd_com')))
-        totals.append(t_sum['sum'])
+        totals.append(t_sum['sum'])'''
     t_sum=NlReestr.objects.filter(seller__edrpou=edrpou_num,ordering_date__year=year)
     if currency == 'UAH':
         t_sum=t_sum.aggregate(sum=Round2(Sum(F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2)))
@@ -280,7 +287,7 @@ def SalesIndividualFirmShow(request,edrpou_num):
         t_sum=t_sum.aggregate(sum=Round2(Sum((F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2)/F('exchange__eur_mb_sale'))))
     elif currency == 'USD':
         t_sum=t_sum.aggregate(sum=Round2(Sum((F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2)/F('exchange__usd_com'))))
-    totals.append(t_sum['sum'])
+    total_year=t_sum['sum']
     for b in buyers:
         cur_firm={}
         cur_firm.update({'buyer_id':b['buyer_id']})
@@ -288,6 +295,7 @@ def SalesIndividualFirmShow(request,edrpou_num):
         cur_firm.update({'buyer__edrpou':b['buyer__edrpou']})
         cur_firm.update({'sum':b['sum']})
         #print (cur_firm['buyer__edrpou'])
+        # buyers per month summs
         b_pms=NlReestr.objects.filter(seller__edrpou=edrpou_num,buyer_id=cur_firm['buyer_id'],ordering_date__year=year).annotate(month=TruncMonth('ordering_date')).values('month') 
         if currency == 'UAH':
             b_pms=b_pms.annotate(sum=Round2(Sum(F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2))).order_by()
@@ -319,16 +327,17 @@ def SalesIndividualFirmShow(request,edrpou_num):
     
     #Needs for django template generation
     mnth_list=["Январь","Февраль","Март","Апрель","Май","Июнь","Июль","Август","Сентябрь","Октябрь","Ноябрь","Декабрь"]
-
+    print(periods)
     context={
         'buyers_list':buyers_list,
-        'totals':totals,
+        'total_year':total_year,
         'edrpou_num':edrpou_num,
         'seller_name':seller_name,
         'currency':currency,
         'mnth_list':mnth_list,
         'year':year,
         'YearSelectForm':YearSelectForm,
+        'periods':periods,
     }
     context.update({'help_page_id':11})
     return render(request,'inner/SalesIndividualFirmShow.html',context)
