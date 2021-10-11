@@ -1,6 +1,7 @@
 {% extends 'main/base.html' %}
 
 {% load bold_in_quotes %}
+{% load index %}
 {% load static %}
 {% load cache %}
 
@@ -50,10 +51,11 @@
         </tr>
         <tr class="py-0">
             <th  class="py-0" colspan=3>
-                <center>Всего</center>
+                <center>Всего {{periods.0}}</center>
             </th>
             {% for p in periods %}
-                <th  class="py-0"> {#   {{t|floatformat:'0'}} #} {{ p }}</th>
+                <th  class="py-0"> {#   {{t|floatformat:'0'}} ({{periods|index:forloop.counter0 }}) #} {% if p %}✔{% else %}🚫{% endif %}  </th>
+
             {% endfor %}
                 <th  class="py-0">{{total_year}}</th>
             </th>
@@ -75,9 +77,9 @@
                 </td class="py-0">
                 {% for s in f.pms %}
                     {% if s %}
-                        <td class="py-0"> <a class="btn btn-light btn-sm  border-secondary" style="min-width: 60px;" href="{% url 'inner:SalesIndividualFirmRaw' edrpou_num|cut:' '  f.buyer__edrpou|cut:' ' %}?month={{ forloop.counter }}&selected_year={{ year }}">{{ s | floatformat:'0' }} </a></td>
+                        <td class="py-0" > <a class="btn btn-success btn-sm  border-secondary" style="min-width: 60px;" href="{% url 'inner:SalesIndividualFirmRaw' edrpou_num|cut:' '  f.buyer__edrpou|cut:' ' %}?month={{ forloop.counter }}&selected_year={{ year }}">{{ s | floatformat:'0' }} </a></td>
                     {% else%}
-                        <td class="py-0"> <span class="text-muted">-</td>
+                        <td class="py-0"> {% if periods|index:forloop.counter0 %}<span class="text-success font-weight-bold">0{% else %}<span class="text-muted">-{% endif %}</span></td>
                     {% endif %}
 
                 {% endfor %}
