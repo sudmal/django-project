@@ -35,6 +35,7 @@
 {% endblock DatePeriod %}
 
 {% block content %}
+
 <table class="table table-stiped table-hover table-bordered" id="table" data-show-columns="true">
     <thead class="thead table-active sticky-header">
         <tr class="py-0">
@@ -53,11 +54,17 @@
             <th  class="py-0" colspan=3>
                 <center>Наличие данных за периодам/Сумма за год</center>
             </th>
-            {% for p in periods %}
-                <th  class="py-0"> {#   {{t|floatformat:'0'}} ({{periods|index:forloop.counter0 }}) #} {% if p %}✔{% else %}🚫{% endif %}  </th>
-
-            {% endfor %}
-                <th  class="py-0">{{total_year}}</th>
+                {% for key,value in period_dates.items %}
+                    <th  class="py-0"> 
+                    {% if value %}
+                        <span style="cursor: help" data-toggle="tooltip" data-placement="top" title="{{ value }}">✔</span>
+                    {% else %}
+                        <span style="cursor: help" data-toggle="tooltip" data-placement="top" title="{{ value }}">🚫</span>
+                    {% endif %}
+                    </th>
+                {% endfor %}
+            
+            <th  class="py-0">{{total_year}}</th>
             </th>
         </tr>
     </thead>
@@ -77,9 +84,9 @@
                 </td class="py-0">
                 {% for s in f.pms %}
                     {% if s %}
-                        <td class="py-0" > <a class="btn btn-success btn-sm  border-secondary" style="min-width: 60px;" href="{% url 'inner:SalesIndividualFirmRaw' edrpou_num|cut:' '  f.buyer__edrpou|cut:' ' %}?month={{ forloop.counter }}&selected_year={{ year }}">{{ s | floatformat:'0' }} </a></td>
+                        <td class="py-0" > <a class="btn btn-sm btn-light border-success" style="min-width: 60px;" href="{% url 'inner:SalesIndividualFirmRaw' edrpou_num|cut:' '  f.buyer__edrpou|cut:' ' %}?month={{ forloop.counter }}&selected_year={{ year }}">{{ s | floatformat:'0' }} </a></td>
                     {% else%}
-                        <td class="py-0"> {% if periods|index:forloop.counter0 %}<span class="text-success font-weight-bold">0{% else %}<span class="text-muted">-{% endif %}</span></td>
+                        <td class="py-0"> - </span></td>
                     {% endif %}
 
                 {% endfor %}

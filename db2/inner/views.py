@@ -262,13 +262,16 @@ def SalesIndividualFirmShow(request,edrpou_num):
         buyers=buyers.annotate(sum=Round2(Sum((F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2)/F('exchange__usd_com')))).order_by('-sum')
     buyers=buyers.filter(sum__isnull=False)
     buyers_list=[]
-    periods=[]
+    period_dates={}
     for m in range(1,13):
         check_period=str(year)+'-'+str(m).zfill(2)
         if NlPeriodSales.objects.filter(edrpou=edrpou_num).extra(where=["(to_char(min_date, 'YYYY-MM') <= '"+check_period+"' and to_char(max_date, 'YYYY-MM') >= '"+check_period+"')"]).count() >0:
-            periods.append(1)
+            period_dates_query=NlPeriodSales.objects.filter(edrpou=edrpou_num).extra(where=["(to_char(min_date, 'YYYY-MM') <= '"+check_period+"' and to_char(max_date, 'YYYY-MM') >= '"+check_period+"')"]).values('min_date','max_date')
+            
+            period_dates.update({m:period_dates_query[0]['min_date'].strftime('%Y.%m.%d') +' - '+ period_dates_query[0]['max_date'].strftime('%Y.%m.%d')})
         else:
-            periods.append(0)
+            period_dates.update({m:False})
+    #print(period_dates)
     totals=[]
     # Total sums
     '''for m in range(1,13):
@@ -324,7 +327,7 @@ def SalesIndividualFirmShow(request,edrpou_num):
     except EmptyPage:
         buyers_list = paginator.page(paginator.num_pages) 
 
-    
+    print(period_dates)
     #Needs for django template generation
     mnth_list=["Январь","Февраль","Март","Апрель","Май","Июнь","Июль","Август","Сентябрь","Октябрь","Ноябрь","Декабрь"]
     context={
@@ -336,7 +339,7 @@ def SalesIndividualFirmShow(request,edrpou_num):
         'mnth_list':mnth_list,
         'year':year,
         'YearSelectForm':YearSelectForm,
-        'periods':periods,
+        'period_dates':period_dates,
     }
     context.update({'help_page_id':11})
     return render(request,'inner/SalesIndividualFirmShow.html',context)
