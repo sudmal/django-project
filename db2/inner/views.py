@@ -266,9 +266,9 @@ def SalesIndividualFirmShow(request,edrpou_num):
     for m in range(1,13):
         check_period=str(year)+'-'+str(m).zfill(2)
         if NlPeriodSales.objects.filter(edrpou=edrpou_num).extra(where=["(to_char(min_date, 'YYYY-MM') <= '"+check_period+"' and to_char(max_date, 'YYYY-MM') >= '"+check_period+"')"]).count() >0:
-            period_dates_query=NlPeriodSales.objects.filter(edrpou=edrpou_num).extra(where=["(to_char(min_date, 'YYYY-MM') <= '"+check_period+"' and to_char(max_date, 'YYYY-MM') >= '"+check_period+"')"]).values('min_date','max_date')
+            period_dates_query=NlPeriodSales.objects.filter(edrpou=edrpou_num).extra(where=["(to_char(min_date, 'YYYY-MM') <= '"+check_period+"' and to_char(max_date, 'YYYY-MM') >= '"+check_period+"')"]).values('min_date','max_date','import_date')
             
-            period_dates.update({m:period_dates_query[0]['min_date'].strftime('%Y.%m.%d') +' - '+ period_dates_query[0]['max_date'].strftime('%Y.%m.%d')})
+            period_dates.update({m:period_dates_query[0]['min_date'].strftime('%d.%m.%Y') +' - '+ period_dates_query[0]['max_date'].strftime('%d.%m.%Y') + ' (import date: ' + period_dates_query[0]['import_date'].strftime('%d.%m.%Y')+ ')'})
         else:
             period_dates.update({m:False})
     #print(period_dates)
