@@ -851,9 +851,18 @@ def PurchasesIndividualFirmShow(request,edrpou_num):
         sellers=sellers.annotate(sum=Round(Sum((F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2)/F('exchange__usd_com')))).order_by('-sum')
     sellers=sellers.filter(sum__isnull=False)
     sellers_list=[]
-    totals=[]
-    # Total sums
+    period_dates={}
     for m in range(1,13):
+        check_period=str(year)+'-'+str(m).zfill(2)
+        if NlPeriodPurchases.objects.filter(edrpou=edrpou_num).extra(where=["(to_char(min_date, 'YYYY-MM') <= '"+check_period+"' and to_char(max_date, 'YYYY-MM') >= '"+check_period+"')"]).count() >0:
+            period_dates_query=NlPeriodPurchases.objects.filter(edrpou=edrpou_num).extra(where=["(to_char(min_date, 'YYYY-MM') <= '"+check_period+"' and to_char(max_date, 'YYYY-MM') >= '"+check_period+"')"]).values('min_date','max_date','import_date')
+            period_dates.update({m:period_dates_query[0]['min_date'].strftime('%d.%m.%Y') +' - '+ period_dates_query[0]['max_date'].strftime('%d.%m.%Y') + ' (import date: ' + period_dates_query[0]['import_date'].strftime('%d.%m.%Y')+ ')'})
+        else:
+            period_dates.update({m:False})
+    #print(period_dates)    
+    #totals=[]
+    # Total sums
+    """for m in range(1,13):
         t_sum=NlCredit.objects.filter(buyer__edrpou=edrpou_num,ordering_date__year=year,ordering_date__month=m)
         if currency == 'UAH':
             t_sum=t_sum.aggregate(sum=Sum(F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2))
@@ -862,6 +871,15 @@ def PurchasesIndividualFirmShow(request,edrpou_num):
         elif currency == 'USD':
             t_sum=t_sum.aggregate(sum=Sum((F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2)/F('exchange__usd_com')))
         totals.append(t_sum['sum'])
+    """
+    t_sum_q=NlCredit.objects.filter(buyer__edrpou=edrpou_num,ordering_date__year=year).values('buyer_id')
+    if currency == 'UAH':
+        t_sum_q=t_sum_q.annotate(sum=Round(Sum(F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2))).order_by()
+    elif currency == 'EUR':
+        t_sum_q=t_sum_q.annotate(sum=Round(Sum((F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2)/F('exchange__eur_mb_sale')))).order_by()
+    elif currency == 'USD':
+        t_sum_q=t_sum_q.annotate(sum=Round(Sum((F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2)/F('exchange__usd_com')))).order_by()
+    t_sum=t_sum_q[0]['sum']
 
     for b in sellers:
         cur_firm={}
@@ -905,13 +923,14 @@ def PurchasesIndividualFirmShow(request,edrpou_num):
 
     context={
         'sellers_list':sellers_list,
-        'totals':totals,
+        't_sum':t_sum,
         'edrpou_num':edrpou_num,
         'buyer_name':buyer_name,
         'currency':currency,
         'mnth_list':mnth_list,
         'year':year,
         'YearSelectForm':YearSelectForm,
+        'period_dates':period_dates
     }
     context.update({'help_page_id':16})
     return render(request,'inner/PurchasesIndividualFirmShow.html',context)

@@ -25,7 +25,7 @@ def bold_in_quotes(str1):
         st=str1.split("\"")
         spart="".join(st[1:])
         spart2=spart.replace("Товариство з обмеженою відповідальністю", "ТОВ")
-        print(spart2)
+        #print(spart2)
 
 
         if len(st[0])>0:

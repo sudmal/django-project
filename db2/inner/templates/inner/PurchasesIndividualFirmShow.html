@@ -36,7 +36,7 @@
 
 {% block content %}
 
-<table class="table table-stiped" id="table" data-show-columns="true">
+<table class="table table-stiped table-hover table-bordered" id="table" data-show-columns="true">
     <thead class="thead table-active sticky-header">
         <tr>
 			<th class="py-0" colspan="3"><center>Продавцы</center></th><th class="py-0"  colspan="13"><center>Период анализа / Суммы в {{ currency }} с НДС</center></th>
@@ -51,14 +51,21 @@
             <th class="header py-0">{{ year }} </th>
         </tr>
         <tr >
-            <th class="py-0"  colspan=3>
-                <center>Всего</center>
+            <th  class="py-0" colspan=3>
+                <center>Наличие данных по периодам/Сумма за год</center>
             </th>
-            {% for t in totals %}
-                <th class="py-0" > {{t|floatformat:'0'}} </th>
-            {% endfor %}
+                {% for key,value in period_dates.items %}
+                    <th  class="py-0"> 
+                    {% if value %}
+                        <span style="cursor: help" data-toggle="tooltip" data-placement="top" title="{{ value }}">✔</span>
+                    {% else %}
+                        <span style="cursor: help" data-toggle="tooltip" data-placement="top" title="{{ value }}">🚫</span>
+                    {% endif %}
+                    </th>
+                {% endfor %}
+            
+            <th class="py-0" > {{t_sum|floatformat:'0'}} </th>
             </th>
-            <th class="py-0" >&nbsp;</th>
         </tr>
     </thead>
     <tbody>
