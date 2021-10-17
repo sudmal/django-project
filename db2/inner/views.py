@@ -879,7 +879,9 @@ def PurchasesIndividualFirmShow(request,edrpou_num):
         t_sum_q=t_sum_q.annotate(sum=Round(Sum((F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2)/F('exchange__eur_mb_sale')))).order_by()
     elif currency == 'USD':
         t_sum_q=t_sum_q.annotate(sum=Round(Sum((F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2)/F('exchange__usd_com')))).order_by()
-    t_sum=t_sum_q[0]['sum']
+    t_sum=0
+    if t_sum_q:
+        t_sum=t_sum_q[0]['sum']
 
     for b in sellers:
         cur_firm={}
