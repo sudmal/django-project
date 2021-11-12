@@ -84,6 +84,18 @@ TODO:
                         &#8645;
                     {% endif %}
                     Страна</th>
+                 <th>                    
+                    <a class="btn btn-light w-100 h-100" style="display: inline-block; white-space: nowrap;" href={% url 'ved:TrademarkReportRaw' trademark_name|urlencode:"" edrpou_num %}?start_date={{ start_date }}&end_date={{ end_date }}&is_grouped={% if is_grouped %}1{% else %}0{% endif %}&sort_field=trademark__name&sort_order={{ order.sort_order }}>
+                    {% if order.sort_field  ==  "trademark__name" %}
+                        {% if order.sort_order == 'asc' %}
+                            &#8673;
+                        {% elif order.sort_order == 'desc' %}
+                            &#8675;
+                        {% endif %}
+                     {% else %}
+                        &#8645;
+                    {% endif %}
+                    Торговая марка</th>
                 <th>                    
                     <a class="btn btn-light w-100 h-100" style="display: inline-block; white-space: nowrap;" href={% url 'ved:TrademarkReportRaw' trademark_name|urlencode:"" edrpou_num %}?start_date={{ start_date }}&end_date={{ end_date }}&is_grouped={% if is_grouped %}1{% else %}0{% endif %}&sort_field=product_code&sort_order={{ order.sort_order }}>
                     {% if order.sort_field  ==  "product_code" %}
@@ -148,6 +160,9 @@ TODO:
                 </td>
                 <td>
                     {{ r.record__sender__country__name}}
+                </td>
+                <td>
+                    {{ r.trademark__name}}
                 </td>
                 <td>
                     {{ r.product_code| cut:' '  }}

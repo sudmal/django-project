@@ -235,7 +235,7 @@ def CompetitorsComparse(request):
         .extra(where=["LEFT(product_code::text,8) IN (SELECT LEFT(gcodes,8) from tnved_group)"])\
             .values('record__recipient__edrpou','record__recipient__name')\
                 .annotate(total_cost_eur=Sum((F('record__exchange__usd_nbu')/F('record__exchange__eur_nbu'))*F('cost_fact')),count=Count('cost_fact',distinct=True),total_cost=Sum('cost_fact')).order_by('-total_cost')
-    #print(str(comparse.query))
+    print(str(comparse.query))
 
     m = hashlib.md5()
     m.update(str(comparse.query).encode('utf-8'))
@@ -567,9 +567,9 @@ def TrademarkReportRaw(request,trademark_name,edrpou_num):
     context.update({'trademark_name':trademark_name})
     context.update({'tm_aliases_list':tm_aliases_list})
     queryset_list = GtdRecords.objects.filter(Q(record__recipient__edrpou=edrpou_num) & (Q(trademark__name=trademark_name) | Q(trademark__name__in = tm_aliases_list) ) & Q(record__date__range=[start_date, end_date]))\
-            .values('record__sender__name','record__sender__country__name','record__date','product_code','description','cost_fact')\
+            .values('record__sender__name','trademark__name','record__sender__country__name','record__date','product_code','description','cost_fact')\
                 .annotate(cost_eur=Sum((F('record__exchange__usd_nbu')/F('record__exchange__eur_nbu'))*F('cost_fact'))).order_by(order['sort_order_symbol']+order['sort_field'])
-    #print(queryset_list.query)
+    print(queryset_list.query)
     summ = GtdRecords.objects.filter(Q(record__recipient__edrpou=edrpou_num) & (Q(trademark__name=trademark_name) | Q(trademark__name__in = tm_aliases_list) ) & Q(record__date__range=[start_date, end_date]))\
                 .aggregate(cost_usd=Sum('cost_fact'))
     tm_firm_summ=summ['cost_usd']

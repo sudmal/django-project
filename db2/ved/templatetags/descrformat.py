@@ -5,7 +5,7 @@ register = template.Library()
 def descrformat(str1):
     st=''
     result=''
-    
+    str1=str(str1)
     if str1.find(";")>=0:
         str1=str1.replace(";",";<br>")
     if str1.find(":")>=0:
