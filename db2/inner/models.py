@@ -199,7 +199,7 @@ class NlPeriodPurchases(models.Model):
     max_date = models.DateTimeField(blank=True, null=True)
     import_date = models.DateTimeField(blank=True, null=True)
     filepath = models.TextField(blank=True, null=True)
-    id = models.BigAutoField(primary_key=True)
+    index = models.BigAutoField(primary_key=True)
     class Meta:
         managed = False
         db_table = 'nl_period_purchases'
@@ -211,7 +211,7 @@ class NlPeriodSales(models.Model):
     max_date = models.DateTimeField(blank=True, null=True)
     import_date = models.DateTimeField(blank=True, null=True)
     filepath = models.TextField(blank=True, null=True)
-    id = models.BigAutoField(primary_key=True)
+    index = models.BigAutoField(primary_key=True)
     class Meta:
         managed = False
         db_table = 'nl_period_sales'

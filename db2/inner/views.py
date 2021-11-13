@@ -976,19 +976,24 @@ def PurchasesIndividualFirmRaw(request,edrpou_num,seller_code):
 def CompetitorsCatalog(request):
    # https://daruse.ru/prostaya-filtracziya-tabliczyi-na-jquery
     year=getCurrentYear()
-    start_date=year+'-01-01'
-    end_date=year+'-12-31'
     competitors=NlReestr.objects.all().values('seller__edrpou','seller__name','seller__class_field__name')\
             .annotate(total_cost=Sum(F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2),\
                 total_count=Count('one_product_cost')).order_by('-total_cost')
     c_importer=list()
+
     for c in competitors:
         is_importer=False
         if Organisation.objects.filter(edrpou=c['seller__edrpou']).count() > 0:
             is_importer = True 
         c.update({'is_importer': is_importer})
+
+        c_dates=list()
+        for c_per in NlPeriodPurchases.objects.filter(edrpou=c['seller__edrpou']).values('min_date','max_date'):
+            c_dates.append(c_per['min_date'].strftime('%d-%m-%Y') + " - " + c_per['max_date'].strftime('%d-%m-%Y'))
+        c.update({'periods':c_dates})
+        
         c_importer.append(c)
-    edrpou_list=[]
+
     context={
         'horeca_num':0,
         'pack_num':0,
