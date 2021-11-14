@@ -115,7 +115,7 @@ td, th  !important{
                                     <td  width="10%" class="py-0 align-middle" ><a class="btn btn-secondary font-weight-bold" href="{% url 'inner:SalesIndividualFirmShow' firm.seller__edrpou %}?year={{ year }}">{{ firm.seller__edrpou | cut:' ' }}</a></td>
                                     <td  width="70%" class="py-0 align-middle" >{% autoescape off %} {{ firm.seller__name|bold_in_quotes }} {% endautoescape %}</td>
                                     <td> 
-                                    <div style="cursor: help" data-toggle="tooltip" data-placement="left" title="{% for fp in firm.periods %} {{fp}}  {% endfor %}"> <img src="{% static 'periods.png' %}"></div>
+                                    <a href="#" title="{% for fp in firm.periods %}{{fp}}&#13;{% endfor %}"> <img src="{% static 'periods.png' %}"></a>
                                     </td>
                                     <td  width="10%" class="py-0 align-middle" ><a class="btn btn-warning btn-sm" style="margin:auto;" href="{% url 'inner:topSalesFirmShow' firm.seller__edrpou %}?year={{ year }}"><img src="{% static 'top100.png' %}"></a></td>
                                     <td  width="10%" class="py-0 align-middle" >{% if firm.is_importer %}&#9989;{% else %} &nbsp;{% endif %}</td>

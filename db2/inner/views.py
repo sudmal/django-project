@@ -979,6 +979,7 @@ def CompetitorsCatalog(request):
     competitors=NlReestr.objects.all().values('seller__edrpou','seller__name','seller__class_field__name')\
             .annotate(total_cost=Sum(F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2),\
                 total_count=Count('one_product_cost')).order_by('-total_cost')
+    #print(competitors.query)
     c_importer=list()
 
     for c in competitors:
@@ -988,7 +989,7 @@ def CompetitorsCatalog(request):
         c.update({'is_importer': is_importer})
 
         c_dates=list()
-        for c_per in NlPeriodPurchases.objects.filter(edrpou=c['seller__edrpou']).values('min_date','max_date'):
+        for c_per in NlPeriodPurchases.objects.filter(edrpou=c['seller__edrpou']).values('min_date','max_date').order_by('max_date').distinct():
             c_dates.append(c_per['min_date'].strftime('%d-%m-%Y') + " - " + c_per['max_date'].strftime('%d-%m-%Y'))
         c.update({'periods':c_dates})
         
