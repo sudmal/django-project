@@ -988,6 +988,11 @@ def CompetitorsCatalog(request):
             is_importer = True 
         c.update({'is_importer': is_importer})
 
+        curr_year_data=False
+        if NlReestr.objects.filter(seller__edrpou=c['seller__edrpou'],ordering_date__year=year).count() > 0:
+            curr_year_data=True
+        c.update({'curr_year_data':curr_year_data})
+
         c_dates=list()
         for c_per in NlPeriodPurchases.objects.filter(edrpou=c['seller__edrpou']).values('min_date','max_date').order_by('max_date').distinct():
             c_dates.append(c_per['min_date'].strftime('%d-%m-%Y') + " - " + c_per['max_date'].strftime('%d-%m-%Y'))

@@ -103,6 +103,7 @@ td, th  !important{
 					<th width="5%">ЕДРПОУ</th>
 					<th width="8%">Наименование</th>
           <th width="8%">Доступные периоды</th>
+          <th width="8%">{{year}}</th>
           <th width="8%">Топ продаж</th>
           <th width="5%">Импортер</th>
 					</tr>
@@ -116,6 +117,9 @@ td, th  !important{
                                     <td  width="70%" class="py-0 align-middle" >{% autoescape off %} {{ firm.seller__name|bold_in_quotes }} {% endautoescape %}</td>
                                     <td> 
                                     <a href="#" title="{% for fp in firm.periods %}{{fp}}&#13;{% endfor %}"> <img src="{% static 'periods.png' %}"></a>
+                                    </td>
+                                    <td>
+                                    {% if firm.curr_year_data %}&#10004;{% else %} &nbsp;{% endif %}
                                     </td>
                                     <td  width="10%" class="py-0 align-middle" ><a class="btn btn-warning btn-sm" style="margin:auto;" href="{% url 'inner:topSalesFirmShow' firm.seller__edrpou %}?year={{ year }}"><img src="{% static 'top100.png' %}"></a></td>
                                     <td  width="10%" class="py-0 align-middle" >{% if firm.is_importer %}&#9989;{% else %} &nbsp;{% endif %}</td>
