@@ -216,7 +216,7 @@ def CompetitorsComparse(request):
     start_date=year+'-01-01'
     end_date=year+'-12-31'
     end_date_q=str(Records.objects.filter(date__range=[start_date, end_date]).aggregate(Max('date'))['date__max'])
-    #print(end_date_q)
+    print(end_date_q)
     if end_date_q:
         end_date=end_date_q
     dates=getRecDates()
