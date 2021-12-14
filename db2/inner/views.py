@@ -1103,3 +1103,151 @@ def topSalesFirmShow(request,edrpou_num):
     context.update({'help_page_id':help_page_id})
     return render(request,'inner/topSalesFirmShow.html',context)
     
+    
+    
+    
+    
+    
+    
+    
+@login_required(login_url='login')
+def RFMIndividual(request):
+    YearSelectForm=NlYearSelectForm()
+    currency = User.objects.get(username=request.user).profile.currency
+    num_per_page = User.objects.get(username=request.user).profile.rows_per_page
+    if num_per_page==0:
+        num_per_page=99999999999
+    year=getCurrentYear()
+    if request.GET.get('selected_year'):
+        YearSelectForm=NlYearSelectForm(request.GET)
+        year=request.GET.get('selected_year')
+    #print(year)
+    searchFormOrg=SearchFormOrg()
+    organisations=[]
+    if request.GET.get('search_string'):
+        searchFormOrg = SearchFormOrg(request.GET)
+        organisations=NlReestr.objects.filter(Q(ordering_date__year=year)&(Q(seller__name__icontains=request.GET.get('search_string'))|Q(seller__edrpou__icontains=request.GET.get('search_string'))))\
+            .values('seller__name','seller__edrpou').distinct()
+        if currency == 'UAH':
+            organisations=organisations.annotate(sum=Sum(F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2)).order_by('-sum')
+        elif currency == 'EUR':
+            organisations=organisations.annotate(sum=Sum((F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2)/F('exchange__eur_mb_sale'))).order_by('-sum')
+        elif currency == 'USD':
+            organisations=organisations.annotate(sum=Sum((F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2)/F('exchange__usd_com'))).order_by('-sum')   
+        #print(organisations.query)
+    context={
+        'organisations':organisations,
+        'currency':currency,
+        'searchFormOrg':searchFormOrg,
+        'YearSelectForm':YearSelectForm,
+        'year':year
+    }
+
+    context.update({'help_page_id':111})
+    return render(request,'inner/RFMIndividual.html',context)
+
+@login_required(login_url='login')
+def RFMFirmShow(request,edrpou_num):
+    year=getCurrentYear()
+    YearSelectForm=NlYearSelectForm()
+    if request.GET.get('selected_year'):
+        YearSelectForm=NlYearSelectForm(request.GET)
+        year=request.GET.get('selected_year')
+    num_per_page = User.objects.get(username=request.user).profile.rows_per_page
+    if num_per_page==0:
+        num_per_page=99999999999
+    currency = User.objects.get(username=request.user).profile.currency
+    seller_name=NlOrg.objects.get(edrpou=edrpou_num).name
+    buyers_dict = {}
+    buyers=NlReestr.objects.filter(seller__edrpou=edrpou_num,ordering_date__year=year).values('buyer_id','buyer__edrpou','buyer__name').distinct()
+    if currency == 'UAH':
+        buyers=buyers.annotate(sum=Round2(Sum(F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2))).order_by('-sum')
+    elif currency == 'EUR':
+        buyers=buyers.annotate(sum=Round2(Sum((F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2)/F('exchange__eur_mb_sale')))).order_by('-sum')
+    elif currency == 'USD':
+        buyers=buyers.annotate(sum=Round2(Sum((F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2)/F('exchange__usd_com')))).order_by('-sum')
+    buyers=buyers.filter(sum__isnull=False)
+    buyers_list=[]
+    period_dates={}
+    for m in range(1,13):
+        check_period=str(year)+'-'+str(m).zfill(2)
+        if NlPeriodSales.objects.filter(edrpou=edrpou_num).extra(where=["(to_char(min_date, 'YYYY-MM') <= '"+check_period+"' and to_char(max_date, 'YYYY-MM') >= '"+check_period+"')"]).count() >0:
+            period_dates_query=NlPeriodSales.objects.filter(edrpou=edrpou_num).extra(where=["(to_char(min_date, 'YYYY-MM') <= '"+check_period+"' and to_char(max_date, 'YYYY-MM') >= '"+check_period+"')"]).values('min_date','max_date','import_date')
+            
+            period_dates.update({m:period_dates_query[0]['min_date'].strftime('%d.%m.%Y') +' - '+ period_dates_query[0]['max_date'].strftime('%d.%m.%Y') + ' (import date: ' + period_dates_query[0]['import_date'].strftime('%d.%m.%Y')+ ')'})
+        else:
+            period_dates.update({m:False})
+    #print(period_dates)
+    totals=[]
+    # Total sums
+    '''for m in range(1,13):
+        t_sum=NlReestr.objects.filter(seller__edrpou=edrpou_num,ordering_date__year=year,ordering_date__month=m)
+        if currency == 'UAH':
+            t_sum=t_sum.aggregate(sum=Sum(F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2))
+        elif currency == 'EUR':
+            t_sum=t_sum.aggregate(sum=Sum((F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2)/F('exchange__eur_mb_sale')))
+        elif currency == 'USD':
+            t_sum=t_sum.aggregate(sum=Sum((F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2)/F('exchange__usd_com')))
+        totals.append(t_sum['sum'])'''
+    t_sum=NlReestr.objects.filter(seller__edrpou=edrpou_num,ordering_date__year=year)
+    if currency == 'UAH':
+        t_sum=t_sum.aggregate(sum=Round2(Sum(F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2)))
+    elif currency == 'EUR':
+        t_sum=t_sum.aggregate(sum=Round2(Sum((F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2)/F('exchange__eur_mb_sale'))))
+    elif currency == 'USD':
+        t_sum=t_sum.aggregate(sum=Round2(Sum((F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2)/F('exchange__usd_com'))))
+    total_year=t_sum['sum']
+    for b in buyers:
+        cur_firm={}
+        cur_firm.update({'buyer_id':b['buyer_id']})
+        cur_firm.update({'buyer__name':b['buyer__name']})
+        cur_firm.update({'buyer__edrpou':b['buyer__edrpou']})
+        cur_firm.update({'sum':b['sum']})
+        #print (cur_firm['buyer__edrpou'])
+        # buyers per month summs
+        b_pms=NlReestr.objects.filter(seller__edrpou=edrpou_num,buyer_id=cur_firm['buyer_id'],ordering_date__year=year).annotate(month=TruncMonth('ordering_date')).values('month') 
+        if currency == 'UAH':
+            b_pms=b_pms.annotate(sum=Round2(Sum(F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2))).order_by()
+        elif currency == 'EUR':
+            b_pms=b_pms.annotate(sum=Round2(Sum((F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2)/F('exchange__eur_mb_sale')))).order_by()
+        elif currency == 'USD':
+            b_pms=b_pms.annotate(sum=Round2(Sum((F('one_product_cost')*F('count')+F('one_product_cost')*F('count')*0.2)/F('exchange__usd_com')))).order_by()
+        pms=[] # per_monnth_summs
+        for m in range(1,13):
+            pms.append(float(0.0))
+        for bb in b_pms:
+            bb['month'] = int(str(bb['month'])[5:7])
+            pms[bb['month']-1]=bb['sum']
+        cur_firm.update({'pms':pms})
+        #print(cur_firm)
+
+        buyers_list.append(cur_firm)
+
+
+    paginator = Paginator(buyers_list, getCurrentRowsPerPage(request))
+    page_number = request.GET.get('page')
+    try:
+        buyers_list = paginator.page(page_number)
+    except PageNotAnInteger:
+        buyers_list = paginator.page(1)
+    except EmptyPage:
+        buyers_list = paginator.page(paginator.num_pages) 
+
+    print(period_dates)
+    #Needs for django template generation
+    mnth_list=["Январь","Февраль","Март","Апрель","Май","Июнь","Июль","Август","Сентябрь","Октябрь","Ноябрь","Декабрь"]
+    context={
+        'buyers_list':buyers_list,
+        'total_year':total_year,
+        'edrpou_num':edrpou_num,
+        'seller_name':seller_name,
+        'currency':currency,
+        'mnth_list':mnth_list,
+        'year':year,
+        'YearSelectForm':YearSelectForm,
+        'period_dates':period_dates,
+    }
+    context.update({'help_page_id':112})
+    return render(request,'inner/RFMFirmShow.html',context)
+
+    
