@@ -10,7 +10,7 @@
 {% endblock title %}
 
 {% block js-before %}
-<link rel="stylesheet" href="{% static 'css/stycky-table.css' %}">
+<link rel="stylesheet" href="{% static 'css/rfm-table.css' %}">
 {% endblock js-before %}
 
 {% block breadcrumb %}
@@ -32,32 +32,32 @@
 {% endblock DatePeriod %}
 
 {% block content %}
-
+<div class="px-5 mx-5">
 <table class="table table-stiped table-hover table-bordered" id="table" data-show-columns="true">
     <thead class="thead table-active sticky-header">
         <tr class="py-0">
-			<th>
+			<th class="py-0 text-left header">
                 Имя организации
             </th>
-			<th>
+			<th class="py-0 text-center header">
                 Recency
             </th>
-			<th>
+			<th class="py-0 text-center header">
                 Frequency
             </th>
-			<th>
+			<th class="py-0 text-center header">
                 Monetary value
             </th>
-			<th>
+			<th class="py-0 text-center header">
                 R Quartile
             </th>
-			<th>
+			<th class="py-0 text-center header">
                 F Quartile
             </th>
-			<th>
+			<th class="py-0 text-center header">
                 M Quartile
             </th>
-			<th>
+			<th class="py-0 text-center header">
                 RFMClass
             </th>
 	    </tr>
@@ -65,28 +65,28 @@
     <tbody>
         {% for buyer in rfm %}
         <tr>
-            <td>
-                {{buyer.buyer_name}}
+            <td class="py-0 align-left">
+                <a  class="my-1 font-weight-bold" style="color:black" href="{% url 'inner:ClientsCompetitorsIndividualSearch'%}?search_string={{buyer.buyer_name|urlencode}}">{% autoescape off %}{{buyer.buyer_name|bold_in_quotes}}{% endautoescape%}</a>
             </td>    
-            <td>
+            <td class="py-0 text-right">
                 {{buyer.R_recency}}
             </td>    
-            <td>
+            <td class="py-0 text-right">
                 {{buyer.F_frequency}}
             </td>    
-            <td>
+            <td class="py-0 text-right">
                 {{buyer.M_monetary_value|floatformat:'0'}}
             </td>    
-            <td>
+            <td class="py-0 text-center">
                 {{buyer.R_Quartile}}
             </td>  
-            <td>
+            <td class="py-0 text-center">
                 {{buyer.F_Quartile}}
             </td>  
-            <td>
+            <td class="py-0 text-center">
                 {{buyer.M_Quartile}}
             </td>  
-            <td>
+            <td class="py-0 text-center">
                 {{buyer.RFMClass}}
             </td>  
         </tr>
@@ -94,6 +94,7 @@
 
     </tbody>
 </table>
+</div>
 
 
 
