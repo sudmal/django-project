@@ -36,10 +36,61 @@
 <table class="table table-stiped table-hover table-bordered" id="table" data-show-columns="true">
     <thead class="thead table-active sticky-header">
         <tr class="py-0">
-			<th><td></td></th>
+			<th>
+                Имя организации
+            </th>
+			<th>
+                Recency
+            </th>
+			<th>
+                Frequency
+            </th>
+			<th>
+                Monetary value
+            </th>
+			<th>
+                R Quartile
+            </th>
+			<th>
+                F Quartile
+            </th>
+			<th>
+                M Quartile
+            </th>
+			<th>
+                RFMClass
+            </th>
 	    </tr>
     </thead>
     <tbody>
+        {% for buyer in rfm %}
+        <tr>
+            <td>
+                {{buyer.buyer_name}}
+            </td>    
+            <td>
+                {{buyer.R_recency}}
+            </td>    
+            <td>
+                {{buyer.F_frequency}}
+            </td>    
+            <td>
+                {{buyer.M_monetary_value|floatformat:'0'}}
+            </td>    
+            <td>
+                {{buyer.R_Quartile}}
+            </td>  
+            <td>
+                {{buyer.F_Quartile}}
+            </td>  
+            <td>
+                {{buyer.M_Quartile}}
+            </td>  
+            <td>
+                {{buyer.RFMClass}}
+            </td>  
+        </tr>
+        {% endfor %}
 
     </tbody>
 </table>

@@ -1189,29 +1189,31 @@ def RFMFirmShow(request,edrpou_num):
     connection = pg.connect("host='"+settings.DATABASES['default']['HOST']+"' dbname="+settings.DATABASES['default']['NAME']+" user="+settings.DATABASES['default']['USER']+" password='"+settings.DATABASES['default']['PASSWORD']+"'")
     sql_query='SELECT nlob.edrpou AS buyer_edrpou,nlob.NAME AS buyer_name,ordering_date,reestr_number,SUM (ROUND((one_product_cost*COUNT+one_product_cost*COUNT*0.2) :: NUMERIC,2)) AS "total_pay_cost" FROM nl_reestr LEFT JOIN nl_org nlos ON seller_id=nlos.ID LEFT JOIN nl_org nlob ON buyer_id=nlob.ID WHERE nlos.edrpou='+str(edrpou_num)+' AND nlob.edrpou !=0 AND ordering_date>=\'2020-01-01\' GROUP BY ordering_date,nlob.edrpou,nlob.NAME,reestr_number ORDER BY ordering_date'
     data=pd.read_sql(sql_query, con=connection)
-    print(data.columns)
     data['ordering_date']=pd.to_datetime(data['ordering_date'])
     #NOW = datetime.datetime(2021,4,30)
     NOW = datetime.datetime.now()
     # R - Количество дней с последнего заказа F - Количество заказов M - Общая сумма по заказам
     rfmTable = data.groupby('buyer_name').agg({'ordering_date':lambda x:(NOW-x.max()).days, 'reestr_number':lambda x:len(x), 'total_pay_cost':lambda x:x.sum()})
+    rfmTable=rfmTable.reset_index()
     rfmTable['ordering_date'] = rfmTable['ordering_date'].astype(int)
-    rfmTable.rename(columns={'ordering_date':'(R) recency','reestr_number':'(F) frequency','total_pay_cost':'(M) monetary_value'}, inplace=True)
+    rfmTable.rename(columns={'ordering_date':'R_recency','reestr_number':'F_frequency','total_pay_cost':'M_monetary_value'}, inplace=True)
     quantiles = rfmTable.quantile(q=[0.25,0.5,0.75]).to_dict()
     rfmsSegmentation = rfmTable
-    rfmsSegmentation['R_Quartile'] = rfmsSegmentation['(R) recency'].apply(RClass, args=('(R) recency',quantiles,))
-    rfmsSegmentation['F_Quartile'] = rfmsSegmentation['(F) frequency'].apply(FMClass, args=('(F) frequency',quantiles,))
-    rfmsSegmentation['M_Quartile'] = rfmsSegmentation['(M) monetary_value'].apply(FMClass, args=('(M) monetary_value',quantiles,))
+    rfmsSegmentation['R_Quartile'] = rfmsSegmentation['R_recency'].apply(RClass, args=('R_recency',quantiles,))
+    rfmsSegmentation['F_Quartile'] = rfmsSegmentation['F_frequency'].apply(FMClass, args=('F_frequency',quantiles,))
+    rfmsSegmentation['M_Quartile'] = rfmsSegmentation['M_monetary_value'].apply(FMClass, args=('M_monetary_value',quantiles,))
     # Склеиваем код RFM в одно значение
     rfmsSegmentation['RFMClass'] = rfmsSegmentation.R_Quartile.map(str) \
                             + rfmsSegmentation.F_Quartile.map(str) \
                             + rfmsSegmentation.M_Quartile.map(str)
-    print(rfmsSegmentation)
+    print(rfmsSegmentation.columns)
+    rfm=rfmsSegmentation.to_dict('records')
     context={
         'edrpou_num':edrpou_num,
         'currency':currency,
         'year':year,
         'seller_name':seller_name,
+        'rfm':rfm,
     }
     context.update({'help_page_id':112})
     return render(request,'inner/RFMFirmShow.html',context)
