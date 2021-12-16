@@ -1196,6 +1196,7 @@ def RFMFirmShow(request,edrpou_num):
     rfmTable = data.groupby('buyer_name').agg({'ordering_date':lambda x:(NOW-x.max()).days, 'reestr_number':lambda x:len(x), 'total_pay_cost':lambda x:x.sum()})
     rfmTable=rfmTable.reset_index()
     rfmTable['ordering_date'] = rfmTable['ordering_date'].astype(int)
+    rfmTable=rfmTable.sort_values(by=['total_pay_cost'],ascending=False)
     rfmTable.rename(columns={'ordering_date':'R_recency','reestr_number':'F_frequency','total_pay_cost':'M_monetary_value'}, inplace=True)
     quantiles = rfmTable.quantile(q=[0.25,0.5,0.75]).to_dict()
     rfmsSegmentation = rfmTable
