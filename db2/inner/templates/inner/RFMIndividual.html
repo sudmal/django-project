@@ -51,7 +51,7 @@ table.table-bordered > tbody > tr > td{
 
 <div class="row">
         <div class="col">
-            <form method="GET" action="{% url 'inner:SalesIndividual' %}">
+            <form method="GET" action="{% url 'inner:RFMIndividual' %}">
                 {% csrf_token %}
                 <div class="input-group mb-3 ml-5">
                 {{ searchFormOrg.search_string }} 
@@ -96,7 +96,7 @@ table.table-bordered > tbody > tr > td{
                 <b>{{ forloop.counter }}</b>
             </div>
             <div class="col-md-1 d-flex">
-                <a  class="badge badge-info py-1 font-weight-bold" style="color:white" href="{% url 'inner:SalesIndividualFirmShow' org.seller__edrpou %}?selected_year={{ year }}">{{ org.seller__edrpou | cut:' ' }}</a>
+                <a  class="badge badge-info py-1 font-weight-bold" style="color:white" href="{% url 'inner:RFMFirmShow' org.seller__edrpou %}?selected_year={{ year }}">{{ org.seller__edrpou | cut:' ' }}</a>
             </div>
             <div class="col-md-5 align-middle py-1">
                 {% autoescape off %}
