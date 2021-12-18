@@ -1208,7 +1208,9 @@ def RFMFirmShow(request,edrpou_num):
                             + rfmsSegmentation.F_Quartile.map(str) \
                             + rfmsSegmentation.M_Quartile.map(str)
     print(rfmsSegmentation.columns)
+    rfmsSegmentation['M_monetary_value'] = rfmsSegmentation['M_monetary_value'].map(round)
     rfm=rfmsSegmentation.to_dict('records')
+    #print(rfm)
     context={
         'edrpou_num':edrpou_num,
         'currency':currency,

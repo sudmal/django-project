@@ -4,6 +4,8 @@
 {% load index %}
 {% load static %}
 {% load cache %}
+{% load nbsp_remove %}
+
 
 {% block title %}
     Анализ клиентов конкурентов :: RFM анализ ({{ edrpou_num| cut:' ' }})
@@ -11,6 +13,7 @@
 
 {% block js-before %}
 <link rel="stylesheet" href="{% static 'css/rfm-table.css' %}">
+<link rel="stylesheet" href="{% static 'css/sortable.min.css' %}">
 {% endblock js-before %}
 
 {% block breadcrumb %}
@@ -18,7 +21,7 @@
         <ol class="breadcrumb bg-transparent">
             <li class="breadcrumb-item"><a href="{% url 'home' %}">Внутренний рынок</a></li>
             <li class="breadcrumb-item"><a href="{% url 'home' %}">Анализ клиентов конкурентов</a></li>
-            <li class="breadcrumb-item active" aria-current="page">RFM анализ ({{ edrpou_num| cut:' ' }}) - {{ seller_name }}</li>
+            <li class="breadcrumb-item active" aria-current="page"><b>RFM анализ</b>  ({{ edrpou_num| cut:' ' }}) - <b> {{ seller_name }}</b></li>
         </ol>
    </nav> 
 {% endblock breadcrumb %}
@@ -33,9 +36,12 @@
 
 {% block content %}
 <div class="px-5 mx-5">
-<table class="table table-stiped table-hover table-bordered" id="table" data-show-columns="true">
+<table class="table table-stiped table-hover table-bordered sortable" id="table" data-show-columns="true">
     <thead class="thead table-active sticky-header">
         <tr class="py-0">
+            <th class="py-0 text-left header">
+                #
+            </th>
 			<th class="py-0 text-left header">
                 Имя организации
             </th>
@@ -66,6 +72,9 @@
         {% for buyer in rfm %}
         <tr>
             <td class="py-0 align-left">
+                <b>{{ forloop.counter }}</b>
+            </td>    
+            <td class="py-0 align-left">
                 <a  class="my-1 font-weight-bold" style="color:black" href="{% url 'inner:ClientsCompetitorsIndividualSearch'%}?search_string={{buyer.buyer_name|urlencode}}">{% autoescape off %}{{buyer.buyer_name|bold_in_quotes}}{% endautoescape%}</a>
             </td>    
             <td class="py-0 text-right">
@@ -75,7 +84,8 @@
                 {{buyer.F_frequency}}
             </td>    
             <td class="py-0 text-right">
-                {{buyer.M_monetary_value|floatformat:'0'}}
+                {{buyer.M_monetary_value|striptags|safe|nbsp_remove}}
+
             </td>    
             <td class="py-0 text-center">
                 {{buyer.R_Quartile}}
@@ -102,5 +112,9 @@
 
 
 {% block js %}
+
+
+<script src="{% static 'js/sortable.min.js' %}"></script>
+
 
 {% endblock js %}

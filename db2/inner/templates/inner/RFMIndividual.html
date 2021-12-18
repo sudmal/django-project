@@ -5,7 +5,7 @@
 {% load cache %}
 
 {% block title %}
-    Продажи :: Индивидуальный анализ (поиск)
+    Продажи :: Анализ клиентов конкурентов :: RFM-анализ (поиск)
 {% endblock title %}
 
 {% block js-before %}
@@ -29,19 +29,15 @@ table.table-bordered > tbody > tr > td{
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb bg-transparent">
             <li class="breadcrumb-item"><a href="{% url 'home' %}">Внутренний рынок</a></li>
-            <li class="breadcrumb-item"><a href="{% url 'home' %}">Продажи</a></li>
-            <li class="breadcrumb-item active" aria-current="page">Индивидульный анализ (Поиск)</li>
+            <li class="breadcrumb-item"><a href="{% url 'home' %}">Анализ клиентов конкурентов</a></li>
+            <li class="breadcrumb-item active" aria-current="page">RFM-анализ (Поиск)</li>
         </ol>
    </nav> 
 
 {% endblock breadcrumb %}
 
 {% block DatePeriod %}
-    <form method="get" class="form-inline" action={% url 'inner:SalesIndividual' %}>
-        {{ YearSelectForm }}
-        <input type=hidden name="search_string" value="{{ request.GET.search_string }}">
-        <button type="submit" class="btn btn-info">Изменить</button>
-    </form>
+
 {% endblock DatePeriod %}
 
 {% block period_button %}
@@ -96,7 +92,7 @@ table.table-bordered > tbody > tr > td{
                 <b>{{ forloop.counter }}</b>
             </div>
             <div class="col-md-1 d-flex">
-                <a  class="badge badge-info py-1 font-weight-bold" style="color:white" href="{% url 'inner:RFMFirmShow' org.seller__edrpou %}?selected_year={{ year }}">{{ org.seller__edrpou | cut:' ' }}</a>
+                <a  class="badge badge-info py-1 font-weight-bold" style="color:white" href="{% url 'inner:RFMFirmShow' org.seller__edrpou %}">{{ org.seller__edrpou | cut:' ' }}</a>
             </div>
             <div class="col-md-5 align-middle py-1">
                 {% autoescape off %}
