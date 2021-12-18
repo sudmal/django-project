@@ -13,7 +13,10 @@
 
 {% block js-before %}
 <link rel="stylesheet" href="{% static 'css/rfm-table.css' %}">
+<link rel="stylesheet" href="{% static 'css/theme.dropbox.min.css' %}">
+{% comment %}
 <link rel="stylesheet" href="{% static 'css/sortable.min.css' %}">
+{% endcomment %}
 {% endblock js-before %}
 
 {% block breadcrumb %}
@@ -36,7 +39,7 @@
 
 {% block content %}
 <div class="px-5 mx-5">
-<table class="table table-stiped table-hover table-bordered sortable" id="table" data-show-columns="true">
+<table class="table table-stiped table-hover table-bordered sortable tablesorter tablesorter-dropbox" id="table" data-show-columns="true">
     <thead class="thead table-active sticky-header">
         <tr class="py-0">
             <th class="py-0 text-left header">
@@ -84,7 +87,7 @@
                 {{buyer.F_frequency}}
             </td>    
             <td class="py-0 text-right">
-                {{buyer.M_monetary_value|striptags|safe|nbsp_remove}}
+                {{buyer.M_monetary_value}}
 
             </td>    
             <td class="py-0 text-center">
@@ -114,7 +117,12 @@
 {% block js %}
 
 
-<script src="{% static 'js/sortable.min.js' %}"></script>
-
-
+{#<script src="{% static 'js/sortable.min.js' %}"></script>#}
+<script src="{% static 'js/jquery.tablesorter.min.js' %}"></script>
+<script src="{% static 'js/jquery.tablesorter.widgets.js' %}"></script>
+<script>
+$(function(){
+    $("#table").tablesorter();
+});
+</script>
 {% endblock js %}
