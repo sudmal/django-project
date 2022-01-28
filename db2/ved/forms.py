@@ -5,9 +5,9 @@ import datetime
 
 year = str((datetime.date.today() - datetime.timedelta(days=120)).year)
 db_dt=Records.objects.filter(date__range=[str(year)+'-01-01', str(year)+'-12-31']).aggregate(Max('date'))['date__max']
-print(db_dt)
-db_max_date=str(db_dt)
 
+db_max_date=str(db_dt)
+print(db_max_date)
 class DateInput(forms.DateInput):
     input_type='date'
 

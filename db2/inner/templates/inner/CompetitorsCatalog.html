@@ -102,6 +102,7 @@ td, th  !important{
           <th>№</th>
 					<th width="5%">ЕДРПОУ</th>
 					<th width="8%">Наименование</th>
+          <th width="8%">RFM Анализ</th>
           <th width="8%">Доступные периоды</th>
           <th width="8%">{{year}}</th>
           <th width="8%">Топ продаж</th>
@@ -115,9 +116,15 @@ td, th  !important{
                                     <td></td>
                                     <td  width="10%" class="py-0 align-middle" ><a class="btn btn-secondary font-weight-bold" href="{% url 'inner:SalesIndividualFirmShow' firm.seller__edrpou %}?year={{ year }}">{{ firm.seller__edrpou | cut:' ' }}</a></td>
                                     <td  width="70%" class="py-0 align-middle" >{% autoescape off %} {{ firm.seller__name|bold_in_quotes }} {% endautoescape %}</td>
-                                    <td> 
-                                    <a href="#" title="{% for fp in firm.periods %}{{fp}}&#13;{% endfor %}"> <img src="{% static 'periods.png' %}"></a>
+                                    <td>
+                                      <a style="margin:auto;" href="{% url 'inner:RFMFirmShow' firm.seller__edrpou %}">
+                                        <img src="{% static 'rfms.png' %}" />
+                                      </a>
                                     </td>
+                                    <td> 
+                                    <a href="#" title="{% for fp in firm.periods %}{{fp}}&#13;{% endfor %}"> <img src="{% static 'periods.png' %}" /></a>
+                                    </td>
+                                    
                                     <td>
                                     {% if firm.curr_year_data %}&#10004;{% else %} &nbsp;{% endif %}
                                     </td>
@@ -139,6 +146,10 @@ td, th  !important{
           <th>№</th>
 					<th width="5%">ЕДРПОУ</th>
 					<th width="8%">Наименование</th>
+          <th width="8%">RFM Анализ</th>
+          <th width="8%">Доступные периоды</th>
+          <th width="8%">{{year}}</th>
+          <th width="8%">Топ продаж</th>
           <th width="5%">Импортер</th>
 					</tr>
 				</thead>
@@ -168,6 +179,10 @@ td, th  !important{
           <th>№</th>
 					<th width="5%">ЕДРПОУ</th>
 					<th width="8%">Наименование</th>
+          <th width="8%">RFM Анализ</th>
+          <th width="8%">Доступные периоды</th>
+          <th width="8%">{{year}}</th>
+          <th width="8%">Топ продаж</th>
           <th width="5%">Импортер</th>
 					</tr>
 				</thead>
@@ -197,6 +212,10 @@ td, th  !important{
           <th>№</th>
 					<th width="5%">ЕДРПОУ</th>
 					<th width="8%">Наименование</th>
+          <th width="8%">RFM Анализ</th>
+          <th width="8%">Доступные периоды</th>
+          <th width="8%">{{year}}</th>
+          <th width="8%">Топ продаж</th>
           <th width="5%">Импортер</th>
 					</tr>
 				</thead>
