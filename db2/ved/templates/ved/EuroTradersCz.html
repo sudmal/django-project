@@ -56,9 +56,9 @@ $(document).ready(function(){
 						<th width="10%">Описание (оригинал)</th>
 						<th width="10%">Описание (перевод)</th>
 						<th width="1%%">Регион</th>
-						<th width="1%%">website</th>
-						<th width="1%%">email</th>
-						<th width="1%%">phone</th>
+						<th width="1%%">Сайт</th>
+						<th width="1%%">E-Mail</th>
+						<th width="1%%">Телефон</th>
 
 					</tr>
 				</thead>
@@ -77,17 +77,30 @@ $(document).ready(function(){
 						</td>
 
 						<td class="py-0 align-middle">
-							<a href=# style="color:dimgrey;" data-toggle="collapse" data-target="#data-collapse-{{ forloop.counter }}-2" aria-expanded="false" aria-controls="data-collapse-{{ forloop.counter }}-2">
-								<small>&#8675; Раскрыть &#8675;</small>
-							</a>
-							<div class="collapse" id="data-collapse-{{ forloop.counter }}-2">
-								{{ firm.description_translate }}
-							</div>
+						<a href=# style="color:dimgrey;" data-toggle="collapse" data-target="#data-collapse-{{ forloop.counter }}-2" aria-expanded="false" aria-controls="data-collapse-{{ forloop.counter }}-2">
+							<small>&#8675; Раскрыть &#8675;</small>
+						</a>
+						<div class="collapse" id="data-collapse-{{ forloop.counter }}-2">
+							{{ firm.description_translate }}
+						</div>
 						</td>
 						<td class="py-0 align-middle">{{ firm.region }}</td>
-						<td class="py-0 align-middle">{{ firm.website }}</td>
-						<td class="py-0 align-middle">{{ firm.email }}</td>
-						<td class="py-0 align-middle">{{ firm.phone }}</td>
+						<td class="py-0 align-middle"> 
+							{% if firm.website %}
+								<a style="color:dimgrey;" href={{ firm.website }} target=_blank>{{ firm.website }}</a>
+							{% endif %}
+						</td>
+						<td class="py-0 align-middle">
+							{% if firm.email %}
+							<a style="color:dimgrey;" href="mailto:{{ firm.email }}">{{ firm.email }}</a>
+							{% endif %}
+						</td>
+
+						<td class="py-0 align-middle">
+							{% if firm.phone %}
+								{{ firm.phone }}
+							{% endif %}
+						</td>
 					</tr>
 					{% endfor %}
 				</tbody>
