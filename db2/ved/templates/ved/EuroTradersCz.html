@@ -19,6 +19,11 @@ $(document).ready(function(){
   });
 });
 </script>
+<style>
+a:hover{
+	font-weight: bold;
+}
+</style>
 {% endblock js-before %}
 {% comment "" %}{% block help_link %}
 
@@ -51,14 +56,14 @@ $(document).ready(function(){
 				<table class="table table-sm table-hover table-secondary table-bordered table-striped">
 				<thead>
 					<tr class="table-secondary">
-						<th width="3%">№</th>
-						<th width="5%">Наименование</th>
-						<th width="10%">Описание (оригинал)</th>
-						<th width="10%">Описание (перевод)</th>
-						<th width="1%%">Регион</th>
-						<th width="1%%">Сайт</th>
-						<th width="1%%">E-Mail</th>
-						<th width="1%%">Телефон</th>
+						<th width="1%">№</th>
+						<th width="30%">Наименование</th>
+						<th width="20%">Описание (оригинал)</th>
+						<th width="20%">Описание (перевод)</th>
+						<th width="1%">Регион</th>
+						<th width="1%">Сайт</th>
+						<th width="1%">E-Mail</th>
+						<th width="20%%;">Телефон</th>
 
 					</tr>
 				</thead>
@@ -87,12 +92,12 @@ $(document).ready(function(){
 						<td class="py-0 align-middle">{{ firm.region }}</td>
 						<td class="py-0 align-middle"> 
 							{% if firm.website %}
-								<a style="color:dimgrey;" href={{ firm.website }} target=_blank>{{ firm.website }}</a>
+								<a style="color:black;" href={{ firm.website }} target=_blank>{{ firm.website }}</a>
 							{% endif %}
 						</td>
 						<td class="py-0 align-middle">
 							{% if firm.email %}
-							<a style="color:dimgrey;" href="mailto:{{ firm.email }}">{{ firm.email }}</a>
+							<a style="color:black;" href="mailto:{{ firm.email }}">{{ firm.email }}</a>
 							{% endif %}
 						</td>
 
