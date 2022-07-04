@@ -20,4 +20,5 @@ urlpatterns = [
     path('CompetitorsCatalog/<int:edrpou_num>', views.CompetitorsCatalogPeriodDetail, name = 'CompetitorsCatalogPeriodDetail'),
     path('ProductCodesCatalog/', views.ProductCodesCatalog, name = 'ProductCodesCatalog'),
     path('TnvedGroupCatalog/', views.TnvedGroupCatalog, name = 'TnvedGroupCatalog'),
+    path('czCatalog/', views.czCatalog, name = 'czCatalog'),
 ]

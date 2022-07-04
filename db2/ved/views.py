@@ -9,7 +9,7 @@ import django_tables2 as tables
 from django_tables2.export.export import TableExport
 from django_tables2.export.views import ExportMixin
 from .models import Competitors
-from .models import Organisation,GtdRecords,Records,Trademark,Sender,Country,TnvedGroup,Exchange,filter_codes,TnvedGroup,Youscore,RecordsStaging,RecordsCompetitors,TmAlias
+from .models import Organisation,GtdRecords,Records,Trademark,Sender,Country,TnvedGroup,Exchange,filter_codes,TnvedGroup,Youscore,RecordsStaging,RecordsCompetitors,TmAlias,FirmsCz
 from .forms import SearchForm,SearchFormOrg
 from .tables import CompetitorsComparsePeriodDetailTable
 from django.db.models import Count, Sum, Q, Avg, Subquery, OuterRef, F, FloatField, Max
@@ -674,6 +674,7 @@ def HRKReport(request):
     context.update({'CACHE_TIME':CACHE_TIME})
     return render(request,'ved/HRKReport.html',context)
 
+@login_required(login_url='login')
 def CompetitorsCatalog(request):
     help_page_id=4
     start_date=year+'-01-01'
@@ -748,6 +749,7 @@ def CompetitorsCatalog(request):
     context.update({'CACHE_TIME':CACHE_TIME})
     return render(request,'ved/CompetitorsCatalog.html',context)
 
+@login_required(login_url='login')
 def ProductCodesCatalog(request):
     help_page_id=5
     ProductCodes=filter_codes.objects.all()
@@ -758,6 +760,7 @@ def ProductCodesCatalog(request):
     context.update({'CACHE_TIME':CACHE_TIME})
     return render(request,'ved/ProductCodesCatalog.html',context)
 
+@login_required(login_url='login')
 def TnvedGroupCatalog(request):
     TnvedGroupData=TnvedGroup.objects.values('gname').distinct().annotate(codes=ArrayAgg('gcodes')).order_by('gname')
     context={
@@ -767,6 +770,7 @@ def TnvedGroupCatalog(request):
     context.update({'CACHE_TIME':CACHE_TIME})
     return  render(request, 'ved/TnvedGroupCatalog.html', context)
 
+@login_required(login_url='login')
 def CompetitorsCatalogPeriodDetail(request,edrpou_num):
     start_date=year+'-01-01'
     end_date=year+'-12-31'
@@ -814,3 +818,12 @@ def CompetitorsCatalogPeriodDetail(request,edrpou_num):
     context.update({'CACHE_TIME':CACHE_TIME})
     return  render(request, 'ved/CompetitorsCatalogPeriodDetail.html', context)
 
+@login_required(login_url='login')
+def czCatalog(request):
+    FirmsCzData=FirmsCz.objects.all()
+    context={
+        'FirmsCzData':FirmsCzData,
+        'help_page_id':99,
+        }
+    context.update({'CACHE_TIME':CACHE_TIME})
+    return  render(request, 'ved/EuroFirmsCz.html', context)

@@ -287,3 +287,22 @@ class TmAlias(models.Model):
     class Meta:
         managed = False
         db_table = 'tm_alias'
+
+
+class FirmsCz(models.Model):
+    title = models.TextField(blank=True, null=True)
+    place = models.TextField(blank=True, null=True)
+    specialisation = models.TextField(blank=True, null=True)
+    products_services = models.TextField(blank=True, null=True)
+    description = models.TextField(blank=True, null=True)
+    phone = models.TextField(blank=True, null=True)
+    mobilephone = models.TextField(blank=True, null=True)
+    fax = models.TextField(blank=True, null=True)
+    email = models.TextField(blank=True, null=True)
+    website = models.TextField(blank=True, null=True)
+    person = models.TextField(blank=True, null=True)
+    full_contact_text = models.TextField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'firms_cz'
