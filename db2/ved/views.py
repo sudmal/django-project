@@ -9,7 +9,7 @@ import django_tables2 as tables
 from django_tables2.export.export import TableExport
 from django_tables2.export.views import ExportMixin
 from .models import Competitors
-from .models import Organisation,GtdRecords,Records,Trademark,Sender,Country,TnvedGroup,Exchange,filter_codes,TnvedGroup,Youscore,RecordsStaging,RecordsCompetitors,TmAlias,FirmsCz
+from .models import Organisation,GtdRecords,Records,Trademark,Sender,Country,TnvedGroup,Exchange,filter_codes,TnvedGroup,Youscore,RecordsStaging,RecordsCompetitors,TmAlias,FirmsCz,TradersCz
 from .forms import SearchForm,SearchFormOrg
 from .tables import CompetitorsComparsePeriodDetailTable
 from django.db.models import Count, Sum, Q, Avg, Subquery, OuterRef, F, FloatField, Max
@@ -827,3 +827,14 @@ def czCatalog(request):
         }
     context.update({'CACHE_TIME':CACHE_TIME})
     return  render(request, 'ved/EuroFirmsCz.html', context)
+
+
+@login_required(login_url='login')
+def czTraders(request):
+    TradersCzData=TradersCz.objects.all()
+    context={
+        'TradersCzData':TradersCzData,
+        'help_page_id':99,
+        }
+    context.update({'CACHE_TIME':CACHE_TIME})
+    return  render(request, 'ved/EuroTradersCz.html', context)

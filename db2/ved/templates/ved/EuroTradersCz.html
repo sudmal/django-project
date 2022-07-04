@@ -1,0 +1,113 @@
+{% extends 'main/base.html' %}
+{% load bold_in_quotes %}
+{% load cache %}
+{% load static %}
+
+
+{% block title %}
+EURO :: Чехия :: Поставщики оборудования
+{% endblock title %}
+
+{% block js-before %}
+<script>
+$(document).ready(function(){
+  $("#myInput").on("keyup", function() {
+    var value = $(this).val().toLowerCase();
+    $("#myTable tr").filter(function() {
+      $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+    });
+  });
+});
+</script>
+{% endblock js-before %}
+{% comment "" %}{% block help_link %}
+
+{% endblock help_link %}
+{% endcomment %}
+{% block period_button %}
+
+{% endblock period_button %}
+{% block content %}
+{% cache 0 CompetitorsCatalog competitors.query %}
+<div class="row">
+	<div class="col">
+		
+	</div>
+</div>
+<div class="row">
+	<div class="col-md ml-5 mr-5">
+		<ul class="nav nav-tabs">
+		<li class="nav-item">
+			<a class="nav-link bg-secondary text-light active" data-toggle="tab" href="#tab_1">Справочник</a>
+		</li>
+		<li class="nav nav-item">
+			<input id="myInput" type="text" placeholder="Поиск..">
+		</li>
+		</ul>
+
+		<div class="tab-content">
+		<div class="tab-pane fade show active" id="tab_1">
+			<div class="table-responsive-lg">
+				<table class="table table-sm table-hover table-secondary table-bordered table-striped">
+				<thead>
+					<tr class="table-secondary">
+						<th width="3%">№</th>
+						<th width="5%">Наименование</th>
+						<th width="10%">Описание (оригинал)</th>
+						<th width="10%">Описание (перевод)</th>
+						<th width="1%%">Регион</th>
+						<th width="1%%">website</th>
+						<th width="1%%">email</th>
+						<th width="1%%">phone</th>
+
+					</tr>
+				</thead>
+				<tbody id="myTable">
+					{% for firm in TradersCzData %}
+					<tr>
+						<td scope="row">{{ forloop.counter }}</td>
+						<td class="py-0 align-middle"><b>{{ firm.title }}</b></td>
+						<td class="py-0 align-middle">
+							<a href=# style="color:dimgrey;" data-toggle="collapse" data-target="#data-collapse-{{ forloop.counter }}-1" aria-expanded="false" aria-controls="data-collapse-{{ forloop.counter }}-1">
+								<small>&#8675; Раскрыть &#8675;</small>
+							</a>
+							<div class="collapse" id="data-collapse-{{ forloop.counter }}-1">
+								{{ firm.description_orig }}
+							</div>
+						</td>
+
+						<td class="py-0 align-middle">
+							<a href=# style="color:dimgrey;" data-toggle="collapse" data-target="#data-collapse-{{ forloop.counter }}-2" aria-expanded="false" aria-controls="data-collapse-{{ forloop.counter }}-2">
+								<small>&#8675; Раскрыть &#8675;</small>
+							</a>
+							<div class="collapse" id="data-collapse-{{ forloop.counter }}-2">
+								{{ firm.description_translate }}
+							</div>
+						</td>
+						<td class="py-0 align-middle">{{ firm.region }}</td>
+						<td class="py-0 align-middle">{{ firm.website }}</td>
+						<td class="py-0 align-middle">{{ firm.email }}</td>
+						<td class="py-0 align-middle">{{ firm.phone }}</td>
+					</tr>
+					{% endfor %}
+				</tbody>
+				</table>
+			</div>
+		</div>
+			
+		</div>
+	</div>
+
+</div>
+
+
+{% comment %}
+
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+{% endcomment %} 
+
+{% endcache %}
+{% endblock content %}
+

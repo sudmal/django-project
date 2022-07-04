@@ -21,4 +21,5 @@ urlpatterns = [
     path('ProductCodesCatalog/', views.ProductCodesCatalog, name = 'ProductCodesCatalog'),
     path('TnvedGroupCatalog/', views.TnvedGroupCatalog, name = 'TnvedGroupCatalog'),
     path('czCatalog/', views.czCatalog, name = 'czCatalog'),
+    path('czTraders/', views.czTraders, name = 'czTraders'),
 ]

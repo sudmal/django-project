@@ -306,3 +306,17 @@ class FirmsCz(models.Model):
     class Meta:
         managed = False
         db_table = 'firms_cz'
+        
+        
+class TradersCz(models.Model):
+    title = models.TextField(blank=True, null=True)
+    description_orig = models.TextField(blank=True, null=True)
+    description_translate = models.TextField(blank=True, null=True)
+    website = models.TextField(blank=True, null=True)
+    email = models.TextField(blank=True, null=True)
+    phone = models.TextField(blank=True, null=True)
+    region = models.TextField(blank=True, null=True)
+
+    class Meta:
+        managed = False
+        db_table = 'traders_cz'
