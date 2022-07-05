@@ -18,6 +18,7 @@ import requests
 import json 
 import hashlib
 from django.core.cache import caches
+from django.conf import settings
 
 from django.contrib.postgres.aggregates import ArrayAgg
 from django.contrib.auth.models import User
@@ -152,7 +153,7 @@ def test(request):
 
 
 def Youscore_get(competitors_top):
-    api_key='1f0900000ebe229bcca6e39128b59d5be1fa2bb7'
+    api_key=settings.PRIVATES['youscore_api_ley']
     fin_data={}
     ved_data={}
 

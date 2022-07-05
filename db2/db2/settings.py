@@ -12,6 +12,14 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 
 from pathlib import Path
 import os
+import json
+
+PRIVATES=None
+with open('db2/private.txt') as f:
+        PRIVATES=json.load(f)
+        f.close
+
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve(strict=True).parent.parent
@@ -21,7 +29,7 @@ BASE_DIR = Path(__file__).resolve(strict=True).parent.parent
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'yzy_%pf*52*(ubx3q1s6$dmu7swq(lilc1&$1pt9u!_z3-534b'
+SECRET_KEY = PRIVATES['SECRET_KEY']
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
@@ -101,8 +109,8 @@ DATABASES = {
         'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'anamnez_copy',
-        'USER': 'operator',
-        'PASSWORD': 'Mimoza2019',
+        'USER': PRIVATES['db_user'],
+        'PASSWORD': PRIVATES['db_pass'],
         'HOST': '192.168.58.55',
         'PORT': '5432',
     }
