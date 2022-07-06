@@ -824,7 +824,7 @@ def czCatalog(request):
     FirmsCzData=FirmsCz.objects.all()
     context={
         'FirmsCzData':FirmsCzData,
-        'help_page_id':99,
+        'help_page_id':98,
         }
     context.update({'CACHE_TIME':CACHE_TIME})
     return  render(request, 'ved/EuroFirmsCz.html', context)
