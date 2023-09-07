@@ -5,6 +5,7 @@ from urllib.parse import unquote
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.contrib.auth.decorators import login_required,user_passes_test
 from django.views.decorators.cache import cache_page
+from django_excel_response import ExcelResponse
 import django_tables2 as tables
 from django_tables2.export.export import TableExport
 from django_tables2.export.views import ExportMixin
@@ -13,17 +14,20 @@ from .models import Organisation,GtdRecords,Records,Trademark,Sender,Country,Tnv
 from .forms import SearchForm,SearchFormOrg
 from .tables import CompetitorsComparsePeriodDetailTable
 from django.db.models import Count, Sum, Q, Avg, Subquery, OuterRef, F, FloatField, Max
+import pandas as pd
+import psycopg2 as pg
 import datetime
 import requests
 import json 
 import hashlib
+import os
 from django.core.cache import caches
 from django.conf import settings
 
 from django.contrib.postgres.aggregates import ArrayAgg
 from django.contrib.auth.models import User
 from django_tables2 import RequestConfig
-
+from django.http import HttpResponse, HttpResponseNotFound
 
 ## https://dizballanze.com/ru/django-project-optimization-part-3/
 #cache = caches['default']  # `default` is a key from CACHES dict in settings.py
@@ -39,6 +43,17 @@ year = str((datetime.date.today() - datetime.timedelta(days=120)).year)
 def logUserData(request):
     pass
     #print(request.META['REMOTE_ADDR'])
+
+def ExportReturnFile(request, file_location, file_name):
+
+    try:    
+        with open(file_location, 'rb') as f:
+           file_data = f.read()
+        response = HttpResponse(file_data, content_type='application/vnd.ms-excel')
+        response['Content-Disposition'] = 'attachment; filename="'+file_name+'"'
+    except IOError:
+        response = HttpResponseNotFound('<h1>File not exist</h1>')
+    return response
 
 def autocomplete_tm(request):
     titles = list()
@@ -229,7 +244,7 @@ def CompetitorsComparse(request):
         end_date=request.GET.get('end_date')
     prev_start_date=str(int(year)-1)+start_date[4:10]
     prev_end_date=str(int(year)-1)+end_date[4:10]
-    
+    Competitors_t=Competitors.objects.all()
 
     comparse = GtdRecords.objects.filter(Q(record__recipient__edrpou__in=Competitors.objects.values_list('competitor_code',flat=True)) & \
         Q(record__date__range=[start_date, end_date] ))\
@@ -269,9 +284,14 @@ def CompetitorsComparse(request):
                     prev_total_cost = c2['total_cost']
         c['delta'] = delta 
         c['prev_total_cost'] = prev_total_cost
+        # Проверяем есть ли названия в справочнике конкурентов, если есть устанавливаем оттуда
+        alt_name=Competitors.objects.filter(competitor_code=c['record__recipient__edrpou']).values_list('competitor_name',flat=True)[0]
+        if alt_name:
+            c['record__recipient__name']=alt_name
         comparse_list.append(c)
 
-
+        
+    
     # pie chart variables
     data=[]
     labels=[]
@@ -313,7 +333,8 @@ def IndividualReport(request):
     if request.GET.get('end_date'):
         search_form_org = SearchFormOrg(request.GET)
         end_date=request.GET.get('end_date')
-  
+    print(start_date)
+    print(end_date)
     if request.GET.get('search_string'):
         search_form_org = SearchFormOrg(request.GET)
         grecords_all = GtdRecords.objects.filter((Q(record__recipient__edrpou__startswith=request.GET.get('search_string')) | \
@@ -365,6 +386,8 @@ def IndividualReportFirmShow(request,edrpou_num):
     if request.GET.get('end_date'):
         search_form = SearchForm(request.GET)
         end_date=request.GET.get('end_date')
+    print(start_date)
+    print(end_date)
     if edrpou_num >= 0:
         firm=Organisation.objects.get(edrpou = edrpou_num)
         queryset_list = GtdRecords.objects.filter((Q(record__recipient__edrpou=edrpou_num) & Q(record__date__range=[start_date, end_date])))\
@@ -372,6 +395,19 @@ def IndividualReportFirmShow(request,edrpou_num):
                 .annotate(count=Count("cost_fact"),total_cost=Sum('cost_fact'),\
                     total_cost_eur=Sum((F('record__exchange__usd_nbu')/F('record__exchange__eur_nbu'))*F('cost_fact')),tms=ArrayAgg('trademark__name', distinct=True))\
                     .order_by(order['sort_order_symbol']+order['sort_field'])
+      
+        print()
+        if str(request.GET.get("_export", None)) == 'xlsx' : 
+            export_query="SELECT \"records\".\"date\",\"records\".\"gtd_name\",COUNT (\"gtd_records\".\"cost_fact\") AS \"count\",SUM (\"gtd_records\".\"cost_fact\") AS \"total_cost\",SUM (((\"exchange\".\"USD-NBU\"/\"exchange\".\"EUR-NBU\")*\"gtd_records\".\"cost_fact\")) AS \"total_cost_eur\",ARRAY_AGG (DISTINCT \"trademark\".\"name\") AS \"trademarks\" FROM \"gtd_records\" INNER JOIN \"records\" ON (\"gtd_records\".\"record_id\"=\"records\".\"id\") INNER JOIN \"organisation\" ON (\"records\".\"recipient_id\"=\"organisation\".\"id\") INNER JOIN \"exchange\" ON (\"records\".\"exchange_id\"=\"exchange\".\"id\") INNER JOIN \"trademark\" ON (\"gtd_records\".\"trademark_id\"=\"trademark\".\"id\") WHERE (\"organisation\".\"edrpou\"="+str(edrpou_num)+" AND \"records\".\"date\" BETWEEN '"+(start_date)+"' AND '"+str(end_date)+"') GROUP BY \"records\".\"date\",\"records\".\"gtd_name\" ORDER BY \"records\".\"date\" ASC"
+            with pg.connect(f"host='{settings.DATABASES['default']['HOST']}' port={settings.DATABASES['default']['PORT']} dbname='{settings.DATABASES['default']['NAME']}' user='{settings.DATABASES['default']['USER']}' password='{settings.DATABASES['default']['PASSWORD']}'") as conn:
+                export_data = pd.read_sql_query(export_query, conn)
+            filename=f'ved_import_{str(edrpou_num)}_{start_date}-{end_date}.xlsx'
+            filepath=f'/tmp/{filename}'
+            export_data.to_excel(filepath,index=False)
+            return ExportReturnFile(request,filepath,filename)
+            os.remove(filepath)
+            
+        
         paginator = Paginator(queryset_list, num_per_page)
         page_number = request.GET.get('page')
         try:
