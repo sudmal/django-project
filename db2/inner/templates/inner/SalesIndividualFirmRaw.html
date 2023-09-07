@@ -1,5 +1,7 @@
 {% extends 'main/base.html' %}
 
+{% load render_table from django_tables2 %}
+{% load querystring from django_tables2 %}
 {% load bold_in_quotes %}
 {% load static %}
 {% load cache %}
@@ -10,7 +12,9 @@
 
 {% block js-before %}
 {% endblock js-before %}
-
+{% block export_button %}
+    {% comment "" %}<a href="{% querystring '_export'='xlsx' %}"><button type="button" class="btn btn-outline-success">Export to EXCEL</button></a>{% endcomment %}
+{% endblock export_button %}
 {% block period_button %}
 {% endblock period_button %}
 

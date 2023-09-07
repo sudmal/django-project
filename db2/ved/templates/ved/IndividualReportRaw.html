@@ -27,9 +27,9 @@ TODO:
         </nav> 
     </div>
         {% autoescape off %}
-        {{ firm.name|bold_in_quotes }}
+        <div style="margin:20px;">{{ firm.name|bold_in_quotes }}</div>
         {% endautoescape %}
-        <table class="table table-sm table-striped border border-secondary">
+        <table class="table table-sm table-striped border border-secondary" style="margin:20px;">
         <thead>
         <!-- 'record__sender__name','record__sender__country__name','record__date','product_code','trademark__name','description','cost_fact' -->
             <tr>

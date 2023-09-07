@@ -43,9 +43,8 @@
         <div class="input-group mb-3">
         <form method="get" class="form-inline" style="width: 600px;" action={% url 'ved:IndividualReport' %}>
         {{ search_form_org.search_string }} 
-            <input type="hidden" name="start_date" value="{{ start_date }}"
-            <input type="hidden" name="end_date" value="{{ end_date }}"
-            {{search_form_org.end_date.value}}
+            <input type="hidden" name="start_date" value="{{ start_date }}">
+            <input type="hidden" name="end_date" value="{{ end_date }}">
             <div class="input-group-append">
                 <button type="submit" class="btn btn-outline-secondary">Поиск</button>
             </div>

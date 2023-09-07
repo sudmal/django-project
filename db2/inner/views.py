@@ -363,7 +363,13 @@ def SalesIndividualFirmRaw(request,edrpou_num,buyer_code):
 
     if request.GET.get('month'):
         raw_records = raw_records.filter(ordering_date__year=year,ordering_date__month=request.GET.get('month'))
-
+    
+#    # Если в GET запросе присутствует параметр _export возвращаем не данные для шаблона, а xlsx-таблицу
+#    export_format = request.GET.get("_export", None)
+#    if TableExport.is_valid_format(export_format):
+#        exporter = TableExport(export_format, raw_records, dataset_kwargs={"title": edrpou_num})
+#        return exporter.response(filename="Nalog_Export_{0}_{1}.{2}".format(edrpou_num,year,export_format))
+    
     paginator = Paginator(raw_records, getCurrentRowsPerPage(request))
     page_number = request.GET.get('page')
     try:

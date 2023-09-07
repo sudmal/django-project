@@ -27,3 +27,4 @@ class CompetitorsComparsePeriodDetailTable(tables.Table):
         sequence = ('num','date','gtd','country', 'sender_name', 'recipient_name','recipient_code','product_code','trademark','description','cost_fact','cost_customs')
         # add class="paleblue" to <table> tag
         attrs = {'class': 'paleblue'}
+     

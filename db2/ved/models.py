@@ -195,7 +195,7 @@ class Organisation(models.Model):
     firm_alias = models.CharField(max_length=2000)
     is_competitor = models.BooleanField()
     edrpou = models.BigIntegerField(unique=True)
-
+    
     class Meta:
         managed = False
         db_table = 'organisation'

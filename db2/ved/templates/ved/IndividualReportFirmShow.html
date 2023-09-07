@@ -2,6 +2,12 @@
 {% load cache %}
 {% load bold_in_quotes %}
 
+{% block export_button %}
+{% if report %}
+    <a href="{% url 'ved:IndividualReportFirmShow' firm.edrpou %}?start_date={{ start_date }}&end_date={{ end_date }}&_export=xlsx"><button type="button" class="btn btn-outline-success">Export to EXCEL</button></a>
+{% endif %}
+{% endblock export_button %}
+
 {% block title %}
 {{ firm.name }} - ВЭД :: Конкуренты :: Индивидуальный анализ :: Просмотр
 {% endblock title %}
@@ -15,7 +21,7 @@
                     <li class="breadcrumb-item"><a href="{% url 'ved:index' %}">ВЭД</a></li>
                     <li class="breadcrumb-item"><a href="{% url 'ved:index' %}">Конкуренты</a></li>
                     <li class="breadcrumb-item"><a href="{% url 'ved:IndividualReport' %}">Индивидульный анализ (Поиск)</a></li>
-                    <li class="breadcrumb-item active" aria-current="page">Индивидульный анализ ({{ firm.edrpou |cut:" " }})</li>
+                    <li class="breadcrumb-item active" aria-current="page">Индивидульный анализ для {{ firm.name }}({{ firm.edrpou |cut:" " }})</li>
                 </ol>
             </nav> 
         </div>

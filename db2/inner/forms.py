@@ -6,7 +6,12 @@ from django.db.models.functions import ExtractYear
 from django.forms.fields import BooleanField,IntegerField
 from .models import NlReestr,NlOrg,NlOrgClass
 
-reestr_years = NlReestr.objects.extra(select={'year':"extract(year from ordering_date)"}).distinct().values('year').order_by()
+reestr_years = NlReestr.objects.extra(select={'year':"extract(year from ordering_date)"}).distinct().values('year').order_by('year')
+choices_years=[]
+for yr in reestr_years:
+    add_yr=str(int(yr['year']))
+    choices_years.append((add_yr,add_yr))
+
 
 
 class DateInput(forms.DateInput):
@@ -26,7 +31,7 @@ class DatesStartEndForm(forms.Form):
     end_date = forms.DateField(input_formats='%Y,%m,%d',widget=DateInput(attrs={'class': 'form-control date-inline-select','value':db_max_date}))
 
 class NlYearSelectForm(forms.Form):
-    CHOICES = [('2017','2017'), ('2018','2018'), ('2019','2019'), ('2020','2020'),('2021','2021')]
+    CHOICES = choices_years
     selected_year = forms.ChoiceField(label='', choices=CHOICES,initial=year, widget=forms.Select(attrs={'class':'form-control'}))
 
 #class CompetitorsChoice(forms.Form):
