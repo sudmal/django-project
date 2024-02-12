@@ -33,12 +33,72 @@
     <thead>
         <tr style="background-color: #b4b4b4">
             <th class="text-right">#</th>
-            <th class="text-right">Дата</th>
-            <th class="text-right">Код товара</th>
-            <th class="text-left">Наименование</th>
-            <th class="text-right">Стоимость</th>
-            <th class="text-right">Количество</th>
-            <th class="text-right">Сумма, {{ currency }}</th>
+            <th class="text-right">                
+                <a class="btn btn-light w-100 h-100" style="display: inline-block; white-space: nowrap;" href={% url 'inner:PurchasesIndividualFirmRaw' edrpou_num seller_code|urlencode:"" %}?sort_field=ordering_date&sort_order={{ order.sort_order }}>
+                {% if order.sort_field  ==  "ordering_date" %}
+                    {% if order.sort_order == 'asc' %}
+                        &#8673;
+                    {% elif order.sort_order == 'desc' %}
+                        &#8675;
+                    {% endif %}
+                 {% else %}
+                    &#8645;
+                {% endif %}Дата</a></th>
+            <th class="text-right">                
+                <a class="btn btn-light w-100 h-100" style="display: inline-block; white-space: nowrap;" href={% url 'inner:PurchasesIndividualFirmRaw' edrpou_num seller_code|urlencode:"" %}?sort_field=product__product_code&sort_order={{ order.sort_order }}>
+                {% if order.sort_field  ==  "product__product_code" %}
+                    {% if order.sort_order == 'asc' %}
+                        &#8673;
+                    {% elif order.sort_order == 'desc' %}
+                        &#8675;
+                    {% endif %}
+                 {% else %}
+                    &#8645;
+                {% endif %}Код товара</a></th>
+            <th class="text-left">                
+                <a class="btn btn-light w-100 h-100" style="display: inline-block; white-space: nowrap;" href={% url 'inner:PurchasesIndividualFirmRaw' edrpou_num seller_code|urlencode:"" %}?sort_field=product__name&sort_order={{ order.sort_order }}>
+                {% if order.sort_field  ==  "product__name" %}
+                    {% if order.sort_order == 'asc' %}
+                        &#8673;
+                    {% elif order.sort_order == 'desc' %}
+                        &#8675;
+                    {% endif %}
+                 {% else %}
+                    &#8645;
+                {% endif %}Наименование</a></th>
+            <th class="text-right">                
+                <a class="btn btn-light w-100 h-100" style="display: inline-block; white-space: nowrap;" href={% url 'inner:PurchasesIndividualFirmRaw' edrpou_num seller_code|urlencode:"" %}?sort_field=one_product_cost&sort_order={{ order.sort_order }}>
+                {% if order.sort_field  ==  "one_product_cost" %}
+                    {% if order.sort_order == 'asc' %}
+                        &#8673;
+                    {% elif order.sort_order == 'desc' %}
+                        &#8675;
+                    {% endif %}
+                 {% else %}
+                    &#8645;
+                {% endif %}Стоимость</a></th>
+            <th class="text-right">                
+                <a class="btn btn-light w-100 h-100" style="display: inline-block; white-space: nowrap;" href={% url 'inner:PurchasesIndividualFirmRaw' edrpou_num seller_code|urlencode:"" %}?sort_field=count&sort_order={{ order.sort_order }}>
+                {% if order.sort_field  ==  "count" %}
+                    {% if order.sort_order == 'asc' %}
+                        &#8673;
+                    {% elif order.sort_order == 'desc' %}
+                        &#8675;
+                    {% endif %}
+                 {% else %}
+                    &#8645;
+                {% endif %}Количество</a></th>
+            <th class="text-right">                
+                <a class="btn btn-light w-100 h-100" style="display: inline-block; white-space: nowrap;" href={% url 'inner:PurchasesIndividualFirmRaw' edrpou_num seller_code|urlencode:"" %}?sort_field=sum&sort_order={{ order.sort_order }}>
+                {% if order.sort_field  ==  "sum" %}
+                    {% if order.sort_order == 'asc' %}
+                        &#8673;
+                    {% elif order.sort_order == 'desc' %}
+                        &#8675;
+                    {% endif %}
+                 {% else %}
+                    &#8645;
+                {% endif %}Сумма, {{ currency }}</a></th>
         </tr>
     </thead>
     <tbody>

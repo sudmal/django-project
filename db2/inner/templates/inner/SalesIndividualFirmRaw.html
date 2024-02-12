@@ -12,9 +12,11 @@
 
 {% block js-before %}
 {% endblock js-before %}
-{% block export_button %}
-    {% comment "" %}<a href="{% querystring '_export'='xlsx' %}"><button type="button" class="btn btn-outline-success">Export to EXCEL</button></a>{% endcomment %}
-{% endblock export_button %}
+{% if records_raw %}
+    {% block export_button %} 
+        <a href="{{ request.build_absolute_uri }}&_export=xlsx"><button type="button" class="btn btn-outline-success">Export to EXCEL</button></a>
+    {% endblock export_button %}
+{% endif %}
 {% block period_button %}
 {% endblock period_button %}
 
@@ -37,13 +39,84 @@
 <table class="table">
     <thead>
         <tr style="background-color:darkgrey;">
-            <th class="text-right">#</th>
-            <th class="text-right">Дата</th>
-            <th class="text-right">Код товара</th>
-            <th class="text-left">Наименование</th>
-            <th class="text-right">Стоимость</th>
-            <th class="text-right">Количество</th>
-            <th class="text-right">Сумма, {{ currency }}</th>
+            <th class="text-right"> #</th>
+            <th class="text-right">                
+                <a class="btn btn-light w-100 h-100" style="display: inline-block; white-space: nowrap;" href={% url 'inner:SalesIndividualFirmRaw' edrpou_num buyer_code|urlencode:"" %}?start_date={{ start_date }}&end_date={{ end_date }}&sort_field=ordering_date&sort_order={{ order.sort_order }}>
+                {% if order.sort_field  ==  "ordering_date" %}
+                    {% if order.sort_order == 'asc' %}
+                        &#8673;
+                    {% elif order.sort_order == 'desc' %}
+                        &#8675;
+                    {% endif %}
+                 {% else %}
+                    &#8645;
+                {% endif %}Дата</a></th>
+            <th class="text-right">
+                <a class="btn btn-light w-100 h-100" style="display: inline-block; white-space: nowrap;" href={% url 'inner:SalesIndividualFirmRaw' edrpou_num buyer_code|urlencode:"" %}?start_date={{ start_date }}&end_date={{ end_date }}&sort_field=product__product_code&sort_order={{ order.sort_order }}>
+                    {% if order.sort_field  ==  "product__product_code" %}
+                        {% if order.sort_order == 'asc' %}
+                            &#8673;
+                        {% elif order.sort_order == 'desc' %}
+                            &#8675;
+                        {% endif %}
+                     {% else %}
+                        &#8645;
+                    {% endif %}Код товара</a></th>
+            <th class="text-left">
+                <a class="btn btn-light w-100 h-100" style="display: inline-block; white-space: nowrap;" href={% url 'inner:SalesIndividualFirmRaw' edrpou_num buyer_code|urlencode:"" %}?start_date={{ start_date }}&end_date={{ end_date }}&sort_field=product__name&sort_order={{ order.sort_order }}>
+                    {% if order.sort_field  ==  "product__name" %}
+                        {% if order.sort_order == 'asc' %}
+                            &#8673;
+                        {% elif order.sort_order == 'desc' %}
+                            &#8675;
+                        {% endif %}
+                     {% else %}
+                        &#8645;
+                    {% endif %}Наименование</a></th>
+            <th class="text-right">
+                <a class="btn btn-light w-100 h-100" style="display: inline-block; white-space: nowrap;" href={% url 'inner:SalesIndividualFirmRaw' edrpou_num buyer_code|urlencode:"" %}?start_date={{ start_date }}&end_date={{ end_date }}&sort_field=count&sort_order={{ order.sort_order }}>
+                    {% if order.sort_field  ==  "count" %}
+                        {% if order.sort_order == 'asc' %}
+                            &#8673;
+                        {% elif order.sort_order == 'desc' %}
+                            &#8675;
+                        {% endif %}
+                     {% else %}
+                        &#8645;
+                    {% endif %}Количество</a></th>
+            <th class="text-right">
+                <a class="btn btn-light w-100 h-100" style="display: inline-block; white-space: nowrap;" href={% url 'inner:SalesIndividualFirmRaw' edrpou_num buyer_code|urlencode:"" %}?start_date={{ start_date }}&end_date={{ end_date }}&sort_field=unit&sort_order={{ order.sort_order }}>
+                    {% if order.sort_field  ==  "unit" %}
+                        {% if order.sort_order == 'asc' %}
+                            &#8673;
+                        {% elif order.sort_order == 'desc' %}
+                            &#8675;
+                        {% endif %}
+                     {% else %}
+                        &#8645;
+                    {% endif %}Ед. изм.</a></th>
+            <th class="text-right">
+                <a class="btn btn-light w-100 h-100" style="display: inline-block; white-space: nowrap;" href={% url 'inner:SalesIndividualFirmRaw' edrpou_num buyer_code|urlencode:"" %}?start_date={{ start_date }}&end_date={{ end_date }}&sort_field=one_product_cost&sort_order={{ order.sort_order }}>
+                    {% if order.sort_field  ==  "one_product_cost" %}
+                        {% if order.sort_order == 'asc' %}
+                            &#8673;
+                        {% elif order.sort_order == 'desc' %}
+                            &#8675;
+                        {% endif %}
+                     {% else %}
+                        &#8645;
+                    {% endif %}Стоимость</a></th>
+            <th class="text-right">
+                <a class="btn btn-light w-100 h-100" style="display: inline-block; white-space: nowrap;" href={% url 'inner:SalesIndividualFirmRaw' edrpou_num buyer_code|urlencode:"" %}?start_date={{ start_date }}&end_date={{ end_date }}&sort_field=sum&sort_order={{ order.sort_order }}>
+                    {% if order.sort_field  ==  "sum" %}
+                        {% if order.sort_order == 'asc' %}
+                            &#8673;
+                        {% elif order.sort_order == 'desc' %}
+                            &#8675;
+                        {% endif %}
+                     {% else %}
+                        &#8645;
+                    {% endif %}Сумма, {{ currency }}</a></th>
         </tr>
     </thead>
     <tbody>
@@ -54,8 +127,9 @@
                 <td class="py-0 text-right">{{ r.ordering_date | date:"d-M-Y" }}</td>
                 <td class="py-0 text-right">{{ r.product__product_code|cut:" " }}</td>
                 <td class="py-0 text-left">{{ r.product__name }}</td>
-                <td class="py-0 text-right">{{ r.one_product_cost|floatformat:2 }}</td>
                 <td class="py-0 text-right">{{ r.count|floatformat:3 }}</td>
+                <td class="py-0 text-left">{{ r.unit }}</td>
+                <td class="py-0 text-right">{{ r.one_product_cost|floatformat:2 }}</td>
                 <td class="py-0 text-right"><b>{{ r.sum |floatformat:2 }}</b></td>
             </tr>
             {% endfor %}
